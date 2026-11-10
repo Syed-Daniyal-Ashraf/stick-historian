@@ -74,5 +74,23 @@ Do not redeclare `world`, `capsEl` or `SUB_MAXW` in episode code; the template o
 - Chromium: set `CHROMIUM_PATH` only if you need a specific browser.
 
 ## Results so far (for strategy)
-- Old reels averaged ~21 s watch time and 0 shares. Receipts #2 got 1,900 views, 3 shares, a 1.6% like rate and 30% skip.
-- Biggest audiences are the USA, India and the Philippines. Planned next stories: Philippines, the staged "mock" Battle of Manila (1898); USA, the 1904 Olympic marathon.
+This is the single results log. Don't keep a second copy anywhere else (including in Claude's own skills) — update it here so it can't drift out of sync with itself.
+
+- Old reels averaged ~21 s watch time and 0 shares. Receipts #2 (`r2`, Theon) got 1,900 views, 3 shares, a 1.6% like rate and 30% skip.
+- An earlier per-video count, from before the current folder set, for three videos not identifiable against today's folders (Pig War, Ea-nasir, and an "Olympic Marathon"):
+
+  | Metric | Pig War | Ea-nasir | Olympic Marathon |
+  |---|---|---|---|
+  | Views | 1,428 | 1,453 | ~2,100 |
+  | Duration | 67 s | 54 s | 40 s |
+  | Average watch time | 21 s | 21 s | 21 s |
+  | Completion rate | 15% | 8% | 29% |
+  | Skip rate | 34.2% | 22.8% | 20.4% |
+  | Likes | 21 | 17 | 22 |
+  | Shares | 0 | 0 | 0 |
+  | Saves | 0 | 0 | 0 |
+
+  **Unresolved:** this table's "Olympic Marathon" already has real metrics, but the planned-stories line below also lists an Olympic marathon video as not yet made. Confirm with Farrukh which is right before using either.
+- `lb` (Lal Bihari) was the first video to generate shares, after the rig was rebuilt with expressive faces/poses and real CC0 audio replaced synthesized sound. Full metrics not yet recorded — add at the next 72h/7-day review instead of estimating.
+- Account-wide profile visits: 23 (not necessarily attributable to any one Reel).
+- Biggest audiences are the USA, India and the Philippines. Planned next stories: Philippines, the staged "mock" Battle of Manila (1898); USA, the 1904 Olympic marathon (see the unresolved note above).
