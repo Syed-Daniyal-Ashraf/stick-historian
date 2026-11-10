@@ -90,7 +90,7 @@ This is the single results log. Don't keep a second copy anywhere else (includin
   | Shares | 0 | 0 | 0 |
   | Saves | 0 | 0 | 0 |
 
-  **Unresolved:** this table's "Olympic Marathon" already has real metrics, but the planned-stories line below also lists an Olympic marathon video as not yet made. Confirm with Farrukh which is right before using either.
+  Confirmed (Farrukh, 2026-11-10): the 1904 Olympic Marathon was already made and already has these metrics. It is not a planned story.
 - `lb` (Lal Bihari) was the first video to generate shares, after the rig was rebuilt with expressive faces/poses and real CC0 audio replaced synthesized sound. Full metrics not yet recorded — add at the next 72h/7-day review instead of estimating.
 - Account-wide profile visits: 23 (not necessarily attributable to any one Reel).
-- Biggest audiences are the USA, India and the Philippines. Planned next stories: Philippines, the staged "mock" Battle of Manila (1898); USA, the 1904 Olympic marathon (see the unresolved note above).
+- Biggest audiences are the USA, India and the Philippines. Planned next stories: Philippines, the staged "mock" Battle of Manila (1898); USA, a story still to be picked (the Olympic Marathon above is already done, not a candidate).
