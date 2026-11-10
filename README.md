@@ -8,7 +8,7 @@
 3. Start Claude Code in this folder (`claude`). It reads `CLAUDE.md` automatically.
 
 ## Good first prompts
-- "Read CLAUDE.md, then build the lb episode and render a contact sheet so I can see it works."
-- "Make the Philippines story (mock Battle of Manila, 1898) as a new episode using lb/ as the template. Script first, then style frames, then a draft export at low resolution."
+- "Read CLAUDE.md and ENGINE.md, then run engine/make.sh mo and render a contact sheet so I can see it works."
+- "Make the Philippines story (mock Battle of Manila, 1898) as a new episode using mo/ as the template. Script first, then style frames, then a draft export at low resolution."
 
 Watch every draft yourself with sound on before asking for the final.

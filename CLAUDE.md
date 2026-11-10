@@ -15,34 +15,49 @@ The owner is Farrukh. Be direct and concise. Do the work instead of asking quest
 
 ## Layout
 ```
-engine/template.html      player + renderer (camera, SEQ cuts/whips, subtitles, WebAudio sfx, offline sfx render)
-engine/build_episode.py   fills the template from <ep>/episode.json + <ep>/src/* -> <ep>/app.html and ../<out>.html
-engine/lib.js             shared helpers (KIT: shake, pop, grade, vig, poses) + legacy stick rig helpers
+ENGINE.md                 one-page reference: rig, camera, subtitles, audio and every command. Read it first.
+engine/template.html      player + renderer (camera, SEQ cuts, WebAudio preview)
+engine/build_episode.py   fills the template from <ep>/episode.json + <ep>/src/*
+engine/make.sh <ep>       joins engine/toon/*.js + <ep>/src/props.js + <ep>/src/shots.js, then builds ../<out>.html
+engine/toon/              THE SHARED TOON KIT, used by every toon episode. Fix the rig here, never in an episode copy.
+  10_base.js              palette, finish() (line boil, paper, grade, vignette), cam(), type, stamps, subtitles
+  20_rig.js               toon() rig, costumes TC, expressions EX, poses TP, full()/tween() pose blending, shoes, idle life
+  30_world.js             shared props and sets (desk, paper, bigArm, strut, burst, dust, web, Indian village/office sets)
+engine/tools/             export.js, shots.js, verify.js, cover.js, mix.sh. All take the episode folder as first argument.
 build/fonts.css           embedded fonts (Anton, Fell, Fraktur, Baloo 2, Kalam, Rozha One)
 assets/                   fonts (OFL), tts model, CC0 sample libraries (created by scripts/setup.sh)
-mo/   Monopoly / Lizzie Magie (2026-11) - newest: toon rig + Edwardian dress, 1930s suits, hats; ragtime score with VSCO upright piano
-lb/   Lal Bihari "dead for 18 years" (2026-11) - CURRENT STANDARD: toon rig, line boil, paper grain, real CC0 score+foley
-px/   Pliny & Vesuvius (Receipts #3)   r2/  Theon (Receipts #2)   rc/  Sick log (Receipts #1)   - older stick rig
+mo/   Monopoly / Lizzie Magie (2026-11) - CURRENT STANDARD: safe-area staging, pose tweens, one-tempo score
+lb/   Lal Bihari "dead for 18 years" (2026-11) - same kit; its subtitles still sit below the safe area (verify.js reports it)
+px/ r2/ rc/               older stick-rig episodes with their own tool copies. Leave as they are.
 ```
-Use `mo/` (newest) or `lb/` as the template for new episodes. Its source is split into parts that `make.sh` concatenates into `src/scenes.js`:
-- `p0_base.js`: palette, `finish()` (line boil + paper texture + grade + vignette), `cam`, `wob`/`shakeV`, `ttl`/`tag` type, `stampMark`, and its own subtitles (`mySubs`, Baloo, word pop, MERGE for numbers such as 1976 / ₹300 / 1,600).
-- `p1_rig.js`: **toon rig** `toon(who,x,y,s,dir,p,t,seed)`. Rubber-hose limbs on a two-bone IK, mitten hands (`open|fist|point|flat|hold`), cel-shaded head, expressions `EX`, costumes `TC` (kurta, sari, khaki, gamchha, caps, `grey` ageing), `holdF/holdB` props, `sq` squash, `garland`. Pose presets live in `TP`.
-- `p2_world.js` and `p3_more.js`: props and sets (fan, ledger, stamps, notes, calendar, counters, village, office, cinema, police station, rickshaw, `bigArm` for top-down inserts, `strut` walk, petals, burst).
-- `p4_shots.js`: `sh1..shN` (one function per narration shot, time `u` from the shot start, word cues via `cu(shot,'word')`), `SEQ`, `overlays()`.
-- `meta.js`: `SKIP_SUBS` (all lines, because the episode draws its own subtitles) and `SHOT_META` (subtitle y per shot).
+An episode folder holds only what is its own: `episode.json` (title, `out` html name, `file` mp4 name), `src/meta.js`
+(subtitle y per shot, `MERGE_EP` number words, `LIFE_EP`, `SUB_MAXW_EP`), `src/props.js` (sets, props, costumes),
+`src/shots.js` (`sh1..shN`, `SEQ`, `overlays()`, `COVER_T`), `src/defs.html`, and `vo/` (script, timing, score).
+Do not redeclare `world`, `capsEl` or `SUB_MAXW` in episode code; the template owns them.
 
-Do not redeclare `world` or `capsEl` in episode code; the template owns them.
+## Staging rules (learned on Monopoly)
+- **Safe area.** The Reels interface covers the top 270 px and everything below 1250 px. Picture that matters sits in
+  y 290-1110; the subtitle is one line with its baseline at 1190; below that only floor or paper. `verify.js` fails
+  the build if a subtitle leaves x 65-1015 / y 270-1250. Check labels and faces with `SAFE=1` contact sheets.
+- **Wide shots use `stage(x,z,g)`** (in `mo/src/shots.js`): the ground line stays at screen y 1115 whatever the zoom.
+  With a hat, keep z <= .93 or the hat enters the top band. Labels go in screen space after the camera.
+- **Poses never snap.** Change a pose with `tween(u,t0,full(A),full(B),d)` or a continuous `mix()`. A one-frame pose
+  switch (`cond?poseA:poseB`) is the "bland code animation" look and is not allowed.
+- **Reach.** A hand target further than ~114 local units from the shoulder stops short. `verify.js` lists every miss.
+- **One tempo.** `vo/timeline.py` starts every shot on a beat; `vo/sound.py` runs one beat grid for the whole film and
+  changes only the arrangement per section, then levels each section. Do not restart the music at a cut.
 
-## Pipeline (run inside the episode folder, e.g. `cd lb`)
-1. **Script:** edit `SCRIPT` in `vo/gen.py`. Each entry is `(shot, 'N', text, speed, gap)`; `*word*` highlights a word. Fix names with `PH` (phoneme replace) or `REPL`.
-2. **Voice:** `python3 vo/gen.py` writes per-line wavs and `vo/lines.json` with word times. Then `python3 vo/timeline.py` (`MIN`/`LEAD`/`TAIL` per shot) writes `vo/timing.json` + `vo/voice.wav`.
-3. **Picture:** write the shots, then `./make.sh` writes `../lal-bihari.html`. Open it in a browser to preview with audio.
-4. **Check stills:** `node shots.js fr/sheet.png 0.5 1.5 ...` tiles frames at given times. Check every second of the film, and use dense strips (0.1 s apart) for walks, impacts and hand-offs.
-5. **Check logic:** `node verify.js` (determinism must report `mismatches: []`) and `node lines.js` (subtitle coverage).
-6. **Sound:** `python3 vo/sound.py` (score + foley cued to word times, writes `vo/music_raw.wav` + `out/fx_real.wav`), then `python3 vo/bed.py` (ducks the music under the voice, writes `vo/bed.wav`/`bed.mp3`).
-7. **Draft export:** `FPS=15 W=540 OUT=animatic.mp4 node export.js`.
-8. **Final export:** `node export.js && bash mix.sh` writes `../../Lal-Bihari-Dead-Man.mp4`, loudnorm −14 LUFS. On the cloud box a 60 s film took ~35 min, so expect much faster locally.
-9. **Cover:** `node cover.js` (frame at `COVER_T`) writes a 4K PNG.
+## Pipeline (from the project root; EP = episode folder, e.g. mo)
+1. **Script:** edit `SCRIPT` in `EP/vo/gen.py`. `(shot, 'N', text, speed, gap)`; `*word*` highlights. Fix names with `PH` or `REPL`.
+2. **Voice:** `cd EP && python3 vo/gen.py && python3 vo/timeline.py` (writes `vo/timing.json`, `vo/voice.wav`).
+3. **Picture:** write shots, then `engine/make.sh EP`. Open `<out>.html` to preview (voice + music; foley is only in the MP4).
+4. **Stills:** `SAFE=1 node engine/tools/shots.js EP sheet.png 0.5 1.5 ...` Check every second, and dense strips (0.1 s) at every pose change.
+5. **Gates:** `node engine/tools/verify.js EP` must print `VERIFY: PASS` (determinism, reach, subtitles in the safe area, every word covered).
+6. **Sound:** `cd EP && python3 vo/sound.py && python3 vo/bed.py` (prints the level of each music section).
+7. **Draft:** `DRAFT=1 node engine/tools/export.js EP` (540 px, 15 fps).
+8. **Final:** `node engine/tools/export.js EP && bash engine/tools/mix.sh EP` writes `<file>.mp4` in the project root, -14 LUFS.
+   JPEG capture with 2 parallel browsers: see ENGINE.md for the measured time.
+9. **Cover:** `node engine/tools/cover.js EP`.
 
 ## Quality gates before delivering
 - **Facts:** an independent review pass (spawn a fresh agent with the frames + script, no conclusions) checks facts against sources and gives timestamps for text collisions, cropped characters and swipe risks. Fix what it finds.
@@ -51,11 +66,12 @@ Do not redeclare `world` or `capsEl` in episode code; the template owns them.
 - **Ears:** you cannot hear audio. Measure loudness per section with ffmpeg `ebur128` and tell Farrukh to listen, especially to pronunciation and the music.
 
 ## Known gotchas
-- Fonts load lazily: tools must `await window.__fontsReady` before the first screenshot. `export.js`, `shots.js` and `snap.js` already do.
-- Reset `UID` each frame (done in `finish()`), otherwise clip ids change and `verify.js` reports mismatches.
-- IK reach is limited (~114 local units × scale), so a hand target out of reach stops short. Move the figure or the prop instead.
+- Fonts load lazily: `engine/tools/common.js` waits for `window.__fontsReady` before any screenshot. Use it for new tools.
+- `UID` is reset each frame in `finish()`; otherwise clip ids change and `verify.js` reports mismatches.
 - `cu()` matches the first word whose normalised form starts with the prefix. For a repeated word, use an offset from a unique word.
-- Chromium: set `CHROMIUM_PATH` only if you need a specific browser; otherwise Playwright's own browser is used.
+- Word times in `timing.json` are estimates (phoneme counts between detected pauses), not measurements. Long phrases can drift.
+- `tween()` blends numbers and arrays; text fields (expr, hand shape) switch halfway. Always wrap poses in `full()`.
+- Chromium: set `CHROMIUM_PATH` only if you need a specific browser.
 
 ## Results so far (for strategy)
 - Old reels averaged ~21 s watch time and 0 shares. Receipts #2 got 1,900 views, 3 shares, a 1.6% like rate and 30% skip.

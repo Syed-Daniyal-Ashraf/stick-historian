@@ -1,6 +1,8 @@
-"""Soundtrack for the Monopoly / Lizzie Magie episode (ragtime-flavoured): original score + foley, mixed offline.
-Samples: VSCO 2 Community Edition (CC0) and Kenney audio packs (CC0). Synthesised: tanpura drone, harmonium, ambiences.
-Writes vo/music_raw.wav (score) and out/sfx.wav (effects); bed.py then ducks the score under the narration."""
+"""Soundtrack for the Monopoly / Lizzie Magie episode: one continuous ragtime score + foley, mixed offline.
+Samples: VSCO 2 Community Edition (CC0) and Kenney audio packs (CC0).
+The score runs on ONE beat grid for the whole film (BPM from vo/timing.json; timeline.py starts every shot on a beat),
+so the pulse and the chord progression carry across cuts. Shots change the arrangement (who plays, major/minor, how loud),
+never the tempo. Writes vo/music_raw.wav (score) and out/fx_real.wav (foley); bed.py then ducks the score under the voice."""
 import json, re, glob, os, numpy as np, soundfile as sf
 SR=48000; rng=np.random.default_rng(5)
 D=os.environ.get('ASSETS_DIR',os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','assets'))+'/'
@@ -66,22 +68,6 @@ SLEIGH=load(glob.glob(V+'Percussion/Sleighbells_Hit*')[0]); TAMB=P('Tamb1-Shake_
 ROLL=load(sorted(glob.glob(V+'Percussion/Timpani/Rolls/*'))[0]); GONG=P('gongHit_f.wav')
 k=lambda f: load(K+f)
 # ------------------------------------------------------------------ synths
-def pluckKS(f,dur,damp=.9995,bright=.6):
-    n=int(dur*SR); Pn=max(2,int(SR/f)); buf=rng.uniform(-1,1,Pn).astype(np.float64); out=np.zeros(n)
-    for i in range(n):
-        j=i%Pn; out[i]=buf[j]; buf[j]=damp*(bright*buf[j]+(1-bright)*buf[(j+1)%Pn])
-    return out/np.abs(out).max()
-_tp={}
-def tanpura_string(f):
-    if f in _tp: return _tp[f]
-    x=pluckKS(f,3.2,.99985,.55); x=.7*x+.3*np.tanh(3.5*x)       # jawari buzz
-    x*=np.minimum(1,np.arange(len(x))/(SR*.01)); _tp[f]=x.astype(np.float32); return _tp[f]
-def harmonium(f,dur,vel=1.0):
-    n=int((dur+.12)*SR); t=np.arange(n)/SR; x=np.zeros(n)
-    for h in range(1,13): x+=np.sin(2*np.pi*f*h*t)/(h**.85)*(1 if h%2 else .7)
-    x+=.6*np.sin(2*np.pi*f*1.0018*t)+.25*np.sin(2*np.pi*f*2*1.002*t)             # second reed, slightly sharp
-    env=np.minimum(1,t/.035)*np.where(t<dur,1,np.exp(-(t-dur)/.05))*(1+.06*np.sin(2*np.pi*4.6*t))
-    return (x*env/8*vel).astype(np.float32)
 def noise(dur,lo=200,hi=4000,col=0):
     n=int(dur*SR); x=rng.normal(0,1,n); X=np.fft.rfft(x); fr=np.fft.rfftfreq(n,1/SR)
     X*=((fr>lo)&(fr<hi))/(np.maximum(fr,1)**(col/2)); y=np.fft.irfft(X,n); return (y/np.abs(y).max()).astype(np.float32)
@@ -99,111 +85,89 @@ mus=lambda x,t0,g=1,pan=0: put(MUS,x,t0,g,pan)
 def gate(a,b,f=.03):
     i0,i1,fl=int(a*SR),int(b*SR),int(f*SR); MUS[i0-fl:i0]*=np.linspace(1,0,fl)[:,None]; MUS[i0:i1]=0; MUS[i1:i1+fl]*=np.linspace(0,1,fl)[:,None]
 fx=lambda x,t0,g=1,pan=0: put(FX,x,t0,g,pan)
-# ------------------------------------------------------------------ score helpers (key: D, Sa = D)
-SA=62
-def drone(t0,t1,g=.11):
-    t=t0; pat=[SA-17,SA-12,SA-12,SA-24]
-    i=0
-    while t<t1-.3: mus(tanpura_string(mid(pat[i%4]))[:int(min(3.2,t1-t+.6)*SR)],t,g*(1.2 if i%4==3 else 1),-.3+.15*(i%4)); t+=.62; i+=1
-BOLS={'dha':lambda:TUMBA*.9+np.pad(QUINTO,(0,max(0,len(TUMBA)-len(QUINTO))))[:len(TUMBA)]*.5,'ge':lambda:shift(TUMBA,-5),'na':lambda:shift(QUINTO,2),'ti':lambda:shift(TAP,3),'ka':lambda:TAP*.7,'dhi':lambda:shift(TUMBA,-2)*.9}
-_b={}
-def bol(name):
-    if name not in _b: _b[name]=BOLS[name]().astype(np.float32)
-    return _b[name]
-KEHERWA=['dha','ge','na','ti','na','ka','dhi','na']
-def groove(t0,t1,bpm=116,g=.5,pat=KEHERWA,swing=.06):
-    e=60/bpm/2; t=t0; i=0
-    while t<t1-.02:
-        q=i%8; b=pat[q]
-        if b: mus(bol(b),t+(swing*e if q%2 else 0),g*(1.0 if q in (0,6) else .7),.15 if b in ('na','ti','ka') else -.1)
-        t+=e; i+=1
-    return e
-def melody(seq,t0,e,inst='harm',g=.5,oct=0):
-    t=t0
-    for it in seq:
-        if it is None: t+=e; continue
-        m,l=(it if isinstance(it,tuple) else (it,1)); m+=oct
-        if inst=='harm': mus(harmonium(mid(m),l*e*.95),t,g*.9,.1)
-        elif inst=='pizz': mus(PIZZ.note(m),t,g,.2)
-        elif inst=='cpizz': mus(CPIZZ.note(m),t,g,-.2)
-        elif inst=='bsn': mus(BSN.note(m),t,g,-.1)
-        elif inst=='harp': mus(HARP.note(m),t,g,.25)
-        elif inst=='glock': mus(GLOCK.note(m),t,g,.3)
-        elif inst=='tuba': mus(TUBA.note(m),t,g,-.15)
-        t+=l*e
-    return t
-D4,E4,Fs4,G4,A4,B4,D5,E5=62,64,66,67,69,71,74,76
-THEME=[(A4,1),(B4,1),(A4,1),(Fs4,1),(E4,1),(Fs4,1),(D4,2),(E4,1),(Fs4,1),(A4,1),(B4,1),(A4,2),(Fs4,2)]
-THEME2=[(D5,1),(B4,1),(A4,1),(B4,1),(A4,1),(Fs4,1),(E4,2),(Fs4,1),(E4,1),(D4,1),(E4,1),(D4,4)]
-SNEAK=[(50,1),None,(53,1),None,(55,1),None,(53,1),(52,1),(50,1),None,(48,1),None,(50,2),None,None]
-# ================================================================== the score (key of C; ragtime oom-pah)
+
+# ================================================================== the score: one grid, sections change the arrangement
+BPM=T.get('bpm',108); Q=60/BPM; NB=int(round(TOTAL/Q))
+beat=lambda t: int(round(t/Q))                      # nearest beat index for a time
 def chord_notes(root,kind='maj'): return [root,root+(4 if kind=='maj' else 3),root+7]
-PROG=[(48,'maj'),(48,'maj'),(53,'maj'),(48,'maj'),(43,'maj'),(43,'maj'),(48,'maj'),(43,'maj')]   # C C F C G G C G
-def rag(t0,t1,bpm=104,g=.5,prog=PROG,tuba=True,snare=True):
-    q=60/bpm; t=t0; i=0
-    while t<t1-.05:
-        root,kind=prog[(i//2)%len(prog)]
-        if i%2==0:
-            mus(PNO.note(root-12,q*.9),t,g*.8,-.2)
-            if tuba: mus(TUBA.note(root-12),t,g*.55,-.3)
+PROG_MAJ=[(48,'maj'),(48,'maj'),(53,'maj'),(48,'maj'),(43,'maj'),(43,'maj'),(48,'maj'),(43,'maj')]   # C C F C G G C G, two beats each
+PROG_MIN=[(48,'min'),(48,'min'),(44,'maj'),(44,'maj'),(41,'min'),(41,'min'),(43,'maj'),(43,'maj')]   # Cm Ab Fm G
+BED=np.zeros((n,2),np.float32); bed=lambda x,t0,g=1,pan=0: put(BED,x,t0,g,pan)
+C5=72; G5=79
+kw=W(1,'woman'); kd1=W(1,'dollars'); kc4=W(4,'crushes'); kc5=W(5,'caught'); kl7=W(7,'learned'); ka7=W(7,'and'); ko7=W(7,'own')
+kp8=W(8,'parker'); kf8=W(8,'five'); ka9=W(9,'anti'); kz=W(10,'zero')
+# (start time, mode, level in dB relative to the loudest section). Modes: rag (oom-pah + melody), soft (rag without tuba/snare),
+# pizz (plucked strings), sad (minor, half-time, soft piano), roll (drum roll over the bass), tense (tuba pedal), hush (bass only), out (silence)
+SECT=[(0,'rag',0),(kw,'hush',-7),(S[2],'soft',-3),(S[3],'pizz',-5),(S[4],'soft',-4),(S[5],'roll',-3),(S[6],'soft',-4),
+      (S[7],'sad',-5),(ka7,'rag',-2),(S[8],'rag',0),(kp8,'sad',-5),(S[9],'tense',-4),(S[10],'sad',-8),(kz+.25,'out',-99)]
+SECT=[(beat(t)*Q,m,l) for t,m,l in SECT]
+def mode_at(t):
+    cur=SECT[0]
+    for s in SECT:
+        if t>=s[0]-1e-6: cur=s
+    return cur
+for i in range(NB):
+    t=i*Q; _,mode,_lv=mode_at(t); bar=(i//2)%8; down=i%2==0
+    root,kind=(PROG_MIN if mode in('sad','tense') else PROG_MAJ)[bar]
+    if mode=='out': continue
+    if mode in('rag','soft'):
+        if down:
+            bed(PNO.note(root-12,Q*.9),t,.42,-.2)
+            if mode=='rag': bed(TUBA.note(root-12),t,.3,-.3)
         else:
-            for m in chord_notes(root+12,kind): mus(PNO.note(m,q*.6),t,g*.42,.05)
-            if snare: mus(SNT[i%len(SNT)],t,g*.25,.2)
-        t+=q; i+=1
-def mel(seq,t0,q,g=.5,inst=None):
-    t=t0; inst=inst or PNO
-    for it in seq:
-        if it is None: t+=q; continue
-        m,l=it; mus(inst.note(m,l*q*.95) if inst in (PNO,PNOs) else inst.note(m),t,g,.2); t+=l*q
-    return t
-C5,D5,E5,F5,G5,A5,B4,A4,G4=72,74,76,77,79,81,71,69,67
-RAG=[(E5,.5),(G5,.5),(None,0) if False else (E5,.5),(C5,.5),(D5,.75),(E5,.25),(C5,1),(A4,.5),(C5,.5),(D5,.5),(E5,.5),(G5,1.5),(None,0)][:12]
-RAG=[x for x in RAG if x[0] is not None]
-RAG2=[(G5,.5),(A5,.5),(G5,.5),(E5,.5),(F5,.75),(E5,.25),(D5,1),(B4,.5),(D5,.5),(G5,.5),(F5,.5),(E5,2)]
-SADP=[(60,1.5),(63,.5),(67,2),(65,1),(63,1),(62,2)]
-def sad_chords(t0,t1,g=.4,q=1.2):
-    t=t0; P_=[(48,'min'),(44,'maj'),(43,'maj'),(48,'min')]; i=0
-    while t<t1-.1:
-        r,k=P_[i%4]; mus(PNOs.note(r-12,q*1.6),t,g*.8)
-        for j,m in enumerate(chord_notes(r+12,k)): mus(PNOs.note(m,q*1.4),t+j*.04,g*.45)
-        t+=q; i+=1
-q104=60/104
-# 1 hook: rich ragtime, then deflate for her
-kw=W(1,'woman'); kd1=W(1,'dollars')
-rag(0,kw-.05,112,.55); mel(RAG,.05,60/112/2,.5)
-mus(PNOs.note(60,1.2),kw+.05,.5); mus(PNOs.note(55,1.2),kw+.7,.45); mus(TBF.note(55),kd1-.05,.7); mus(TBF.note(50),kd1+.45,.6)
-# 2 1904: gentle rag + typewriter; stamp
-rag(S[2],SE(2)-.05,100,.38,snare=False); mel(RAG2,S[2]+.2,60/100/2,.38)
-mus(TIMP[2],W(2,'game')-.05,.6); [mus(GLOCK.note(m),W(2,'game')+i*.06,.35) for i,m in enumerate([C5,E5,G5])]
-# 3 the point: cheeky pizz walk; coins; broke
-melody([(48,1),(52,1),(55,1),(57,1),(55,1),(52,1),(48,2)],S[3]+.05,q104/1.5,'cpizz',.55)
-mus(TUBA.note(43),W(3,'rich')+.2,.6); mus(BSN.note(40),W(3,'broke')-.05,.6); mus(TBF.note(48),W(3,'broke')+.25,.55)
-# 4 two sets of rules
-rag(S[4],SE(4)-.05,104,.32,tuba=False,snare=False)
-[mus(GLOCK.note(m),W(4,'shares')+i*.07,.4) for i,m in enumerate([C5,E5,G5,C5+12])]
-kc4=W(4,'crushes'); mus(TIMP[0],kc4,.9); mus(TUBA.note(36),kc4,.8); mus(CRASH,kc4,.35)
-# 5 guess: drum roll, ta-da
-kc5=W(5,'caught'); mus(ROLL[:int((kc5-S[5]+.05)*SR)],S[5],.45); mus(CRASH,kc5,.55); [mus(PNO.note(m,.9),kc5+i*.03,.5) for i,m in enumerate([48,60,64,67,72])]
-# 6 by hand: soft rag
-rag(S[6],SE(6)-.05,96,.3,tuba=False); mel(RAG[:8],S[6]+.1,60/96/2,.3)
-# 7 Depression: minor and slow; idea; Parker Brothers rag; stamp
-kl7=W(7,'learned'); ka7=W(7,'and'); ko7=W(7,'own')
-sad_chords(S[7],kl7,.42,1.25); mel([(63,1),(62,.5),(60,1.5),(58,1),(60,2)],S[7]+.4,.42,.32)
-[mus(GLOCK.note(m),W(7,'friend')+i*.05,.45) for i,m in enumerate([G5,C5+12])]
-rag(ka7-.05,SE(7)-.05,108,.42); mel(RAG2,ka7,60/108/2,.4)
-mus(TIMP[1],ko7-.2,.7); mus(PIZZ.note(60),ko7+.1,.5); mus(PIZZ.note(55),ko7+.3,.5)
-# 8 rich, then $500
-kp8=W(8,'parker'); kf8=W(8,'five')
-rag(S[8],kp8-.12,120,.6); mel(RAG,S[8]+.02,60/120/2,.55); mus(SLEIGH,S[8]+.1,.45)
-sad_chords(kp8-.05,SE(8)-.05,.38,1.1); mus(TBF.note(52),W(8,'dollars')-.05,.6)
-# 9 1970s: tension, reveal
-ka9=W(9,'anti'); mus(ROLL[:int((ka9+.5-S[9])*SR)]*np.linspace(.2,1,int((ka9+.5-S[9])*SR)).astype(np.float32),S[9],.32)
-melody([(36,2),(36,2),(39,2),(36,2)],S[9]+.1,.38,'tuba',.4)
-mus(CRASH,ka9+.5,.5); mus(TIMP[0],ka9+.5,.8); [mus(GLOCK.note(m),ka9+.55+i*.07,.4) for i,m in enumerate([C5,E5,G5,C5+12])]
-# 10 the census: solo piano, silence after zero, last chord
-kz=W(10,'zero')
-mel(SADP,S[10]+.1,.5,.42,PNOs); [mus(PNOs.note(m,2.5),S[10]+.1,.28) for m in (36,43)]
-[mus(PNOs.note(m,3.0),kz+1.1+i*.05,.38) for i,m in enumerate([36,48,55,60,64])]
+            for m in chord_notes(root+12,kind): bed(PNO.note(m,Q*.6),t,.22,.05)
+            if mode=='rag': bed(SNT[i%len(SNT)],t,.13,.2)
+        # right hand: broken chords in eighths, always chord tones, with a tied syncopation every other bar
+        c3,c5,c8=chord_notes(root+24,kind)[1],chord_notes(root+24,kind)[2],root+36
+        fig=[c3,c5,c8,c5] if (i//2)%2==0 else [c8,None,c5,c3]
+        for j in (0,1):
+            m=fig[(0 if down else 2)+j]
+            if m: bed(PNO.note(m,Q*.5),t+j*Q/2,.26 if mode=='rag' else .2,.2)
+    elif mode=='pizz':
+        if down: bed(CPIZZ.note(root),t,.5,-.2)
+        else:
+            for m in chord_notes(root+24,kind)[:2]: bed(PIZZ.note(m),t,.3,.2)
+    elif mode=='sad':
+        if i%4==0:
+            bed(PNOs.note(root-12,Q*3.6),t,1.1)
+            for j,m in enumerate(chord_notes(root+12,kind)): bed(PNOs.note(m,Q*3.2),t+j*.05,.6)
+        elif i%4==2: bed(PNOs.note(chord_notes(root+24,kind)[1],Q*1.8),t,.55,.15)
+        elif i%4==3: bed(PNOs.note(chord_notes(root+24,kind)[0],Q*.9),t,.45,.15)
+    elif mode=='roll':
+        if down: bed(PNO.note(root-12,Q*.9),t,.36,-.2); bed(TUBA.note(root-12),t,.26,-.3)
+    elif mode=='tense':
+        if down: bed(TUBA.note(36 if (i//4)%2==0 else 39),t,.7,-.15)
+        else: bed(CPIZZ.note(48),t,.4,.1)
+    elif mode=='hush':
+        if down: bed(PNOs.note(root-12,Q*1.6),t,.9,-.1)
+# rolls live in the bed so they are levelled with their section
+r0=S[5]; bed(ROLL[:int((kc5-r0+.05)*SR)],r0,.4)
+r9=S[9]; ln=int((ka9+.5-r9)*SR); bed(ROLL[:ln]*np.linspace(.2,1,ln).astype(np.float32),r9,.3)
+# level every section to its target so the music never jumps in loudness at a cut
+def rms_db(x): return 20*np.log10(np.sqrt(np.mean(x**2))+1e-9)
+edges=[s[0] for s in SECT]+[TOTAL]; gain=np.ones(n,np.float32); ref=None; report=[]
+for si,(t0,m,lv) in enumerate(SECT):
+    a,b=int(t0*SR),int(edges[si+1]*SR)
+    if m=='out' or b-a<SR*.3: continue
+    r=float(rms_db(BED[a:b]))
+    if ref is None: ref=r-lv
+    g=float(np.clip(ref+lv-r,-12,12)); gain[a:b]=10**(g/20); report.append((round(t0,2),m,lv,round(r-ref,1),round(g,1)))
+fl=int(SR*.06); ker=np.ones(fl,np.float32)/fl; gain=np.convolve(gain,ker,'same')
+BED*=gain[:,None]; MUS+=BED
+print('sections (start, mode, target dB, measured before, gain applied):'); [print(' ',r) for r in report]
+# stingers on word cues (free of the grid on purpose: they hit with the picture)
+mus(TBF.note(55),kd1-.05,.5); mus(TBF.note(50),kd1+.45,.42)
+mus(TIMP[2],W(2,'game')-.05,.45); [mus(GLOCK.note(m),W(2,'game')+i*.06,.26) for i,m in enumerate([C5,C5+4,G5])]
+mus(TUBA.note(43),W(3,'rich')+.2,.4); mus(BSN.note(40),W(3,'broke')-.05,.45); mus(TBF.note(48),W(3,'broke')+.25,.4)
+[mus(GLOCK.note(m),W(4,'shares')+i*.07,.3) for i,m in enumerate([C5,C5+4,G5,C5+12])]
+mus(TIMP[0],kc4,.6); mus(TUBA.note(36),kc4,.5); mus(CRASH,kc4,.25)
+mus(CRASH,kc5,.4); [mus(PNO.note(m,.9),kc5+i*.03,.36) for i,m in enumerate([48,60,64,67,72])]
+[mus(GLOCK.note(m),W(7,'friend')+i*.05,.32) for i,m in enumerate([G5,C5+12])]
+mus(TIMP[1],ko7-.2,.5); mus(PIZZ.note(60),ko7+.1,.36); mus(PIZZ.note(55),ko7+.3,.36)
+mus(SLEIGH,S[8]+.1,.3); mus(TBF.note(52),W(8,'dollars')-.05,.42)
+mus(CRASH,ka9+.5,.36); mus(TIMP[0],ka9+.5,.55); [mus(GLOCK.note(m),ka9+.55+i*.07,.3) for i,m in enumerate([C5,C5+3,G5,C5+12])]
+[mus(PNOs.note(m,3.0),kz+1.1+i*.05,.3) for i,m in enumerate([36,48,55,60,63])]
+
 # ================================================================== foley
 def stamp(t0,g=1): fx(k('RPG sounds (50 sounds)/bookPlace1.ogg'),t0,1.0*g); fx(shift(TIMP[2],-5)[:int(.5*SR)],t0,.35*g); fx(k('Casino sounds (50 sounds)/cardPlace2.ogg'),t0+.01,.7*g)
 cs=lambda i: k(f'Casino sounds (50 sounds)/cardSlide{i}.ogg')
@@ -255,3 +219,4 @@ MUS=MUS[:int(TOTAL*SR)]; FX=FX[:int(TOTAL*SR)]
 MUS/=np.abs(MUS).max()*1.05; FX/=np.abs(FX).max()*1.4
 sf.write('vo/music_raw.wav',MUS,SR); os.makedirs('out',exist_ok=True); sf.write("out/fx_real.wav",FX,SR)
 print('ok total',TOTAL)
+

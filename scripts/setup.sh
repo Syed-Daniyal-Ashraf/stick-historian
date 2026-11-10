@@ -46,4 +46,4 @@ if [ ! -d assets/kenney-audio-assets ]; then
   git clone --filter=blob:none --no-checkout https://github.com/ismetcabbar9-oss/kenney-audio-assets assets/kenney-audio-assets
   ( cd assets/kenney-audio-assets && git sparse-checkout init --no-cone && printf '/Audio (295 files)/*\n/LICENSE.md\n' > .git/info/sparse-checkout && git checkout HEAD )
 fi
-echo "setup done. Try: cd lb && ./make.sh && node shots.js fr/test.png 1 10 20"
+echo "setup done. Try: engine/make.sh mo && node engine/tools/shots.js mo test.png 1 10 20"

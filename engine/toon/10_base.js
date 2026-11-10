@@ -1,7 +1,4 @@
-/* ============================== She Invented Monopoly. She Got $500. (Lizzie Magie, 1904-1940)
-   (base kit from the Lal Bihari episode) — Lal Bihari 'Mritak', Uttar Pradesh, 1976-1994
-   Events follow published accounts (Open magazine "The Living Dead"; Wikipedia; Improbable Research). Faces, rooms,
-   clothes, staging and the exact look of every place are illustration. */
+/* ============================== toon kit: base (palette, finish, camera, type, stamps, subtitles) - shared by every toon episode */
 const CAM0={x:540,y:960,z:1};
 const MARI='#ffb627', SAFF='#f08a24', TEAL='#1f8f7a', CRIM='#c8372d', IVORY='#f7ebd4', NAVY='#16223A', LEAF='#5f9a3a';
 const BAL='Baloo, sans-serif';
@@ -16,7 +13,8 @@ function finish(svg,t,{boil=2.6,paper=.28,grade=null,vig=.9}={}){ const sd=1+Mat
   if(paper>0) g+=`<rect width="1080" height="1920" fill="url(#paper)" opacity="${paper}" style="mix-blend-mode:multiply"/>`;
   if(vig>0) g+=`<rect width="1080" height="1920" fill="url(#gVig2)" opacity="${vig}"/>`;
   return g; }
-const cam=(c,svg)=>`<g transform="translate(540 960) scale(${N(c.z*1000)/1000}) translate(${N(-c.x)} ${N(-c.y)})">${svg}</g>`;
+/* camera: world point (c.x,c.y) lands at screen (540, oy). oy defaults to c.oy, then to the frame centre (960). */
+const cam=(c,svg,oy)=>`<g transform="translate(540 ${N(oy!=null?oy:(c.oy!=null?c.oy:960))}) scale(${N(c.z*1000)/1000}) translate(${N(-c.x)} ${N(-c.y)})">${svg}</g>`;
 /* damped spring: 0 -> settles, used for wobble after an impact */
 const wob=(u,t0,amp=1,f=18,d=6)=>u<t0?0:amp*Math.exp(-(u-t0)*d)*Math.sin((u-t0)*f);
 const shakeV=(u,t0,amp=18,dur=.4)=>{ const k=(u-t0)/dur; if(k<0||k>1) return [0,0]; const a=amp*(1-k)*(1-k); return [Math.sin(u*91)*a,Math.cos(u*73)*a*.7]; };
@@ -34,7 +32,8 @@ function stampMark(x,y,lines,col,k,rot=-12,size=70){ if(k<=0) return ''; const s
   lines.forEach((l,i)=>g+=`<text y="${N(-h/2+34+size*.78+i*size*1.02-8)}" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${size}" fill="${col}" letter-spacing="2">${l}</text>`);
   return `<g transform="translate(${N(x)} ${N(y)}) rotate(${rot}) scale(${N(sc*100)/100})" opacity="${op(k*3)*.92}" filter="url(#inky)">${g}</g>`; }
 /* ============================== subtitles (episode style): Baloo, word pop, numbers shown as figures */
-const MERGE=[[['nineteen','oh','four'],'1904'],[['nineteen','seventies'],'1970s'],[['nineteen','forty'],'1940'],[['five','hundred','dollars'],'$500']];
+/* MERGE: spoken number words shown as figures. Each episode sets MERGE_EP in its src/meta.js. */
+const MERGE=typeof MERGE_EP!=='undefined'?MERGE_EP:[];
 const SUBW=SHOTS.map(s=>s.lines.map(l=>{ const out=[]; const w=l.words; for(let i=0;i<w.length;i++){ let hit=null;
   for(const [seq,rep] of MERGE){ if(seq.every((x,j)=>w[i+j]&&normW(w[i+j].w)===x)){ hit=[seq.length,rep]; break; } }
   if(hit){ const last=w[i+hit[0]-1].w, punc=(last.match(/[,.…?!]+$/)||[''])[0]; out.push({w:hit[1]+punc,t:w[i].t,hl:true}); i+=hit[0]-1; } else out.push({w:w[i].w,t:w[i].t,hl:w[i].hl}); } return out; }));
@@ -42,9 +41,10 @@ const MYSUBS=[]; SHOTS.forEach((s,si)=>s.lines.forEach((l,li)=>{ const ws=SUBW[s
   ws.forEach(w=>{ c.push(w); const len=c.map(x=>x.w).join(' ').length; if(/[,.?!…]$/.test(w.w)||len>15){ ch.push(c); c=[]; } }); if(c.length) ch.push(c);
   const nl=s.lines[li+1], end=Math.min(l.v0+l.vd+.4, nl?nl.v0-.04:SE(s.n)-.03);
   ch.forEach((c,ci)=>MYSUBS.push({shot:s.n,t0:c[0].t-.06,t1:ch[ci+1]?ch[ci+1][0].t-.06:end,words:c})); }));
+const MYSUB_MAXW=typeof SUB_MAXW_EP!=='undefined'?SUB_MAXW_EP:900;   // widest subtitle line (px); episodes may narrow it in src/meta.js
 function mySubs(t){ const c=MYSUBS.find(c=>t>=c.t0&&t<c.t1); if(!c) return ''; const sy=SHOT_META[c.shot-1].subY, pos=typeof sy==='function'?sy(t-S(c.shot)):(sy||1440);
   let size=88; const words=c.words.map(w=>({s:w.w.toUpperCase().replace(/[“”]/g,'"'),hl:w.hl,t:w.t}));
-  const sp=size*.28; let tot=words.reduce((a,w)=>a+tW(w.s,size)+sp,-sp); if(tot>900){ size*=900/tot; tot=900; }
+  const sp=size*.28; let tot=words.reduce((a,w)=>a+tW(w.s,size)+sp,-sp); if(tot>MYSUB_MAXW){ size*=MYSUB_MAXW/tot; tot=MYSUB_MAXW; }
   let x=540-tot/2, g='';
   for(const w of words){ const ww=tW(w.s,size), k=sat((t-Math.max(c.t0,w.t-.07))/.15), cx=x+ww/2;
     if(k>0){ const sc=k<1?lerp(.6,1,E.back(k)):1;

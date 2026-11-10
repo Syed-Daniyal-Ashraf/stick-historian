@@ -8,8 +8,10 @@ for i,l in enumerate(L):
   subprocess.run(['ffmpeg','-y','-v','error','-i',f'vo/raw{i:02d}.wav','-af',CHAIN,'-ar','24000',f'vo/p{i:02d}.wav'],check=True)
   g=-22.0-lufs(f'vo/p{i:02d}.wav')
   subprocess.run(['ffmpeg','-y','-v','error','-i',f'vo/p{i:02d}.wav','-af',f'volume={g:.2f}dB','-ar','24000',f'vo/l{i:02d}.wav'],check=True)
-# shots 1-2 have no narration (cold open + mascot); fixed minimum durations, narration offset per shot
-NSHOTS=10; MIN={1:4.0,2:4.6,3:3.4,4:5.6,5:2.4,6:2.8,7:7.6,8:4.4,9:4.6,10:5.4}; LEAD={1:.15,2:.15,3:.15,4:.15,5:.1,6:.15,7:.15,8:.15,9:.15,10:.15}; TAIL={1:.5,2:.35,3:.6,4:.3,5:.7,6:.4,7:.4,8:.5,9:.6,10:1.8}; GAP=.2
+# Every shot starts on a beat of the score (BPM must match vo/sound.py), so the music never restarts at a cut.
+# MIN = shortest length per shot, LEAD = pause before the first word, TAIL = shortest pause after the last word (seconds).
+BPM=108; BEAT=60/BPM
+NSHOTS=10; MIN={1:4.0,2:4.6,3:3.4,4:5.6,5:2.4,6:2.8,7:7.6,8:4.4,9:4.6,10:5.4}; LEAD={s:.15 for s in range(1,11)}; LEAD[5]=.1; TAIL={s:.15 for s in range(1,11)}; TAIL[5]=.5; TAIL[10]=1.9; GAP=.2
 t=0; out={'shots':[]}; sr=24000
 for s in range(1,NSHOTS+1):
   lines=[(i,l) for i,l in enumerate(L) if l['shot']==s]; cur=LEAD.get(s,.2); sl=[]
@@ -18,6 +20,7 @@ for s in range(1,NSHOTS+1):
     v0=cur; sl.append({'i':i,'spk':l['spk'],'v0':round(t+v0,3),'vd':l['dur'],'words':[{'w':w['w'],'hl':w['hl'],'t':round(t+v0+w['t'],3)} for w in l['words']],'env':l['env']})
     cur=v0+l['dur']+GAP
   dur=max(MIN[s],(cur-GAP+TAIL.get(s,.35)) if lines else 0)
+  dur=int(-(-round(dur/BEAT,6)//1))*BEAT            # round up to a whole number of beats
   out['shots'].append({'start':round(t,3),'lines':sl}); t+=dur
 out['total']=round(t,3)
 voice=np.zeros(int((t+1)*sr),dtype=np.float32)
@@ -26,6 +29,6 @@ for sh in out['shots']:
     a,_=sf.read(f"vo/l{ln['i']:02d}.wav",dtype='float32'); j=int(ln['v0']*sr); voice[j:j+len(a)]+=a
 voice=voice[:int(t*sr)]; sf.write('vo/voice.wav',voice,sr)
 subprocess.run(['ffmpeg','-y','-v','error','-i','vo/voice.wav','-ac','1','-b:a','128k','vo/voice.mp3'],check=True)
-json.dump(out,open('vo/timing.json','w'))
+out['bpm']=BPM; json.dump(out,open('vo/timing.json','w'))
 print('TOTAL',round(t,2)); print([s['start'] for s in out['shots']])
 for k,sh in enumerate(out['shots']): print(k+1,' | '.join(' '.join(w['w']+'@'+format(w['t']-sh['start'],'.2f') for w in ln['words']) for ln in sh['lines']))
