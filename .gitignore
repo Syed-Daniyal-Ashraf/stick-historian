@@ -1,0 +1,13 @@
+node_modules/
+assets/tts/
+assets/VSCO-2-CE/
+assets/kenney-audio-assets/
+*/out/
+*/fr/
+*/fin/
+*/frames/
+*/app.html
+*.html
+!engine/template.html
+*.mp4
+*/vo/*.wav

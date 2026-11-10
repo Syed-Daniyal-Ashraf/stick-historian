@@ -1,0 +1,6 @@
+{
+  "name": "stick-historian",
+  "private": true,
+  "description": "Code-animated history reels: SVG engine, toon rig, offline sound, Playwright export",
+  "dependencies": { "playwright": "^1.48.0" }
+}

@@ -1,0 +1,18 @@
+const SFX={
+  water:(t0,d)=>{ nz(t0,d,.035,{f:500,q:.6,a:.6,r:.8}); for(let x=.3,i=0;x<d;x+=.9,i++) nz(t0+x,.5,.03,{f:900,q:1.2,a:.2,r:.3}); },
+  gull:t0=>{ osc('sine',1500,t0,.18,.05,{f2:1100,r:.12}); osc('sine',1600,t0+.22,.16,.04,{f2:1150,r:.1}); },
+  stomp:t0=>{ osc('sine',90,t0,.18,.5,{f2:50,r:.12}); nz(t0,.06,.25,{type:'lowpass',f:700}); },
+  huff:t0=>{ nz(t0,.35,.12,{f:900,q:.8,a:.03,r:.25}); },
+  scribble:(t0,d)=>{ for(let x=0,i=0;x<d;x+=.09,i++) nz(t0+x,.06,.05,{f:2600+(i%3)*500,q:2,a:.01,r:.04}); },
+  pop:t0=>{ osc('sine',520,t0,.12,.3,{f2:980,r:.08}); },
+  card:t0=>{ nz(t0,.18,.12,{f:3000,f2:1500,q:.8,a:.01,r:.1}); },
+  dun:t0=>{ osc('triangle',98,t0,.45,.32,{r:.35}); osc('sine',196,t0,.3,.12,{r:.25}); },
+  dun2:t0=>{ osc('triangle',87,t0,.7,.38,{r:.55}); osc('sine',174,t0,.5,.14,{r:.4}); },
+  whoosh:t0=>{ nz(t0,.3,.14,{f:500,f2:2400,q:1.1,a:.05,r:.15}); },
+  strum:t0=>{ [523,659,784,1047].forEach((f,i)=>osc('triangle',f,t0+i*.05,.9,.07,{r:.8})); },
+  flop:t0=>{ osc('sine',80,t0,.3,.55,{f2:45,r:.2}); nz(t0,.1,.25,{type:'lowpass',f:600}); },
+  steps:(t0,d)=>{ for(let x=0;x<d;x+=.4) nz(t0+x,.05,.07,{type:'lowpass',f:800}); },
+  stamp:t0=>{ osc('sine',120,t0,.22,.8,{f2:55,r:.16}); nz(t0,.07,.45,{type:'lowpass',f:1600}); nz(t0+.01,.05,.2,{type:'highpass',f:3000}); },
+  clock:(t0,d)=>{ for(let x=0,i=0;x<d;x+=.5,i++) osc('sine',i%2?1800:1500,t0+x,.03,.04,{r:.02}); },
+  wahwah:t0=>{ [0,.32,.64].forEach((d,i)=>osc('sawtooth',[233,220,208][i],t0+d,.3,.07,{filt:['lowpass',900],r:.15})); osc('sawtooth',196,t0+.96,.9,.07,{f2:180,filt:['lowpass',800],r:.6}); },
+};

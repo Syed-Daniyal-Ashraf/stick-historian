@@ -1,0 +1,15 @@
+const SFX={
+  skitter:(t0,d)=>{ for(let x=0,i=0;x<d;x+=.045,i++) nz(t0+x,.018,.05+((i*7)%3)*.015,{type:'highpass',f:3800,a:.002,r:.012}); },
+  hop:t0=>{ osc('sine',110,t0,.12,.35,{f2:60,r:.08}); nz(t0,.04,.12,{type:'lowpass',f:900}); },
+  brush:(t0,d)=>{ for(let x=0,i=0;x<d;x+=.16,i++) nz(t0+x,.12,.05,{f:2200+(i%3)*400,q:1.5,a:.03,r:.06}); },
+  pop:t0=>{ osc('sine',520,t0,.12,.3,{f2:980,r:.08}); },
+  whoosh:t0=>{ nz(t0,.3,.14,{f:500,f2:2400,q:1.1,a:.05,r:.15}); },
+  cough:t0=>{ nz(t0,.16,.2,{f:700,q:1.2,a:.01,r:.1}); nz(t0+.02,.1,.12,{f:1600,q:1,a:.005,r:.06}); },
+  bonk:t0=>{ osc('triangle',330,t0,.25,.4,{f2:160,r:.2}); osc('sine',990,t0,.08,.15,{r:.06}); },
+  twinkle:t0=>{ [0,.07,.14].forEach((d,i)=>osc('sine',1568*Math.pow(1.26,i),t0+d,.45,.08,{r:.35})); },
+  bubble:(t0,d)=>{ for(let x=0,i=0;x<d;x+=.13,i++) osc('sine',300+((i*5)%4)*90,t0+x,.07,.08,{f2:700,r:.05}); },
+  heavy:(t0,d)=>{ for(let x=0,i=0;x<d;x+=.45,i++){ nz(t0+x,.06,.12,{type:'lowpass',f:500}); } },
+  thud:t0=>{ osc('sine',75,t0,.4,.7,{f2:38,r:.3}); nz(t0,.12,.4,{type:'lowpass',f:700}); },
+  stamp:t0=>{ osc('sine',120,t0,.22,.8,{f2:55,r:.16}); nz(t0,.07,.45,{type:'lowpass',f:1600}); nz(t0+.01,.05,.2,{type:'highpass',f:3000}); },
+  clap:(t0,d)=>{ for(let x=0;x<d;x+=.32) nz(t0+x,.05,.18,{f:1500,q:.8,a:.002,r:.04}); },
+};
