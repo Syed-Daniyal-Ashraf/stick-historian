@@ -34,6 +34,7 @@ function yoyo(hx,hy,u,mode,o={}){ const L=o.len||200, s=o.s||1, col=o.col||YO_RE
     case 'sleep':  cy=hy+L+Math.sin(u*3.1+ph)*3; cx=hx+Math.sin(u*2.1+ph)*4; fast=true; spin=u*2.6+ph; sway=Math.sin(u*2.1+ph)*4; break;
     case 'return': cy=hy+L*(1-k*k*(3-2*k)); spin=u*(2.6-k*2)+ph; fast=k<.4; break;
     case 'bob':    { const per=o.per||.9, p=(((u/per+ph)%1)+1)%1, tri=p<.5?E.io(p*2):E.io(2-p*2); cy=hy+L*tri; spin=u*1.6+ph; break; }
+    case 'ext':    { const e=sat(o.e||0); cy=hy+L*e+(e>.97?Math.sin(u*3.1+ph)*3:0); spin=u*2.6+ph; fast=e>.9; break; }
     case 'walk':   { const R=40*s; cx=o.wx; cy=o.gy-R; spin=-o.wx/(2*Math.PI*R)+ph; roll=1; break; }
   }
   if(o.spin!=null) spin=o.spin; if(o.fast!=null) fast=o.fast;
@@ -50,8 +51,11 @@ function yoyo(hx,hy,u,mode,o={}){ const L=o.len||200, s=o.s||1, col=o.col||YO_RE
   return str+g; }
 
 /* ============================== sets and props (world space; ground line y=1700; floors start near y 1380-1450) */
-const FLOOR=(y,c,line=true)=>`<rect x="-300" y="${y}" width="1680" height="${2500-y}" fill="${c}"/>`+(line?`<path d="M-300 ${y}H1380" stroke="${INK}" stroke-width="7"/>`:'');
-const WALLBG=c=>`<rect x="-300" y="-300" width="1680" height="2800" fill="${c}"/>`;
+const FLOOR=(y,c,line=true)=>`<rect x="-600" y="${y}" width="2280" height="2400" fill="${c}"/>`+(line?`<path d="M-300 ${y}H1380" stroke="${INK}" stroke-width="7"/>`:'');
+const WALLBG=c=>`<rect x="-600" y="-600" width="2280" height="4400" fill="${c}"/>`;
+/* floorboards in perspective from the floor line y0 down (vanishing point above the floor), for interior floors */
+function boards(y0,col,vx=540){ let g=''; for(let i=-9;i<=9;i++){ const x0=vx+i*150; g+=`<path d="M${x0} ${y0}L${N(vx+(x0-vx)*3.2)} ${y0+1500}" stroke="${col}" stroke-width="5" opacity=".55"/>`; }
+  for(let r=1;r<7;r++) g+=`<path d="M-600 ${N(y0+r*r*26+r*30)}H1680" stroke="${col}" stroke-width="${N(3+r*.6)}" opacity=".35"/>`; return g; }
 function palm(x,y,s=1,u=0){ const sw=Math.sin(u*1.1+x)*5, tx=10+sw*2; let g=`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0Q${N(22+sw)} -150 ${N(tx)} -330" fill="none" stroke="${INK}" stroke-width="34" stroke-linecap="round"/><path d="M0 0Q${N(22+sw)} -150 ${N(tx)} -330" fill="none" stroke="#8a6238" stroke-width="22" stroke-linecap="round"/>`;
   for(let i=0;i<7;i++){ const r=rad(-170+i*48+sw*.6), L=165, ex=tx+Math.cos(r)*L, ey=-330+Math.sin(r)*L*.55+46, qx=tx+Math.cos(r)*L*.5, qy=-330+Math.sin(r)*L*.8-44, d=`M${N(tx)} -330Q${N(qx)} ${N(qy)} ${N(ex)} ${N(ey)}`;
     g+=`<path d="${d}" fill="none" stroke="${INK}" stroke-width="25" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#4f9a3a" stroke-width="15" stroke-linecap="round"/>`; }
@@ -60,7 +64,7 @@ function hotelLobby(u,t,{dusk=0}={}){ let g=WALLBG('#e9d6a8');
   for(let i=0;i<14;i++) g+=`<rect x="${-200+i*130}" y="-300" width="62" height="1750" fill="#d9c08a" opacity=".6"/>`;
   g+=`<rect x="-300" y="1160" width="1680" height="260" fill="#7a1f2a"/><path d="M-300 1160H1380" stroke="${INK}" stroke-width="6"/>`;
   g+=FLOOR(1400,'#e8dcc0');
-  for(let r=0;r<7;r++) for(let c=-2;c<12;c++) if((r+c)%2===0) g+=`<path d="M${-300+c*150-r*14} ${1400+r*r*10+r*40}h150l${-14-r*2} ${40+r*10}h-150Z" fill="#7a4a3a" opacity=".55"/>`;
+  for(let r=0;r<11;r++) for(let c=-4;c<16;c++) if((r+c)%2===0) g+=`<path d="M${-300+c*150-r*14} ${1400+r*r*10+r*40}h150l${-14-r*2} ${40+r*10}h-150Z" fill="#7a4a3a" opacity=".55"/>`;
   /* revolving door, left */
   const a=u*1.1; g+=`<rect x="40" y="560" width="300" height="840" rx="14" ${st('#c8a23a',8)}/><rect x="70" y="590" width="240" height="780" rx="10" fill="#bfe0e8" stroke="${INK}" stroke-width="5"/><circle cx="190" cy="980" r="118" fill="#eaf6f8" stroke="${INK}" stroke-width="5" opacity=".7"/>`;
   for(let i=0;i<4;i++){ const th=a+i*Math.PI/2; g+=`<path d="M190 980L${N(190+Math.cos(th)*118)} ${N(980+Math.sin(th)*118)}" stroke="#8a6a2a" stroke-width="9"/>`; }
@@ -92,11 +96,11 @@ function bigWord(x,y,size,{reg=1,lift=[0,0,0,0,0],crack=0,bump=0,fill='#ffd23a'}
     let l=''; for(let d=16;d>=1;d-=2) l+=`<text x="${N(d*.7)}" y="${N(d*.9)}" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${size}" fill="#8a3a14" stroke="${INK}" stroke-width="${N(size*.07)}" stroke-linejoin="round">${c}</text>`;
     l+=`<text text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${size}" fill="${fill}" stroke="${INK}" stroke-width="${N(size*.07)}" stroke-linejoin="round" paint-order="stroke fill">${c}</text>`;
     g+=`<g transform="translate(${N(mx+dx)} ${N(dy)}) rotate(${N(r)})" opacity="${o}">${l}</g>`; cx+=ws[i]; });
-  if(reg>0){ const R=size*.2, rx=tot/2-R*.2, ry=-size*.72, sc=reg*(1+bump*.4), half=(d,sg)=>`<g transform="translate(${N(sg*crack*40)} ${N(crack*crack*1800)}) rotate(${N(sg*crack*70)})"><clipPath id="rg${UID}${sg>0?'r':'l'}"><rect x="${sg>0?0:-R*2}" y="${-R*2}" width="${R*2}" height="${R*4}"/></clipPath><g clip-path="url(#rg${UID}${sg>0?'r':'l'})"><circle r="${R}" fill="#fffaf0" stroke="${INK}" stroke-width="${N(size*.05)}"/><text y="${N(R*.36)}" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${N(R*1.15)}" fill="${INK}">R</text></g></g>`;
+  if(reg>0){ const R=size*.2, rx=tot/2-R*.2, ry=-size*.72, sc=reg*(1+bump*.4), half=(d,sg)=>`<g transform="translate(${N(sg*crack*90)} ${N(crack*crack*520-Math.sin(crack*Math.PI)*60)}) rotate(${N(sg*crack*110)})" opacity="${op((1-crack)*2.2)}"><clipPath id="rg${UID}${sg>0?'r':'l'}"><rect x="${sg>0?0:-R*2}" y="${-R*2}" width="${R*2}" height="${R*4}"/></clipPath><g clip-path="url(#rg${UID}${sg>0?'r':'l'})"><circle r="${R}" fill="#fffaf0" stroke="${INK}" stroke-width="${N(size*.05)}"/><text y="${N(R*.36)}" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${N(R*1.15)}" fill="${INK}">R</text></g></g>`;
     UID++; g+=`<g transform="translate(${N(rx)} ${N(ry)}) scale(${N(sc*100)/100})">${crack>0?half(0,-1)+half(0,1):half(0,-1)+half(0,1)}</g>`; }
   return `<g transform="translate(${N(x)} ${N(y)})">${g}</g>`; }
 function patentCounter(u,t){ let g=WALLBG('#5e7a5a'); for(let i=0;i<12;i++) g+=`<rect x="${-200+i*150}" y="-300" width="70" height="1500" fill="#566f52" opacity=".7"/>`;
-  g+=`<rect x="-300" y="1000" width="1680" height="300" fill="#7a5a3a"/><path d="M-300 1000H1380" stroke="${INK}" stroke-width="6"/>`+FLOOR(1300,'#5a4a3a');
+  g+=`<rect x="-300" y="1000" width="1680" height="300" fill="#7a5a3a"/><path d="M-300 1000H1380" stroke="${INK}" stroke-width="6"/>`+FLOOR(1300,'#5a4a3a')+boards(1300,'#463a2c');
   g+=`<rect x="520" y="300" width="520" height="640" rx="10" ${st('#c9985a',9)}/><rect x="540" y="320" width="480" height="600" fill="#d9a86a" opacity=".9"/>`;
   g+=`<g transform="translate(160 640)"><rect x="-90" y="-210" width="180" height="420" ${st('#e8dcc0',6)}/><circle cy="-60" r="62" fill="#e8c34a" stroke="${INK}" stroke-width="5"/><path d="M0 -60V-100M0 -60L28 -48" stroke="${INK}" stroke-width="6" stroke-linecap="round"/></g>`;
   return g; }
@@ -104,7 +108,7 @@ function counterFront(){ return `<rect x="-300" y="1380" width="1680" height="54
 function certificate(x,y,s,rot,{stamp=0,txt='FLORES YO-YO',u=0}={}){ return `<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><rect x="-190" y="-130" width="380" height="260" rx="4" ${st('#f4ecd4',5)}/><rect x="-170" y="-110" width="340" height="220" fill="none" stroke="#a89a6a" stroke-width="3"/><text y="-46" text-anchor="middle" font-family="Rozha, ${BAL}" font-size="30" fill="#5a5040">TRADE-MARK</text><text y="34" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="62" fill="${INK}">${txt}</text>${stamp>0?stampMark(0,70,['REGISTERED','1930'],CRIM,stamp,-8,40):''}</g>`; }
 function formYoYo(x,y,s,rot,{rej=0}={}){ return `<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><rect x="-170" y="-120" width="340" height="240" rx="4" ${st('#f1ead6',5)}/><text y="-50" text-anchor="middle" font-family="Rozha, ${BAL}" font-size="26" fill="#5a5040">TRADE-MARK APPLICATION</text><text y="30" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="76" fill="${INK}">YO-YO</text>${rej>0?stampMark(0,6,['REJECTED'],CRIM,rej,-14,46):''}</g>`; }
 function duncanOffice(u,t){ let g=WALLBG('#6a4a2e'); for(let i=0;i<9;i++) g+=`<rect x="${-120+i*160}" y="160" width="140" height="1080" rx="6" fill="#74523a" stroke="#4a3220" stroke-width="5"/>`;
-  g+=`<rect x="-300" y="1300" width="1680" height="1800" fill="#3a2a1e"/><path d="M-300 1300H1380" stroke="${INK}" stroke-width="6"/>`;
+  g+=`<rect x="-600" y="1300" width="2280" height="2400" fill="#3a2a1e"/>`+boards(1300,'#2a1e14')+`<path d="M-600 1300H1680" stroke="${INK}" stroke-width="6"/>`;
   g+=`<rect x="120" y="260" width="260" height="360" rx="8" ${st('#2c3e5a',8)}/><rect x="120" y="260" width="260" height="360" fill="url(#gOutside)" opacity=".5"/><path d="M250 260V620M120 440H380" stroke="#5a3a26" stroke-width="10"/>`;
   return g; }
 function moneyBag(x,y,s=1,rot=0){ return `<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><path d="M-46 0Q-70 -50 -30 -86L-22 -104Q0 -96 22 -104L30 -86Q70 -50 46 0Z" ${st('#b89a62',5)}/><path d="M-24 -100Q0 -84 24 -100" fill="none" stroke="${INK}" stroke-width="6"/><text y="-30" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="52" fill="#5a4a22">$</text></g>`; }
@@ -113,6 +117,6 @@ function streetCorner(u,t){ let g=WALLBG('#8a8e96'); for(let r=0;r<22;r++) for(l
   g+=`<path d="M1000 1450V420" stroke="${INK}" stroke-width="22"/><path d="M1000 1450V420" stroke="#3a3a40" stroke-width="12"/><path d="M950 420H1050L1030 360H970Z" ${st('#3a3a40',5)}/><circle cx="1000" cy="440" r="24" fill="#ffe7a0" opacity=".9"/>`;
   return g; }
 function courtBg(){ let g=`<rect x="-300" y="-300" width="1680" height="2600" fill="#c97a3a"/>`; for(let i=0;i<14;i++) g+=`<rect x="${-200+i*100}" y="-200" width="60" height="1600" fill="#b86a30" opacity=".6"/>`;
-  return g+`<rect x="-300" y="1380" width="1680" height="1800" fill="#5a3a22"/><path d="M-300 1380H1380" stroke="${INK}" stroke-width="7"/>`; }
+  return g+`<rect x="-600" y="1380" width="2280" height="2400" fill="#5a3a22"/>`+boards(1380,'#452a16')+`<path d="M-600 1380H1680" stroke="${INK}" stroke-width="7"/>`; }
 function courtBench(){ return `<rect x="375" y="1040" width="420" height="36" rx="6" ${st('#8a5630',6)}/><rect x="395" y="1076" width="380" height="330" ${st('#6a3e1e',6)}/><rect x="435" y="1116" width="300" height="200" rx="6" fill="none" stroke="#4a2a14" stroke-width="5"/>`; }
 const royalBox=(x,y,rot,s)=>`<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><rect x="-150" y="-100" width="300" height="200" rx="8" ${st('#2c5e8a',6)}/><rect x="-130" y="-80" width="260" height="160" rx="4" fill="none" stroke="#fff" stroke-width="4"/><text y="22" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="62" fill="#fff">ROYAL</text></g>`;

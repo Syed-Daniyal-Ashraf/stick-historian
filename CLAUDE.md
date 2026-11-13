@@ -40,6 +40,9 @@ Do not redeclare `world`, `capsEl` or `SUB_MAXW` in episode code; the template o
 - **Safe area.** The Reels interface covers the top 270 px and everything below 1250 px. Picture that matters sits in
   y 290-1110; the subtitle is one line with its baseline at 1190; below that only floor or paper. `verify.js` fails
   the build if a subtitle leaves x 65-1015 / y 270-1250. Check labels and faces with `SAFE=1` contact sheets.
+- **Fill the frame.** Floors and walls must overscan to the bottom of the frame at any zoom (check the last 60 px of a sheet).
+  Split-screen panels run past the subtitle (y 130-1530) with the action kept in y 300-1110. Never leave the lower third one flat colour.
+- **No clumps.** Two or three small figures need a head-width of space each; three overlapping copies read as a glitch.
 - **Wide shots use `stage(x,z,g)`** (in `mo/src/shots.js`): the ground line stays at screen y 1115 whatever the zoom.
   With a hat, keep z <= .93 or the hat enters the top band. Labels go in screen space after the camera.
 - **Poses never snap.** Change a pose with `tween(u,t0,full(A),full(B),d)` or a continuous `mix()`. A one-frame pose

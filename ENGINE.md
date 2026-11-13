@@ -66,4 +66,4 @@ It does not check labels, faces or props against the safe area: look at a `SAFE=
 - `timeline.py`: `BPM`, `MIN`, `LEAD`, `TAIL`; every shot length is rounded up to whole beats. Writes `bpm` into `timing.json`.
 - `sound.py`: one beat grid from `timing.json`; `SECT` = (start, mode, level dB). Modes in `mo`: `rag soft pizz sad roll tense hush out`.
   Sections are levelled to their targets (printed). Stingers and foley are placed on word times with `W(shot,'word')`.
-- `bed.py`: music 6 LU under the voice, ducked 7 dB more under speech. `mix.sh`: adds foley, two-pass loudnorm to -14 LUFS.
+- `bed.py`: music 6 LU under the voice, ducked 7 dB more under speech. `mix.sh`: adds foley, two-pass loudnorm to -14 LUFS, then a limiter (ceiling -2 dBFS).

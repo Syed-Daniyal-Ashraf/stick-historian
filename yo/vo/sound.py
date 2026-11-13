@@ -180,7 +180,7 @@ def whirr(t0,t1,g=.12): d=t1-t0; x=noise(d,250,1800,1)*(.6+.4*np.sin(np.arange(i
 bell=lambda t0,g=.5: (fx(GLOCK.note(88)*1.0,t0,g), fx(GLOCK.note(95)*.6,t0+.02,g*.7))
 # 1 hook: kids pop in, yo-yo zips back, the registered mark lands
 whirr(0,W(1,'company'),.08)
-for i in range(3): fx(pop(1+i),W(1,'hooked')+i*.09,.45)
+for i in range(2): fx(pop(1+i),W(1,'hooked')+i*.12,.45)
 zip_(W(1,'company')+.05,.3,True,.35); stamp(kw1-.02,.85); bell(kw1+.05,.35)
 # 2 lobby: suitcases creak, desk bell, the loop, the yo-yo falls asleep
 fx(k('RPG sounds (50 sounds)/creak2.ogg'),S[2]+.3,.45); room(S[2],W(2,'philippines'),.08,200,1800)

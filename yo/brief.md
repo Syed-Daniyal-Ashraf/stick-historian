@@ -196,3 +196,23 @@ The rejection lands at ~23 s (was ~24.8), and Duncan enters by name at ~20.3 s (
 Duncan suing in person in shot 6 (the plaintiff was his company) is accepted as illustration.
 **Not checked:** listening (music balance, the sad section at the sash beat, foley, pronunciation of Flores = flˈɔːɹɛs and Philippine = fˈɪlᵻpˌiːn), phone speakers.
 **Loudness per section (final mix, LUFS):** hook -13.9, hotel -13.7, loop -14.1, company -14.1, rejected -13.7, buyout -13.5, sash -14.9, court -14.1, evidence -14.3, ending -14.3.
+
+## 12. Animation review pass (Fable 5.2, 2026-11-13, built on e7df880)
+Frame-by-frame review of the Stage D MP4 (2 fps sheets of the encoded file + 0.1 s strips at every transition). Narration is unchanged.
+**Bugs fixed**
+- Black strip at the bottom of the frame in shots 2, 3 and 4: `FLOOR()` ended at world y 2500, short of the frame at z <= .9. Floors and walls now overscan.
+- Shot 7: the judge's yo-yo and string were drawn down the middle of his face (it read as a red streak). He now holds it out to the side.
+- Shot 6: the cracked (R) halves fell through the frame and stopped as stray marks under the subtitle. They now spin off and fade.
+- Shot 6: nothing happened on "and lost". Duncan now slumps in shock and the rival punches the air.
+- Shot 2: the nightcap gag appeared 0.3 s before the cut. `TAIL[2]` adds one beat, so it holds ~0.9 s (film is 52.2 s, was 51.7).
+- Shots 1, 2, 5: the kids were three overlapping copies in one clump. Shot 1 has two kids with room, shot 2 spreads three, shot 5 has two in front and one peeking.
+- Final mix peaked at -0.7 dBFS; `engine/tools/mix.sh` now ends with a limiter.
+**Staging and motion**
+- Hook: panels run from y 130 to 1530 (was 300-1110, leaving 40% of the frame black). Pedro throws and catches the yo-yo in a loop instead of holding one pose for 6 s; the toy is larger; the kids bounce.
+- Shot 3: he really cranks the lathe; the factories are ~45% larger and fill the width.
+- Shot 4: Duncan walks in when he is named (he stood in frame for 3 s before). Small push-in on REJECTED.
+- Shot 6: the YO-YO(R) word is larger and clear of Duncan's hat. Shot 7: the floating letters are larger. Shot 8: the quoted page is larger.
+- Interior floors have floorboards in perspective, so the lower third is no longer one flat colour.
+**Not changed / still open:** word timings are estimates; shot 4 is still 6.7 s on one set; shot 7 is width-limited (board + judge + window), so its figures stay small.
+**Not checked:** listening (music, foley, pronunciation), motion at full speed.
+

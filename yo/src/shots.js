@@ -12,15 +12,18 @@ function panelBox(x,y,w,h,inner,c,{rot=0,k=1,border=INK,id='pb'}={}){ if(k<=0) r
 const fedoraSvg=(x,y,rot,k,col='#d8cba6')=>`<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${N(k*100)/100})"><ellipse cx="4" cy="-30" rx="66" ry="14" fill="${col}" stroke="${INK}" stroke-width="4.5"/><path d="M-38 -32Q-40 -78 4 -80Q46 -78 44 -32Z" fill="${col}" stroke="${INK}" stroke-width="4.5"/><path d="M-38 -42Q4 -50 44 -42" stroke="#1e1610" stroke-width="9" fill="none"/></g>`;
 
 /* 1 HOOK: he has the toy (left) / they have the word (right) */
-const PA={x:40,y:300,w:490,h:810}, PB={x:550,y:300,w:490,h:810}, PCAM={x:540,y:1240,z:1.5};
+const PA={x:40,y:130,w:490,h:1400}, PB={x:550,y:130,w:490,h:1400}, PCAM={x:540,y:1424,z:1.5};   /* panels run past the subtitle so the frame is full; the action stays in y 300-1110 */
+/* Pedro's throw cycle: 0 = in the hand, 1 = asleep at the end of the string. Starts asleep (first frame), then flick up, throw down, sleep... */
+const throwExt=u=>{ const c=((u+1.0)%1.9); return c<1.25?1:c<1.55?1-E.io((c-1.25)/.3):E.i((c-1.55)/.35); };
 function pedroPanel(u,t){ const kh=cu(1,'hooked'), kc=cu(1,'company');
   let g=`<rect x="-300" y="-300" width="1680" height="2000" fill="#9fd4ec"/><circle cx="880" cy="820" r="100" fill="#fff3c4"/><circle cx="880" cy="820" r="170" fill="#fff3c4" opacity=".25"/>`+FLOOR(1700,'#d8c08a')+palm(900,1700,1.05,u);
   const P0=full({hF:[46,-150],hB:[-10,-112],handF:'hold',expr:'proud',lean:2,tilt:-3,look:[5,-1]}), P1=full({...P0,expr:'sad',lean:-2,tilt:5,look:[3,5],hF:[44,-136]});
-  const p=tween(u,kc+.05,P0,P1,.35), X=370, s=2.15, hp=handPt(X,1700,s,1,p);
-  [['kidA',545,0],['kidB',665,.3],['kidC',790,.55]].forEach(([w,kx,ph],i)=>{ const k=seg(u,kh+i*.09,kh+i*.09+.3,E.back); if(k<=0) return; const kp=full({hF:[40,-114],hB:[-10,-118],handF:'hold',expr:'joy',lean:3,tilt:-4}), kh2=handPt(kx,1700,1.4,-1,kp);
-    g+=toon(w,kx,1700,1.4*k,-1,kp,t,20+i)+yoyo(kh2[0],kh2[1],u,'bob',{s:1.0*k,len:120,per:.8,ph}); });
+  const e0=throwExt(Math.min(u,kc)), ext=u<kc?e0:e0*(1-E.io(sat((u-kc)/.45))), flick=(1-ext)*(u<kc?1:0);
+  const p0=tween(u,kc+.05,P0,P1,.35), p={...p0,hF:[p0.hF[0]+flick*6,p0.hF[1]-flick*26],tilt:p0.tilt-flick*4}, X=350, s=2.15, hp=handPt(X,1700,s,1,p);
+  [['kidD',800,0,1.42],['kidA',620,.45,1.5]].forEach(([w,kx,ph,ks],i)=>{ const k=seg(u,kh+i*.12,kh+i*.12+.3,E.back); if(k<=0) return; const hop=Math.abs(Math.sin((u-kh)*5+i*1.3))*10*(1-seg(u,kc,kc+.3)), kp=full({hF:[40,-114],hB:[-10,-118],handF:'hold',expr:u>kc+.2?'awe':'joy',look:u>kc+.2?[-5,-2]:[-3,2],lean:3,tilt:-4}), kh2=handPt(kx,1700-hop,ks,-1,kp);
+    g+=toon(w,kx,1700-hop,ks*k,-1,kp,t,20+i)+yoyo(kh2[0],kh2[1],u,'bob',{s:1.15*k,len:125+hop,per:.75,ph}); });
   g+=toon('pedroBell',X,1700,s,1,p,t,2);
-  g+=yoyo(hp[0],hp[1],u,u<kc?'sleep':'return',{s:1.5,len:215,k:(u-kc)/.45});
+  g+=yoyo(hp[0],hp[1],u,'ext',{s:1.85,len:235,e:ext});
   return g; }
 function duncanPanel(u,t){ const kc=cu(1,'company'), kw=cu(1,'word'), bump=Math.max(0,wob(u,kw,1,18,6));
   let g=WALLBG('#2f5a46')+FLOOR(1700,'#1f3a2e'); for(let i=0;i<10;i++) g+=`<rect x="${-200+i*150}" y="-300" width="70" height="2000" fill="#2a5040" opacity=".7"/>`;
@@ -34,9 +37,9 @@ function duncanPanel(u,t){ const kc=cu(1,'company'), kw=cu(1,'word'), bump=Math.
 function sh1(t){ const u=t-S(1), kc=cu(1,'company'), kw=cu(1,'word');
   const lit=seg(u,kc-.1,kc+.2), zB=1.5+seg(u,kc,kc+.9,E.io)*.22;
   let g=`<rect width="1080" height="1920" fill="#20160f"/>`;
-  g+=panelBox(PA.x,PA.y,PA.w,PA.h,pedroPanel(u,t),{x:540,y:1240,z:1.5+u*.006},{rot:-1,border:TEAL,id:'h1'});
-  g+=panelBox(PB.x,PB.y,PB.w,PB.h,duncanPanel(u,t),{x:540,y:1240,z:zB},{rot:1,border:CRIM,id:'h2'});
-  g+=`<rect x="32" y="292" width="506" height="826" rx="16" fill="#000" opacity="${N(lit*.5*100)/100}" transform="rotate(-1 285 705)"/>`;
+  g+=panelBox(PA.x,PA.y,PA.w,PA.h,pedroPanel(u,t),{x:540,y:1424,z:1.5+u*.006},{rot:-1,border:TEAL,id:'h1'});
+  g+=panelBox(PB.x,PB.y,PB.w,PB.h,duncanPanel(u,t),{x:540,y:1424,z:zB},{rot:1,border:CRIM,id:'h2'});
+  g+=`<rect x="32" y="122" width="506" height="1416" rx="16" fill="#000" opacity="${N(lit*.42*100)/100}" transform="rotate(-1 285 830)"/>`;
   return finish(jolt(shakeV(u,kw,12,.25),g),t,{boil:2.2}); }
 
 /* 2 HOTEL -> PHILIPPINES -> THE LOOP -> IT SLEEPS */
@@ -44,7 +47,7 @@ function sh2(t){ const u=t-S(2), kh=cu(2,'hotel'), kp=cu(2,'philippines'), kl=cu
   if(u>=kl-.12){ const kk=u-kl, ring=seg(kk,0,.55,E.o), knot=1-seg(kk,.1,.4,E.i), HY=300, LEN=440, S3=3.4, cy=HY+LEN;
     let g=`<rect width="1080" height="1920" fill="#efe2bf"/><circle cx="540" cy="${cy}" r="520" fill="#fff6dc" opacity=".8"/>`;
     const awake=u>kl+.42;
-    g+=yoyo(540,HY,u,'sleep',{s:S3,len:LEN,spin:awake?u*2.8:.12,fast:awake,cap:seg(u,kz,kz+.18),zzz:seg(u,kz+.05,kz+.3)});
+    g+=yoyo(540,HY,u,'sleep',{s:S3,len:LEN,spin:awake?u*2.8:.12,fast:awake,cap:seg(u,kz+.05,kz+.25),zzz:seg(u,kz+.15,kz+.4)});
     if(knot>0.02) g+=`<g transform="translate(540 ${cy-6}) scale(${N(knot*100)/100})"><circle r="30" fill="${YO_STR}" stroke="${INK}" stroke-width="6"/><path d="M-14 -4Q0 8 14 -4" fill="none" stroke="${INK}" stroke-width="4"/></g>`;
     if(ring>0&&ring<1.001){ const ry=lerp(HY+60,cy-8,ring); g+=`<ellipse cx="540" cy="${N(ry)}" rx="${N(lerp(30,60,ring))}" ry="${N(lerp(14,26,ring))}" fill="none" stroke="${INK}" stroke-width="13"/><ellipse cx="540" cy="${N(ry)}" rx="${N(lerp(30,60,ring))}" ry="${N(lerp(14,26,ring))}" fill="none" stroke="${YO_STR}" stroke-width="6"/>`; }
     return finish(g,t,{boil:2}); }
@@ -56,9 +59,9 @@ function sh2(t){ const u=t-S(2), kh=cu(2,'hotel'), kp=cu(2,'philippines'), kl=cu
   g+=tag('HOTEL',540,335,48,'#7a1f2a','#ffe9a8',{k:seg(u,kh-.1,kh+.1),rot:-2});
   const w=seg(u,kp-.15,kp+.65,E.io);
   if(w>0){ const R=lerp(40,1600,w), bx=lerp(500,600,w), by=lerp(470,520,w);
-    let yard=philYard(u,t)+toon('kidA',250,1700,1.6,1,{hF:[44,-114],hB:[-10,-118],handF:'hold',expr:'joy',lean:3},t,21)+toon('kidB',500,1700,1.6,1,{hF:[30,-114],handF:'hold',expr:'happy',lean:5,hB:[-8,-118]},t,22)+toon('kidC',740,1700,1.6,-1,{hF:[44,-114],hB:[-10,-118],handF:'hold',expr:'happy',lean:3},t,23);
-    const kA=handPt(250,1700,1.6,1,{hF:[44,-114]}), kB=handPt(500,1700,1.6,1,{hF:[30,-114]}), kC=handPt(740,1700,1.6,-1,{hF:[44,-114]});
-    yard+=yoyo(kA[0],kA[1],u,'bob',{s:1.1,len:140,per:.8})+yoyo(kC[0],kC[1],u,'bob',{s:1.1,len:140,per:.7,ph:.4})+yoyo(kB[0],kB[1],u,'walk',{s:1.1,wx:500+90+Math.sin(u*2.4)*30,gy:1698,len:140});
+    let yard=philYard(u,t)+toon('kidA',190,1700,1.6,1,{hF:[44,-114],hB:[-10,-118],handF:'hold',expr:'joy',lean:3},t,21)+toon('kidB',450,1700,1.6,1,{hF:[30,-114],handF:'hold',expr:'happy',lean:5,hB:[-8,-118]},t,22)+toon('kidC',830,1700,1.6,-1,{hF:[44,-114],hB:[-10,-118],handF:'hold',expr:'happy',lean:3},t,23);
+    const kA=handPt(190,1700,1.6,1,{hF:[44,-114]}), kB=handPt(450,1700,1.6,1,{hF:[30,-114]}), kC=handPt(830,1700,1.6,-1,{hF:[44,-114]});
+    yard+=yoyo(kA[0],kA[1],u,'bob',{s:1.1,len:140,per:.8})+yoyo(kC[0],kC[1],u,'bob',{s:1.1,len:140,per:.7,ph:.4})+yoyo(kB[0],kB[1],u,'walk',{s:1.1,wx:450+110+Math.sin(u*2.4)*40,gy:1698,len:140});
     g+=`<clipPath id="tb"><circle cx="${N(bx)}" cy="${N(by)}" r="${N(R)}"/></clipPath><g clip-path="url(#tb)">${stage(480,z,yard)}</g><circle cx="${N(bx)}" cy="${N(by)}" r="${N(R)}" fill="none" stroke="${INK}" stroke-width="10" opacity="${N((1-seg(w,.85,1))*100)/100}"/>`;
     [[470,620,12],[490,560,18],[520,505,26]].forEach(([dx,dy,r],i)=>{ g+=`<circle cx="${dx}" cy="${dy}" r="${r*seg(u,kp-.4+i*.08,kp-.2+i*.08,E.back)}" fill="#fff" stroke="${INK}" stroke-width="5" opacity="${N((1-seg(w,.2,.4))*100)/100}"/>`; }); }
   else [[470,620,12],[490,560,18],[520,505,26]].forEach(([dx,dy,r],i)=>{ g+=`<circle cx="${dx}" cy="${dy}" r="${r*seg(u,kp-.4+i*.08,kp-.2+i*.08,E.back)}" fill="#fff" stroke="${INK}" stroke-width="5"/>`; });
@@ -68,7 +71,7 @@ function sh2(t){ const u=t-S(2), kh=cu(2,'hotel'), kp=cu(2,'philippines'), kl=cu
 function sh3(t){ const u=t-S(3), kn=cu(3,'nineteen'), kt=cu(3,'own')+.1; /* Stage D: 'three factories' line cut; the factories pop on "own" (vo/sound.py KF3 matches) */
   if(u<kt-.12){ const z=lerp(.9,.93,seg(u,0,kt,E.io)), a=u*7;
     let g=WALLBG('#a8794a'); for(let i=0;i<14;i++) g+=`<path d="M${-200+i*130} -300V1500" stroke="#8a5e34" stroke-width="5"/>`; g+=FLOOR(1500,'#5a3a22');
-    const wc=[640,1300], R=60, cr=[560+Math.sin(a*.5)*5,1325+Math.cos(a*.7)*6];
+    const wc=[640,1300], R=60, cr=[556+Math.cos(a)*20,1322+Math.sin(a)*20];
     g+=`<rect x="480" y="1440" width="330" height="40" rx="6" ${st('#9a6a3c',6)}/><path d="M510 1480V1700M780 1480V1700" stroke="${INK}" stroke-width="16"/><path d="M510 1480V1700M780 1480V1700" stroke="#7a4a28" stroke-width="8"/><path d="M${wc[0]} ${wc[1]}V1440" stroke="${INK}" stroke-width="16"/><path d="M${wc[0]} ${wc[1]}V1440" stroke="#7a7a82" stroke-width="8"/>`;
     g+=`<g transform="translate(${wc[0]} ${wc[1]}) scale(2.1)">${yoyoBody(a/6.283,YO_RED,true)}</g>`;
     for(let i=0;i<6;i++){ const th=a*2+i*1.05; g+=`<path d="M${N(wc[0]+Math.cos(th)*96)} ${N(wc[1]+Math.sin(th)*96)}l${N(Math.cos(th)*26)} ${N(Math.sin(th)*26)}" stroke="#ffe9a8" stroke-width="5" stroke-linecap="round"/>`; }
@@ -78,14 +81,14 @@ function sh3(t){ const u=t-S(3), kn=cu(3,'nineteen'), kt=cu(3,'own')+.1; /* Stag
     g+=`<g transform="translate(790 ${N(840-(1-sk)*700)}) rotate(${N(sw-2)}) scale(.9)"><path d="M-120 -120L-90 -10M120 -120L90 -10" stroke="${INK}" stroke-width="8"/><rect x="-190" y="-10" width="380" height="190" rx="10" ${st('#efe6cc',7)}/><text y="68" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="76" fill="${CRIM}">FLORES</text><text y="132" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="62" fill="${NAVY}">YO-YO</text><text y="165" text-anchor="middle" font-family="${BAL}" font-weight="700" font-size="22" fill="#6a5e48">SANTA BARBARA · 1928</text></g>`;
     return finish(stage(540,z,g),t); }
   const k=u-(kt-.12), z=lerp(1.6,.85,seg(k,0,.5,E.o)), pop=i=>seg(u,kt+i*.2,kt+i*.2+.35,E.back);
-  let g=`<rect x="-900" y="-900" width="2900" height="2600" fill="#9fd4ec"/><circle cx="880" cy="1000" r="110" fill="#fff3c4"/>`+FLOOR(1700,'#8cbf5a');
-  [[170,1.15],[540,1.25],[910,1.15]].forEach(([x,s],i)=>{ g+=factory(x,1700,s,pop(i),u,i); });
-  [0,1,2].forEach(i=>{ const x=[170,540,910][i]; g+=impact(x,1500,seg(u,kt+i*.2,kt+i*.2+.5),2.2); });
+  let g=`<rect x="-900" y="-900" width="2900" height="2600" fill="#9fd4ec"/><circle cx="300" cy="880" r="100" fill="#fff3c4"/><circle cx="300" cy="880" r="170" fill="#fff3c4" opacity=".25"/>`+FLOOR(1700,'#8cbf5a');
+  [[120,1.5,0],[960,1.5,2],[540,1.75,1]].forEach(([x,s,i])=>{ g+=factory(x,1700,s,pop(i),u,i); });
+  [0,1,2].forEach(i=>{ const x=[120,540,960][i]; g+=impact(x,1440,seg(u,kt+i*.2,kt+i*.2+.5),2.6); });
   g+=conveyor(1706,u);
-  return finish(jolt(addV(shakeV(u,kt+.0,12,.25),shakeV(u,kt+.2,12,.25),shakeV(u,kt+.4,12,.25)),stage(540,z,g)),t); }
+  return finish(jolt(addV(shakeV(u,kt+.0,12,.25),shakeV(u,kt+.2,12,.25),shakeV(u,kt+.4,12,.25)),stage(540,z,g,1085)),t); }
 
 /* 4 TRADEMARKED -> REJECTED */
-function sh4(t){ const u=t-S(4), kt=cu(4,'trademarked'), kf=cu(4,'flores'), kd=cu(4,'donald'), kj=cu(4,'rejected'), z=lerp(.8,.83,seg(u,0,5,E.io)); /* Stage D: wider (was .9-.93) so the pinned certificate fits between the Reels top bar and the hats */
+function sh4(t){ const u=t-S(4), kt=cu(4,'trademarked'), kf=cu(4,'flores'), kd=cu(4,'donald'), kj=cu(4,'rejected'), z=lerp(.8,.83,seg(u,0,5,E.io))+.045*seg(u,kj-.12,kj+.22,E.back), camX=540+14*seg(u,kj-.12,kj+.22,E.io); /* Stage D: wider (was .9-.93) so the pinned certificate fits between the Reels top bar and the hats */
   const cs=seg(u,.15,1.0,E.io), cx=lerp(300,690,cs), stampK=seg(u,kf,kf+.1), pin=seg(u,kf+.6,kf+1.25,E.io);
   const fs=seg(u,kd-.2,kd+.55,E.io), fx=lerp(1060,700,fs), rej=seg(u,kj,kj+.1);
   let g=patentCounter(u,t);
@@ -106,18 +109,19 @@ function sh4(t){ const u=t-S(4), kt=cu(4,'trademarked'), kf=cu(4,'flores'), kd=c
   const pk=seg(u,.2,.8,E.io), P0=full({lean:2,expr:'proud',look:[5,-1],hF:[60,-176],hB:[-10,-112],handF:'open'}), P1=full({lean:-3,tilt:-5,expr:'proud',look:[5,-4],hF:[66,-232],hB:[40,-150],handF:'point'});
   g+=toon('pedroSuit',190,1700,2.3,1,tween(u,kf+.5,P0,P1,.4),t,2);
   const D0=full({lean:3,tilt:-3,expr:'smug',look:[-5,0],hF:[56,-176],hB:[-10,-112],handF:'flat'}), D1=full({lean:-6,tilt:8,expr:'angry',look:[-5,-1],hF:[64,-196],hB:[50,-168],handF:'fist',handB:'fist'}), D2=full({...D1,lean:-14,tilt:10,expr:'shock'});
-  const dp=u<kj?tween(u,kd+.1,D0,D1,.3):tween(u,kj+.05,D1,D2,.35);
+  const dw=strut(u,1330,925,kd-1.25,kd-.25,2.3,120,.25), DW={...full(dw.p),hF:[dw.p.hF[0]*.5+8,-116],hB:[dw.p.hB[0]*.5-4,-118],lean:dw.moving?7:3,tilt:-3,expr:'smug',look:[5,0]};
+  const dp=u<kd-.2?(dw.moving?DW:mix(DW,D0,seg(u,kd-.25,kd-.2))):u<kj?tween(u,kd+.1,D0,D1,.3):tween(u,kj+.05,D1,D2,.35);
   const hatK=seg(u,kj+.05,kj+.95,E.lin), hy0=1700-290*2.3+10;
-  g+=toon('duncan',925,1700,2.3,-1,{...dp,cos:u>=kj+.03&&u<kj+.95?{cap:''}:{}},t,3);
+  g+=toon('duncan',u<kd-.2?dw.x:925,1700,2.3,-1,{...dp,cos:u>=kj+.03&&u<kj+.95?{cap:''}:{}},t,3);
   if(u>=kj+.03&&u<kj+.95) g+=`<g transform="translate(0 ${N(-4*330*hatK*(1-hatK))})">${fedoraSvg(907,hy0-30,N(hatK*280),2.5,'#a89060')}</g>`;
   /* Stage D: the stamp on the form was too small to read; a big REJECTED lands in screen space, below the faces */
-  return finish(jolt(shakeV(u,kj,18,.3),stage(540,z,g)+(rej>0?`<g transform="translate(640 770) rotate(-7)" opacity="${op(rej*3)}"><rect x="-300" y="-82" width="600" height="164" rx="10" ${st('#f4ecd4',6)}/></g>`:'')+stampMark(640,770,['REJECTED'],'#d0281e',rej,-7,100)),t); }
+  return finish(jolt(shakeV(u,kj,18,.3),stage(camX,z,g)+(rej>0?`<g transform="translate(640 770) rotate(-7)" opacity="${op(rej*3)}"><rect x="-300" y="-82" width="600" height="164" rx="10" ${st('#f4ecd4',6)}/></g>`:'')+stampMark(640,770,['REJECTED'],'#d0281e',rej,-7,100)),t); }
 
 /* 5 BOUGHT OUT: the money, the name, the sash */
 function sh5(t){ const u=t-S(5), kb=cu(5,'bought'), kn=cu(5,'name'), kk=cu(5,'kids'), kd2=cu(5,'with')+.22, kp=cu(5,'pedro');
   if(u<kp+.3){ const z=lerp(.9,.93,seg(u,0,3,E.io)), give=seg(u,kb-.25,kb+.45,E.io), bx=lerp(660,520,give), roll=seg(u,cu(5,'company')-.05,kn+.1,E.io); /* Stage D: repaint now finishes before the cut */
     let g=duncanOffice(u,t);
-    g+=`<g transform="translate(505 905) scale(.7)"><path d="M-130 -210V-100M130 -210V-100" stroke="${INK}" stroke-width="7"/><rect x="-260" y="-110" width="520" height="290" rx="12" ${st('#efe6cc',8)}/>`;
+    g+=`<g transform="translate(455 905) scale(.7)"><path d="M-130 -210V-100M130 -210V-100" stroke="${INK}" stroke-width="7"/><rect x="-260" y="-110" width="520" height="290" rx="12" ${st('#efe6cc',8)}/>`;
     const rx=lerp(-230,230,roll);
     g+=`<clipPath id="oldn"><rect x="${N(rx)}" y="-110" width="${N(520)}" height="200"/></clipPath><clipPath id="newn"><rect x="-260" y="-110" width="${N(rx+260)}" height="200"/></clipPath>`;
     g+=`<g clip-path="url(#oldn)"><text y="-6" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="104" fill="${CRIM}">FLORES</text></g><g clip-path="url(#newn)"><text y="-6" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="104" fill="#3f6a4a">DUNCAN</text></g>`;
@@ -134,10 +138,10 @@ function sh5(t){ const u=t-S(5), kb=cu(5,'bought'), kn=cu(5,'name'), kk=cu(5,'ki
   const hand=keys(u,[[kp-.05,[50,-122]],[kk-.7,[56,-120],E.io],[kk+.3,[58,-118],E.io],[kk+2,[58,-118]]]);
   const P0=full({lean:8,tilt:2,expr:'happy',look:[5,3],hF:hand,hB:[-14,-114],handF:'hold'}), P1=full({...P0,expr:'determined',tilt:6,lean:6});
   const pp=tween(u,kd2+.05,P0,P1,.3), hp=handPt(X,1700,s,1,pp);
-  const kidP=(v,x,ph,i)=>{ const kp2=full({lean:3,hF:[40,-112],hB:[-10,-118],expr:'awe',look:[-4,0],handF:'open'}); return toon(v,x,1700,1.6,-1,kp2,t,30+i); };
-  g+=kidP('kidA',760,0,0)+kidP('kidB',865,0,1);
+  const kidP=(v,x,ph,i)=>{ const kp2=full({lean:3,hF:[40,-112],hB:[-10,-118],expr:'awe',look:[-4,0],handF:'open'}); return toon(v,x,1700,1.5,-1,kp2,t,30+i); };
+  g+=toon('kidB',858,1692,1.32,-1,full({lean:2,hF:[30,-112],hB:[-10,-118],expr:'awe',look:[-4,1],tilt:Math.sin(u*3)*5}),t,31)+kidP('kidA',775,0,0);
   const raise=seg(u,kd2-.05,kd2+.3,E.back), cardP=full({lean:3,expr:'proud',look:[-4,0],hF:mix([40,-112],[38,-300],raise),hB:[-10,-118],handF:'hold'});
-  g+=toon('kidC',975,1700,1.6,-1,{...cardP,holdF:{svg:`<g transform="translate(-6 -70) rotate(-8) scale(-1 1)"><rect x="-70" y="-46" width="140" height="92" rx="6" ${st('#fbf6ea',5)}/><text y="12" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="30" fill="#3f6a4a">DUNCAN</text></g>`}},t,32);
+  g+=toon('kidC',945,1700,1.5,-1,{...cardP,holdF:{svg:`<g transform="translate(-6 -70) rotate(-8) scale(-1 1)"><rect x="-70" y="-46" width="140" height="92" rx="6" ${st('#fbf6ea',5)}/><text y="12" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="30" fill="#3f6a4a">DUNCAN</text></g>`}},t,32);
   g+=toon('pedroSash',X,1700,s,1,pp,t,2);
   g+=`<g transform="translate(${X} 1700) scale(${s} ${s})"><path d="M-22 -224L30 -146" stroke="${INK}" stroke-width="27" stroke-linecap="round"/><path d="M-22 -224L30 -146" stroke="#3f6a4a" stroke-width="19" stroke-linecap="round"/><text transform="translate(-12 -204) rotate(56)" font-family="${BAL}" font-weight="800" font-size="12" fill="#ffe9a8" letter-spacing="1">DUNCAN</text></g>`;
   g+=yoyo(hp[0],hp[1],u,'walk',{s:1.5,wx,gy:1698,len:200});
@@ -153,13 +157,13 @@ function sh6(t){ const u=t-S(6), kd=cu(6,'decades'), kr=cu(6,'rival'), kl=cu(6,'
     return finish(stage(540,.9,g),t); }
   const k=u-1.3; let g=courtroom(u,t,kl);
   const pt=seg(u,kr-.25,kr+.1,E.back);
-  g+=toon('duncan',250,1700,2.2,1,tween(u,kr-.3,full({lean:2,expr:'determined',look:[4,0],hF:[40,-130],hB:[-8,-120],cos:{grey:.9}}),full({lean:6,tilt:-5,expr:'angry',look:[5,-1],hF:[100,-210],hB:[-14,-150],handF:'point',cos:{grey:.9}}),.3),t,3);
+  g+=toon('duncan',250,1700,2.2,1,u<kl?tween(u,kr-.3,full({lean:2,expr:'determined',look:[4,0],hF:[40,-130],hB:[-8,-120],cos:{grey:.9}}),full({lean:6,tilt:-5,expr:'angry',look:[5,-1],hF:[100,-210],hB:[-14,-150],handF:'point',cos:{grey:.9}}),.3):tween(u,kl+.02,full({lean:6,tilt:-5,expr:'angry',look:[5,-1],hF:[100,-210],hB:[-14,-150],handF:'point',cos:{grey:.9}}),full({lean:-9,tilt:12,hy:8,shrug:-8,expr:'shock',look:[3,-5],hF:[34,-128],hB:[-16,-118],handF:'open',cos:{grey:.9}}),.35),t,3);
   const lost=seg(u,kl-.05,kl+.3,E.back);
-  g+=toon('rival',860,1700,2.2,-1,tween(u,kr-.5,full({lean:0,expr:'neutral',look:[-4,0],hF:[48,-176],hB:[24,-150],handF:'hold'}),full({lean:-2,expr:'smug',look:[-4,0],hF:[48,-176],hB:[24,-150],handF:'hold'}),.4),t,6);
+  g+=toon('rival',860,1700,2.2,-1,u<kl?tween(u,kr-.5,full({lean:0,expr:'neutral',look:[-4,0],hF:[48,-176],hB:[24,-150],handF:'hold'}),full({lean:-2,expr:'smug',look:[-4,0],hF:[48,-176],hB:[24,-150],handF:'hold'}),.4):tween(u,kl+.1,full({lean:-2,expr:'smug',look:[-4,0],hF:[48,-176],hB:[24,-150],handF:'hold'}),full({lean:-6,tilt:-8,expr:'joy',look:[-4,-3],hF:[48,-176],hB:[30,-292],handF:'hold',handB:'fist'}),.3),t,6);
   g+=`<g transform="translate(${N(860-48*2.2)} ${N(1700-176*2.2)})">${royalBox(-10,-60,-4,.4)}</g>`;
   g=g.replace(/$/,'')+`<g transform="translate(250 1540)"></g>`;
-  const word=`<g transform="scale(1)">${bigWord(0,0,84,{reg:1,crack:seg(u,kl-.02,kl+.55,E.lin)})}</g>`;
-  return finish(jolt(shakeV(u,kl,16,.3),stage(540,z,g)+`<g transform="translate(300 400)" opacity="${op(seg(u,1.3,1.5)*3)}">${word}</g>`),t); }
+  const word=`<g transform="scale(1)">${bigWord(0,0,108,{reg:1,crack:seg(u,kl-.02,kl+.6,E.o)})}</g>`;
+  return finish(jolt(shakeV(u,kl,16,.3),stage(540,z,g)+`<g transform="translate(560 372)" opacity="${op(seg(u,1.3,1.5)*3)}">${word}</g>`),t); }
 
 /* 7 THE RULING */
 function sh7(t){ const u=t-S(7), ky=cu(7,'yoyo'), kp=cu(7,'philippine'), ko=cu(7,'own'), z=.82;
@@ -173,25 +177,25 @@ function sh7(t){ const u=t-S(7), ky=cu(7,'yoyo'), kp=cu(7,'philippine'), ko=cu(7
   const lift=[0,1,2,3,4].map(i=>i===2?0:seg(u,kp+.05+i*.04,kp+.7+i*.04,E.io)*(1-seg(u,ko,ko+.01)));
   const out=[0,1,2,3,4].map(i=>seg(u,ko-.05+i*.06,ko+.8+i*.06,E.io));
   const hold=seg(u,ky-.25,ky+.1,E.back);
-  const J0=full({lean:2,expr:'stern',look:[0,3],hF:[40,-190],hB:[-30,-230],handF:'hold',noShadow:true}), J1=full({lean:3,tilt:-2,expr:'stern',look:[0,-2],hF:[60,-300],hB:[-30,-230],handF:'hold'});
+  const J0=full({lean:2,expr:'stern',look:[0,3],hF:[40,-190],hB:[-30,-230],handF:'hold',noShadow:true}), J1=full({lean:3,tilt:-4,expr:'stern',look:[4,-1],hF:[88,-268],hB:[-30,-230],handF:'hold'});
   const jp=tween(u,ky-.3,J0,J1,.35), jh=handPt(570,1420,2.0,1,jp);
   g+=toon('judge',570,1420,2.0,1,{...jp,noShadow:true,cos:{}},t,9)+courtBench();
-  g+=yoyo(jh[0],jh[1],u,'sleep',{s:1.3,len:80,ph:.3,spin:u*2.4,fast:true});
+  g+=yoyo(jh[0],jh[1],u,'sleep',{s:1.15,len:96,ph:.3,spin:u*2.4,fast:true});
   /* letters: they lift off the exhibit at "Philippine", then float out of the window at "own" */
-  ['Y','O','Y','O'].forEach((c,i)=>{ const L=lift[i<2?i:i+1], O=out[i<2?i:i+1], sx=215+i*55+(i>1?20:0), sy=875, ex=900+i*28, ey=800-i*12, x=lerp(sx+(L*(i-1.5)*30),ex,O), y=lerp(sy-L*120,ey+Math.sin(u*5+i)*10,O)+Math.sin(u*4+i)*8*L-Math.sin(Math.PI*O)*150; /* Stage D: arc over the judge's face */
-    if(L>0||O>0) g+=`<g transform="translate(${N(x)} ${N(y)}) rotate(${N((i*17-25)*L*(1-O*.4))})" opacity="${op(1.5)}"><text text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${N(lerp(64,84,L))}" fill="#ffd23a" stroke="${INK}" stroke-width="6" paint-order="stroke fill">${c}</text></g>`; });
+  ['Y','O','Y','O'].forEach((c,i)=>{ const L=lift[i<2?i:i+1], O=out[i<2?i:i+1], sx=215+i*55+(i>1?20:0), sy=875, ex=845+i*56, ey=790-(i%2)*46, x=lerp(sx+(L*(i-1.5)*30),ex,O), y=lerp(sy-L*120,ey+Math.sin(u*5+i)*10,O)+Math.sin(u*4+i)*8*L-Math.sin(Math.PI*O)*150; /* Stage D: arc over the judge's face */
+    if(L>0||O>0) g+=`<g transform="translate(${N(x)} ${N(y)}) rotate(${N((i*17-25)*L*(1-O*.4))})" opacity="${op(1.5)}"><text text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${N(lerp(64,112,Math.max(L,O*.8)))}" fill="#ffd23a" stroke="${INK}" stroke-width="6" paint-order="stroke fill">${c}</text></g>`; });
   const idle=lift.every(v=>v===0)&&out.every(v=>v===0);
   if(idle) g+=['Y','O','-','Y','O'].map((c,i)=>`<text x="${171+i*52}" y="890" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="58" fill="#ffd23a" stroke="${INK}" stroke-width="6" paint-order="stroke fill">${c}</text>`).join('');
   return finish(cam({x:615,y:1050,z:1.0},g,710),t); }
 
 /* 8 THE EVIDENCE: a typed filing */
 function sh8(t){ const u=t-S(8), ke=cu(8,'evidence'), ko=cu(8,'own'), kt=cu(8,'thirty');
-  const slide=seg(u,ke-.2,ke+.55,E.o), zoom=lerp(.86,1,seg(u,ke+.5,ke+1.4,E.io));
+  const slide=seg(u,ke-.2,ke+.55,E.o), zoom=lerp(.9,1.12,seg(u,ke+.5,ke+1.4,E.io));
   let g=deskTop();
   g+=`<g transform="translate(540 1180)"><path d="M-300 -40L-260 -190H260L300 -40V190H-300Z" ${st('#d9c08a',7)}/></g>`;
   const ln=(i,a,b)=>seg(u,a+i*.28,a+i*.28+.45,E.lin);
   const hl=seg(u,ko-.1,ko+.4,E.io);
-  g+=`<g transform="translate(540 ${N(lerp(1180,620,slide))}) scale(${N(zoom*100)/100}) rotate(${N(lerp(4,-1,slide))})"><rect x="-400" y="-340" width="800" height="680" ${st('#ecd9a0',8)}/><rect x="-370" y="-310" width="740" height="620" fill="none" stroke="#b8a26a" stroke-width="3"/>`;
+  g+=`<g transform="translate(540 ${N(lerp(1180,668,slide))}) scale(${N(zoom*100)/100}) rotate(${N(lerp(4,-1,slide))})"><rect x="-400" y="-340" width="800" height="680" ${st('#ecd9a0',8)}/><rect x="-370" y="-310" width="740" height="620" fill="none" stroke="#b8a26a" stroke-width="3"/>`;
   g+=`<text y="-250" text-anchor="middle" font-family="Fell, ${BAL}" font-size="25" fill="#5a4a2a" letter-spacing="1">DUNCAN’S REPLY TO THE PATENT OFFICE · DEC. 19, 1931</text><path d="M-340 -224H340" stroke="#8a7a4a" stroke-width="3"/>`;
   const L=['“…the applicant understands','the term ‘Yo-Yo’ is used in','the Philippine Islands…”'], FF='Fell, '+BAL, h0=tW('the ',50,FF,400), hw=tW('Philippine Islands',50,FF,400);
   g+=`<rect x="${N(-340+h0-6)}" y="${N(-130+2*84+8)}" width="${N((hw+12)*hl)}" height="64" fill="#ffd23a" opacity=".7"/>`;
