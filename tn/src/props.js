@@ -97,8 +97,8 @@ function sunFace(x,y,r,u,expr='smug',k=1){ let g=`<g transform="translate(${N(x)
   g+=sad?`<path d="M${N(-r*.3)} ${N(r*.5)}Q0 ${N(r*.28)} ${N(r*.3)} ${N(r*.5)}" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>`:`<path d="M${N(-r*.3)} ${N(r*.34)}Q0 ${N(r*.62)} ${N(r*.3)} ${N(r*.34)}" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>`;
   return g+`</g>`; }
 /* ---- Wisconsin (rough outline, 0-100 box) and a rough North America for the wall map (0-100 box) */
-const WISC=[[12,20],[28,14],[44,16],[52,10],[66,18],[78,22],[88,26],[86,34],[96,36],[84,44],[82,58],[86,72],[84,90],[24,92],[14,84],[10,70],[18,60],[8,50],[10,36]];
-const NAMER=[[6,16],[18,8],[34,10],[48,6],[64,12],[78,10],[92,18],[88,30],[96,40],[84,48],[90,60],[80,70],[72,84],[60,78],[50,92],[40,80],[30,66],[18,52],[10,38]];
+const WISC=[[10,8],[24,14],[36,10],[44,16],[56,20],[64,26],[72,34],[76,40],[86,28],[90,30],[82,44],[78,52],[81,62],[78,78],[80,92],[28,92],[24,84],[18,72],[12,62],[4,52],[2,40],[8,30],[6,20]];
+const NAMER=[[2,20],[8,12],[16,10],[22,14],[28,10],[36,6],[46,4],[48,12],[52,22],[60,26],[64,20],[62,12],[68,6],[74,12],[80,20],[86,24],[94,30],[92,36],[86,38],[88,44],[82,48],[80,54],[78,60],[76,66],[80,74],[76,76],[72,68],[64,68],[58,70],[54,74],[52,82],[56,88],[50,92],[44,90],[36,80],[30,70],[26,62],[22,50],[20,40],[14,32],[10,26],[4,28]];
 const inPoly=(x,y,P)=>{ let c=false; for(let i=0,j=P.length-1;i<P.length;j=i++){ const [xi,yi]=P[i],[xj,yj]=P[j]; if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi)) c=!c; } return c; };
 const polyPath=(P,x,y,s)=>'M'+P.map(p=>`${N(x+p[0]*s)} ${N(y+p[1]*s)}`).join('L')+'Z';
 /* ---- law book (open, blank pages), top hat overlay, capitol, press, newspaper page */
@@ -127,3 +127,15 @@ function wallCalendar(x,y,s,yr,flip,rot=-3){ const A=Math.floor(yr), curr=flip<.
   for(let r=0;r<4;r++) for(let c=0;c<6;c++) g+=`<rect x="${-96+c*34}" y="${-50+r*32}" width="22" height="16" fill="#c9bfa8"/>`;
   if(flip>0&&flip<1){ const k=flip; g+=`<path d="M-120 -78L120 -78L${N(120-k*40)} ${N(150-k*380)}L${N(-120+k*30)} ${N(150-k*400)}Z" fill="#f2ead8" stroke="${INK}" stroke-width="5" opacity="${op(1.3-k)}"/>`; }
   return g+`</g>`; }
+
+/* Trinity Church (the second noon, per W. F. Allen's eyewitness account): brownstone Gothic tower, tall spire, pinnacles. Same option names as steeple(). */
+function trinity(x,top,base,o={}){ const w=o.w||300, cy=o.cy||top+520, r=o.r||92, swing=o.swing||0, dong=o.dong||0, BS='#9a6a56', BD='#7a4e3e';
+  let g=`<path d="M${x-w*.26} ${top+300}L${x} ${top-40}L${x+w*.26} ${top+300}Z" ${st(BS,7)}/><path d="M${x} ${top-40}V${top-86}M${x-14} ${top-66}H${x+14}" stroke="${INK}" stroke-width="7" stroke-linecap="round"/>`;
+  for(let i=1;i<5;i++) g+=`<path d="M${N(x-w*.26*i/5)} ${N(top-40+340*i/5)}h${N(w*.52*i/5)}" stroke="${BD}" stroke-width="4"/>`;
+  [-1,1].forEach(sd=>{ const px=x+sd*w*.42; g+=`<path d="M${N(px-18)} ${top+300}L${N(px)} ${top+200}L${N(px+18)} ${top+300}Z" ${st(BS,6)}/>`; });
+  g+=`<rect x="${x-w*.42}" y="${top+296}" width="${w*.84}" height="${base-top-296}" ${st(BS,7)}/>`;
+  g+=`<path d="M${x-w*.2} ${top+440}V${top+360}Q${x-w*.2} ${top+322} ${x} ${top+318}Q${x+w*.2} ${top+322} ${x+w*.2} ${top+360}V${top+440}Z" ${st('#3a2a24',6)}/>`;
+  g+=bellProp(x,top+336,.75,swing,dong);
+  for(let i=0;i<6;i++) g+=`<path d="M${x-w*.42} ${N(top+470+i*70)}h${w*.84}" stroke="${BD}" stroke-width="3" opacity=".7"/>`;
+  g+=clockFace(x,cy,r,o.mins||0,{rim:'#2a2a32',glow:o.glow||0});
+  g+=`<path d="M${x-w*.1} ${base}V${base-120}Q${x} ${base-170} ${x+w*.1} ${base-120}V${base}Z" ${st('#4a2e22',6)}/>`; return g; }

@@ -173,8 +173,8 @@ def ratchet(t0,n_,dt,g=.35,pitch=0):
     for i in range(n_): fx(shift(CLAVE,pitch+(i%2)*2),t0+i*dt,g)
 def buzz(t0,t1,g=.1):
     d=t1-t0; x=noise(d,180,520,0)*(.5+.5*np.sin(np.arange(int(d*SR))/SR*2*np.pi*13)).astype(np.float32); fx(x*np.hanning(len(x)).astype(np.float32),t0,g)
-# 1 hook: bell on the first frame, the noon strike, the crank ratchets back four minutes, the second noon
-bellD(.05,.55); bellD(W(1,'noon')+.02,.8); ratchet(C1[1]+.18,14,.052,.3,-4); fx(chirp(900,300,.3)*.4,C1[1]+.95,.25); bellD(W(1,'again')+.03,.85)
+# 1 hook: bell on the first frame, St. Paul's strikes noon, clockwork ticks through four minutes, Trinity's second noon
+bellD(.05,.55); bellD(W(1,'noon')+.02,.8); ratchet(C1[1]+.12,14,.07,.26,-2); bellD(W(1,'again')+.03,.85)
 fx(pop(1),.2,.4)
 # 2 the locomotive: whistle + chuffs, then the room
 whistle(S[2]+.08,1.15,.3)

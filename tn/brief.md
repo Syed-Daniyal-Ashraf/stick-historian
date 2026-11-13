@@ -37,8 +37,8 @@ baffled. One small tag in the safe area: **NOON?** (then "NOON. AGAIN." on the s
 **Order:** paradox (0-6 s) → the man and the pendulum (7-17 s, the share moment) → why one clock could do it (17-21 s) → why bother (21-30 s) → why noon twice (30-35 s) → the reaction (35-42 s) → the law, 35 years late (42-52 s).
 ```python
 SCRIPT=[
- (1,'N',"On November eighteenth, eighteen eighty-three, a New York church rang *noon.*",1.0,.0),
- (1,'N',"Four minutes later… it rang noon *again.*",.98,.1),
+ (1,'N',"On November eighteenth, eighteen eighty-three, New York's church bells rang *noon.*",1.0,.0),
+ (1,'N',"Four minutes later… noon rang *again.*",.98,.1),
  (2,'N',"Blame the *railroads.* And one man with a clock.",1.0,.05),
  (3,'N',"That morning, he *stopped* New York's master clock…",1.0,.0),
  (3,'N',"for three minutes and *fifty-eight* seconds.",.98,.05),
@@ -188,22 +188,24 @@ A new picture every 2-3 s is made with **cuts inside a shot**. Make those cuts d
 ### Measurements to record in this episode's brief after Stage B
 `verify.js` renderMs before/after on `yo` (B1/B2 must not slow the frame), and `compare.js` results for `mo`, `lb`, `yo`.
 
-## 9. Caption and pinned comment (draft; Stage D finalises)
+## 9. Caption and pinned comment (final, Stage D 2026-11-13)
+Lines 1-2 of section 3 were re-voiced in Stage D (Farrukh's choice): the eyewitness heard two churches, not one (section 13).
 Caption:
-> In 1883, a New York church rang noon twice. The railroads did it, and no law told them to. ⏰🚂
+> On 18 November 1883, New York heard noon twice. The railroads did it, and no law told them to. ⏰🚂
 > Would you have reset your watch for a railroad?
 >
 > #history #timezones #railroad #nyc #animation
 
 Pinned comment (sources):
 > Sources:
-> - New York Times, Nov. 1883, on James Hamblet stopping Western Union's standard clock for 3 min 58.38 s: historymatters.gmu.edu/d/5748
+> - New York Times, Nov. 1883: James Hamblet stopped Western Union's standard clock at 9 a.m. for 3 min 58.38 s: historymatters.gmu.edu/d/5748
+> - W. F. Allen (who drew up the zones), eyewitness: St. Paul's bells struck the old noon; about four minutes later Trinity's chimes rang the new one. In I. Bartky, "The Adoption of Standard Time", Technology and Culture 30 (1989)
+> - I. Bartky, Selling the True Time (Stanford UP, 2000), incl. the Indianapolis Sentinel, 21 Nov 1883
 > - Library of Congress, Law Library blog, "Whose Time Is It Anyway?" (Nov 2024)
-> - A. Ramirez, "How Standardized Time Changed America", TIME, 18 Nov 2019 (the St. Paul's bells)
-> - I. Bartky, Selling the True Time (Stanford UP, 2000), incl. the Indianapolis Sentinel of 21 Nov 1883
-> - J. S. Gordon, "Standard Time", American Heritage (2001); Standard Time Act, 19 March 1918
+> - American Heritage: J. S. Gordon, "Standard Time" (2001); "They Didn't Know What Time It Was" (Wisconsin's 38 local times)
+> - Standard Time Act, signed 19 March 1918
 >
-> Notes: New York's master clock was actually changed at 9 a.m. that Sunday; the church bells caught up at noon. Not every town got two noons: it depended on which side of its zone it sat and when it switched. Counts of pre-1883 times vary a lot between sources; Wisconsin's 38 is the best-documented figure.
+> Notes: the master clock was changed at 9 a.m.; the bells caught up at noon. TIME (2019) says St. Paul's rang both noons; we follow Allen's eyewitness account (two churches). Not every town got two noons: it depended on where it sat in its zone and when it switched. Counts of pre-1883 local times vary a lot; Wisconsin's 38 comes from American Heritage. Some transcriptions of the Sentinel print "Sun", others "sun".
 
 ## 10. Risks and fallbacks
 - **The share moment is the pendulum (~10-17 s).** It must be the best-animated beat in the film: the freeze, the silent beat, the restart wave.
@@ -285,3 +287,38 @@ SAFE=1 contact sheets were checked for every sub-shot, with frames 0.1-0.2 s eit
 **Render:** full export done in Stage C for Stage D to inspect: `Day-Of-Two-Noons-1883.mp4` (project root, git-ignored like all MP4s; re-make with
 `node engine/tools/export.js tn && bash engine/tools/mix.sh tn`, ~5 min with `WORKERS=2`), 1080x1920, 30 fps, **50.19 s**, -14.0 LUFS, peak -2.7 dBFS.
 Bed (voice + music) measures -19.0 LUFS, foley -28.8 LUFS before the mix. 4K cover not made yet (`COVER_T=1.0`, the first frame).
+
+## 13. Stage D report (Opus 5.5, medium, 2026-11-13, built on c18171a)
+**Delivered:** `Day-Of-Two-Noons-1883.mp4` (1080x1920, 30 fps, 50.19 s, -14.0 LUFS, peak -2.9 dBFS) and `Day-Of-Two-Noons-1883-Cover-4K.png`
+(2160x3840, frame at 1.0 s, now without the running caption: `tn/src/cover.js` clears `capsEl`). Both in the project root, git-ignored. Caption and comment: section 9.
+`verify.js` PASS (determinism 60/60, reach 0 misses, 87 chunks, 26 cuts, longest gap 3.0 s); same three under-0.25 s caption warnings as Stage C.
+
+**Facts gate** (fresh agent, frames + script only). All claims supported except one, which I checked myself in the tz database notes (Allen via Bartky 1989):
+the eyewitness heard **St. Paul's strike the old noon and Trinity's chimes ring the new noon** four minutes later. TIME (2019) says St. Paul's rang twice.
+Farrukh chose to re-voice: lines 1-2 are now "New York's church bells rang noon. / Four minutes later… noon rang again." Total length and every shot start
+are unchanged (beat rounding), so the 104 bpm grid and the 11.45-15.0 s dropout hold. Shot 1d (second noon) now shows Trinity's brownstone Gothic spire
+(`trinity()` in `props.js`). Also confirmed: 9 a.m. stop, 3 min 58.38 s (stopwatch 3:58 is an honest truncation), jewelers, Wisconsin 38 (American Heritage, secondary),
+Sentinel 21 Nov 1883 wording, Standard Time Act 19 Mar 1918, "+1h" clocks 9/10/11/12 left to right (west on the left).
+
+**Fixed (section 12 list + review):**
+- Hook arrow pointed clockwise (forward). Now counter-clockwise, right of the dial.
+- 1c: the finger dragging the hand from 12:04 to 12:00 implied St. Paul's clock was set back (no source). Now the minute hand sweeps 12:00 to 12:04 with a "+4 MIN" wedge (elapsed time). The descending chirp in `sound.py` is gone; clockwork ticks remain.
+- 2a: RAILROADS tag removed (it repeated the caption and touched the smokestack).
+- 3c: the pendulum inset covered a face and the street clocks sat behind heads. Clocks are now above the heads, the inset is smaller, and the people moved right.
+- 5b: the Wisconsin outline is redrawn (Door peninsula, Mississippi edge). 5c: the North America outline is redrawn and the zone bands only cover the US/Canada part. 1883 boundaries were jagged; bands are a symbol.
+- 5e: the top hat no longer floats (no tilt in the shrug); the law book is smaller and lower, so the face is clear.
+- 6a: both city clocks now go back to 12:00 (from 12:04 and 12:09), not to unrelated times.
+- 6b workman (x1.12 to 1.4) and 7a editor (x1.1 to 1.42) are bigger. The workman can't move further left without reach misses.
+- 8b: the calendar is smaller, clear of the hat, and tears to 1918 on "nineteen eighteen". 8c: the watch is at chest height (the long chain over the mouth is now a small bow), with a slow 1 to 1.12 push-in over the final hold.
+
+**Left as is (judgement):**
+- Hook (0-2.6 s): wide, figures about 270 px tall. Readable on a phone; it is also the cover. A tighter frame would push the cross into the top band.
+- Opening and 6b show a workman cranking a clock back. This illustrates the general mechanism (New York's clocks went back), not a sourced act at St. Paul's.
+- Lower frame below the captions is plain floor (under the Reels UI anyway).
+- 4a/4b skylines (section 12 item 4): 4b now reads as a wire ride with roof clocks; not changed.
+- Engine item still open: no bowler/top-hat caps in the rig (`fedora` stand-in plus the `topHat()` overlay). For a Stage B, not here.
+
+**Loudness of the final, per section (ebur128, integrated LUFS):** 0-6.9 s -14.0 · 6.9-11.5 -13.4 · dropout 11.5-15.0 -14.2 · 15.0-17.9 -14.2 · 17.9-23.7 -13.6 · 23.7-34.0 -13.9 · 34.0-38.7 -13.9 · 38.7-43.9 -14.5 · 43.9-50.2 -14.2. Music bus is 0.0 inside the dropout.
+
+**Not checked (no ears here):** the new line 1-2 delivery ("New York's church bells", "noon rang again"), the bell built from gong + glockenspiel,
+the clock ticks, the dropout feel, bell vs cut sync at 3.3-4.1 s and 6.2 s (word times are estimates), phone-speaker balance. Farrukh must listen before posting.

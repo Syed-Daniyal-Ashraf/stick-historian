@@ -19,9 +19,10 @@ const PS={stand:full({}),
 const bellSwing=(u,k,A=26)=>u<k?0:A*Math.exp(-(u-k)*1.6)*Math.sin((u-k)*10);
 
 /* ---------- 1 HOOK: a church rings noon, then rings noon again ---------- */
-function church(u,t,o){ // wide street. o: zoom-ish layout options
+function church(u,t,o){ // wide street. o: zoom-ish layout options; o.trinity draws Trinity's spire (the second noon)
   const mins=o.mins||0, wk=o.workman;
-  let g=`<rect x="-300" y="-300" width="1680" height="1400" fill="url(#gSky)"/>`+skyline(GY-6,3,['#a9856a','#b08f72','#9b7a60','#bd9a7c'],{h0:160,h1:300,clocks:false});
+  let g=`<rect x="-300" y="-300" width="1680" height="1400" fill="url(#gSky)"/>`+skyline(GY-6,o.trinity?7:3,['#a9856a','#b08f72','#9b7a60','#bd9a7c'],{h0:160,h1:300,clocks:false});
+  if(o.trinity){ g+=trinity(540,330,GY-6,{cy:780,r:92,swing:o.swing,dong:o.dong}); g+=street(GY,'#8b8678'); return g; }
   g+=steeple(540,300,GY-6,{cy:650,r:105,mins,swing:o.swing,dong:o.dong,glow:o.glow||0});
   g+=street(GY,'#8b8678');
   return g; }
@@ -33,7 +34,7 @@ function sh1_a(u,t){ // first frame: the premise, readable without sound
   const s0=.8, yy=GY;
   [['coatA',250,'look'],['coatB',840,'ear'],['coatC',710,'shrug']].forEach(([w,x,pk],i)=>{ const tw=tween(u,.6+i*.35,PS.stand,PS[pk],.4); g+=toon(w,x,yy,s0,i===1?-1:1,{...tw,holdF:pk==='look'||pk==='ear'?watchSvg():undefined},t,10+i); });
   // curved arrow: the minute hand is being cranked BACKWARDS
-  g+=`<g opacity="${N((.55+.4*Math.sin(u*6))*100)/100}"><path d="M600 548Q650 560 662 614" fill="none" stroke="${CRIM}" stroke-width="12" stroke-linecap="round"/><path d="M640 618L664 650L688 614Z" fill="${CRIM}" stroke="${INK}" stroke-width="4" transform="rotate(-8 664 640)"/></g>`;
+  g+=`<g opacity="${N((.55+.4*Math.sin(u*6))*100)/100}"><path d="M664 632Q654 566 604 548" fill="none" stroke="${CRIM}" stroke-width="12" stroke-linecap="round"/><path d="M612 524L572 546L610 572Z" fill="${CRIM}" stroke="${INK}" stroke-width="4"/></g>`;
   g+=tag('NOON?',540,330+0,64,'#fff3c4',INK,{k:seg(u,.15,.45,E.back),rot:-3});
   return g; }
 function sh1_b(pu,u,t){ // tight on the bell: the first noon
@@ -44,18 +45,16 @@ function sh1_b(pu,u,t){ // tight on the bell: the first noon
   g+=`<rect y="1000" width="1080" height="1000" fill="#5a4636"/><path d="M0 1000H1080" stroke="${INK}" stroke-width="7"/>`;
   return g; }
 const p1b0=()=>cutPts(1)[0];
-function sh1_c(pu,u,t){ // the clock face: four minutes back
-  const k0=.18, back=seg(pu,k0,k0+.75,E.back), mins=lerp(4,0,back), cx=540, cy=640, r=320;
+function sh1_c(pu,u,t){ // the clock face: four minutes pass (elapsed time; no source says this church's clock was set back)
+  const k0=.12, back=seg(pu,k0,k0+1.0,E.io), mins=lerp(0,4,back), cx=540, cy=640, r=320;
   let g=`<rect width="1080" height="1920" fill="#b99a74"/><rect x="60" y="270" width="960" height="800" rx="40" ${st('#f4f0e6',8)}/>`;
   g+=clockFace(cx,cy,r,mins,{rim:'#2a2a32',sw:9});
-  const ma=(mins%60)*6, tip=[cx+Math.sin(rad(ma))*r*.74, cy-Math.cos(rad(ma))*r*.74];
-  g+=bigArm([-100,1300],[tip[0]+30,tip[1]+40],'#d9a37a','#6a7f9a','fist','',.9);
-  g+=ttl('+4 MIN',860,380,70,'#ffe9a8',{k:seg(pu,0,.15,E.back)*(1-seg(pu,k0+.5,k0+.9)),rot:5});
-  g+=`<g opacity="${N((back>0&&back<1?1:0)*100)/100}"><path d="M300 1010Q540 1100 780 1010" fill="none" stroke="${CRIM}" stroke-width="14" stroke-linecap="round"/></g>`;
+  g+=`<path d="M${cx} ${cy}L${cx} ${cy-r*.86}A${r*.86} ${r*.86} 0 0 1 ${N(cx+Math.sin(rad(mins*6))*r*.86)} ${N(cy-Math.cos(rad(mins*6))*r*.86)}Z" fill="${MARI}" opacity=".35"/>`;
+  g+=ttl('+4 MIN',800,410,84,'#ffe9a8',{k:seg(pu,k0+.6,k0+.8,E.back),rot:5});
   g+=`<rect y="1070" width="1080" height="1000" fill="#7a6246"/><path d="M0 1070H1080" stroke="${INK}" stroke-width="7"/>`;
   return g; }
 function sh1_d(pu,u,t){ // wide again, low and close: the second noon
-  const k=cu(1,'again')-cutPts(1)[2]; let g=church(u,t,{mins:0,swing:bellSwing(pu,Math.max(0,k),28),dong:seg(pu,k,k+.45,E.lin)});
+  const k=cu(1,'again')-cutPts(1)[2]; let g=church(u,t,{trinity:1,mins:0,swing:bellSwing(pu,Math.max(0,k),28),dong:seg(pu,k,k+.45,E.lin)});
   g=`<g transform="translate(540 1005) scale(1.12) translate(-540 -1005)">${g}</g>`;
   [['coatA',130,'look','ear'],['coatB',900,'shrug','shrug'],['coatC',280,'ear','look']].forEach(([w,x,a,b],i)=>{ const tw=tween(pu,.9+i*.2,PS[a],PS[b],.35); g+=toon(w,x,GY+4,1.1,i===1?-1:1,{...tw,holdF:(a==='look'||a==='ear')?watchSvg():undefined},t,20+i); });
   g+=tag('NOON. AGAIN.',540,330,60,'#fff3c4',INK,{k:seg(pu,k,k+.2,E.back),rot:2});
@@ -78,7 +77,6 @@ function sh2_a(pu,u,t){ const k=seg(pu,0,1.47,E.i), s=lerp(.35,1.55,k);
   for(let i=0;i<14;i++){ const a=rad(i*25.7), r0=480+rnd(i)*80; g+=`<path d="M${N(540+Math.cos(a)*r0*1.1)} ${N(700+Math.sin(a)*r0*.8)}L${N(540+Math.cos(a)*(r0+260*k))} ${N(700+Math.sin(a)*(r0+260*k)*.8)}" stroke="#fffaf0" stroke-width="9" stroke-linecap="round" opacity="${N(k*.8*100)/100}"/>`; }
   g+=[0,1,2,3].map(i=>steamPuff(380+i*95,330-(i%2)*30,50,((pu*1.4+i*.27)%1))).join('');
   g+=locomotive(540,700,s,u,{mins:0});
-  g+=tag('RAILROADS',540,330,54,'#f4f0e6',INK,{k:seg(pu,.5,.8,E.back),rot:-3});
   return jolt(shakeV(pu,.2,10*k,1.2),g); }
 function wuRoom(u,t,o={}){ let g=`<rect width="1080" height="1920" fill="#7d6648"/><rect y="0" width="1080" height="1005" fill="#8a7050"/>`;
   for(let i=0;i<9;i++) g+=`<path d="M${i*135} 0V1005" stroke="#6a5438" stroke-width="5"/>`;
@@ -115,11 +113,11 @@ function sh3_b(pu,u,t){ const secs=lerp(0,238,seg(pu,.1,1.7,E.io));
   return g; }
 function sh3_c(pu,u,t){ const kw=.35; let g=`<rect width="1080" height="1920" fill="url(#gSky)"/>`+skyline(GY-6,9,['#a9856a','#b08f72','#9b7a60','#bd9a7c'],{h0:300,h1:560,w0:130,w1:210});
   g+=street(GY);
-  for(let i=0;i<6;i++){ const cx=100+i*176, cy=i%2?760:700, m0=(i*211+90)%720, f=seg(pu,kw+i*.17,kw+i*.17+.3,E.back), mins=lerp(m0,540+720*Math.sign(0),f);
-    g+=`<path d="M${cx} ${cy+66}V${GY}" stroke="${INK}" stroke-width="14"/><path d="M${cx} ${cy+66}V${GY}" stroke="#3a3a44" stroke-width="7"/>`+clockFace(cx,cy,62,mins,{rim:'#2a2a32',sw:4,glow:f>0&&f<1?1:0})+impact(cx,cy,seg(pu,kw+i*.17,kw+i*.17+.35,E.lin),.55); }
+  for(let i=0;i<6;i++){ const cx=330+i*138, cy=i%2?520:460, m0=(i*211+90)%720, f=seg(pu,kw+i*.17,kw+i*.17+.3,E.back), mins=lerp(m0,540+720*Math.sign(0),f);
+    g+=`<path d="M${cx} ${cy+66}V${GY}" stroke="${INK}" stroke-width="14"/><path d="M${cx} ${cy+66}V${GY}" stroke="#3a3a44" stroke-width="7"/>`+clockFace(cx,cy,56,mins,{rim:'#2a2a32',sw:4,glow:f>0&&f<1?1:0})+impact(cx,cy,seg(pu,kw+i*.17,kw+i*.17+.35,E.lin),.55); }
   const A=full({hF:[46,-190],hB:[-12,-114],handF:'open',expr:'awe',look:[4,-8],tilt:-6}), B=full({...A,hF:[30,-150],expr:'happy',tilt:0,look:[5,-3]});
-  [['coatB',290,0],['coatC',620,1],['coatD',950,0]].forEach(([w,x,i],q)=>g+=toon(w,x,GY+6,.95,q===2?-1:1,tween(pu,kw+.9+q*.15,A,B,.35),t,50+q));
-  const pk=panelBox(30,290,300,430,`<rect width="300" height="430" fill="#3b2a1f"/><rect x="70" y="14" width="160" height="26" ${st('#7a4a2a',5)}/>`+pendulum(150,34,300,PEND(t),44,{}),{},{k:seg(pu,0,.2,E.back),rot:-2,border:TEAL,id:'p3c'});
+  [['coatB',400,0],['coatC',660,1],['coatD',930,0]].forEach(([w,x,i],q)=>g+=toon(w,x,GY+6,.95,q===2?-1:1,tween(pu,kw+.9+q*.15,A,B,.35),t,50+q));
+  const pk=panelBox(24,300,230,330,`<rect width="230" height="330" fill="#3b2a1f"/><rect x="45" y="14" width="140" height="24" ${st('#7a4a2a',5)}/>`+pendulum(115,32,230,PEND(t),36,{}),{},{k:seg(pu,0,.2,E.back),rot:-2,border:TEAL,id:'p3c'});
   return g+pk; }
 function sh3(t){ const u=t-S(3), P=part(3,u); return finish(P.i===0?sh3_a(P.pu,u,t):P.i===1?sh3_b(P.pu,u,t):sh3_c(P.pu,u,t),t,{boil:2.2}); }
 
@@ -172,7 +170,8 @@ function sh5_c(pu,u,t){ let g=WALLBG('#a8855a')+FLOOR(GY,'#5a3e28');
   const fx=90, fy=320, fw=900, fh=440; g+=`<rect x="${fx}" y="${fy}" width="${fw}" height="${fh}" rx="10" ${st('#f4ecd0',9)}/>`;
   const P=NAMER.map(p=>[fx+30+p[0]*(fw-60)/100,fy+16+(p[1]-4)*(fh-32)/90]);
   g+=`<clipPath id="nam"><path d="M${P.map(p=>p.map(N).join(' ')).join('L')}Z"/></clipPath><path d="M${P.map(p=>p.map(N).join(' ')).join('L')}Z" ${st('#d9e0b0',7)}/><g clip-path="url(#nam)">`;
-  [TEAL,MARI,CRIM,'#2c5e8a'].forEach((c,i)=>{ const k=seg(pu,.3+i*.17,.3+i*.17+.22,E.o); g+=`<rect x="${N(fx+30+i*(fw-60)/4)}" y="${fy}" width="${N((fw-60)/4*k)}" height="${fh}" fill="${c}" opacity=".78"/>`; });
+  const zx0=fx+30+20*(fw-60)/100, zw=(fw-60)*.6/4, zy1=fy+16+(66-4)*(fh-32)/90;
+  [TEAL,MARI,CRIM,'#2c5e8a'].forEach((c,i)=>{ const k=seg(pu,.3+i*.17,.3+i*.17+.22,E.o); g+=`<rect x="${N(zx0+i*zw)}" y="${fy}" width="${N(zw*k)}" height="${N(zy1-fy)}" fill="${c}" opacity=".78"/>`; });
   g+=`</g>`;
   const A=full({lean:4,hF:[70,-300],hB:[-6,-114],handF:'point',expr:'determined',look:[8,-6],tilt:-4}), B=full({...A,hF:[84,-312],lean:6});
   const gx=Math.min(1,pu/1.1);
@@ -185,24 +184,24 @@ function sh5_d(pu,u,t){ let g=WALLBG('#9a5a44')+FLOOR(GY,'#6a5a46'); for(let r=0
   g+=toon('railyoung',540,GY+4,.95,1,tween(pu,.5,A,B,.8,E.io),t,83); return g; }
 function sh5_e(pu,u,t){ let g=WALLBG('#8a7050')+FLOOR(GY,'#5a3e28');
   g+=`<rect x="640" y="340" width="300" height="400" ${st('#6a3e1e',8)}/>`+[0,1,2].map(r=>`<path d="M650 ${420+r*100}H930" stroke="${INK}" stroke-width="6"/>`+[0,1,2,3,4,5].map(i=>`<rect x="${662+i*42}" y="${352+r*100}" width="30" height="${60+((i*7+r*5)%3)*8}" fill="${['#5a2a1e','#2a3a5a','#3a5a3a'][(i+r)%3]}" stroke="${INK}" stroke-width="3"/>`).join('')).join('');
-  const low=seg(pu,.75,1.15,E.io), A=full({hF:[70,-200],hB:[70,-196],handF:'hold',handB:'hold',expr:'smug',look:[0,-2]}), B=full({hF:[88,-196],hB:[-74,-192],handF:'open',handB:'open',expr:'confused',shrug:10,tilt:6,look:[0,-3]});
+  const low=seg(pu,.75,1.15,E.io), A=full({hF:[70,-200],hB:[70,-196],handF:'hold',handB:'hold',expr:'smug',look:[0,-2]}), B=full({hF:[88,-196],hB:[-74,-192],handF:'open',handB:'open',expr:'confused',shrug:0,tilt:0,look:[0,-3]});
   const pose=tween(pu,.7,A,B,.45); g+=toon('tophat',420,GY+4,1.1,1,pose,t,84)+topHat(420+10,GY-338*1.1,1.05,pose.tilt*.8);
-  g+=lawBook(lerp(520,470,low),lerp(880,940,low),420,240,lerp(1,.9,low))+qmark(700,560,seg(pu,.9,1.2),1.1);
+  g+=lawBook(lerp(520,470,low),lerp(930,975,low),380,200,lerp(1,.9,low))+qmark(700,560,seg(pu,.9,1.2),1.1);
   return g; }
 function sh5(t){ const u=t-S(5), P=part(5,u); return finish([sh5_a,sh5_b,sh5_c,sh5_d,sh5_e][P.i](P.pu,u,t),t,{boil:2.2}); }
 
 /* ---------- 6 CLOCKS IN THE EAST WENT BACK ---------- */
-function backPanel(pu,k0,from,wall,kind){ const mins=lerp(from,from-6,seg(pu,k0,k0+.8,E.back)); let g=WALLBG(wall);
+function backPanel(pu,k0,from,wall,kind){ const mins=lerp(from,0,seg(pu,k0,k0+.8,E.back)); let g=WALLBG(wall);
   g+=kind?`<rect x="40" y="120" width="400" height="640" ${st('#f4f0e6',8)}/><path d="M150 120L240 20L330 120" ${st('#f4f0e6',8)}/>`:`<rect x="0" y="760" width="480" height="300" fill="#6a5a46"/>`;
   g+=clockFace(240,kind?330:300,170,mins,{rim:'#2a2a32',sw:8});
   g+=`<g opacity="${N(seg(pu,k0,k0+.15,E.lin)*(1-seg(pu,k0+.7,k0+.95,E.lin))*100)/100}"><path d="M110 560Q240 640 370 560" fill="none" stroke="${CRIM}" stroke-width="14" stroke-linecap="round"/><path d="M118 590L96 548L148 556Z" fill="${CRIM}" stroke="${INK}" stroke-width="4"/></g>`; return g; }
 function sh6_a(pu,u,t){ let g=`<rect width="1080" height="1920" fill="#2a2018"/>`;
-  g+=panelBox(40,290,480,720,backPanel(pu,.25,62,'#9a5a44',0),{},{rot:-1.5,border:TEAL,id:'pa6',k:seg(pu,0,.12,E.back)})+panelBox(560,290,480,720,backPanel(pu,.45,205,'#9fc3d8',1),{},{rot:1.5,border:MARI,id:'pb6',k:seg(pu,.08,.2,E.back)});
+  g+=panelBox(40,290,480,720,backPanel(pu,.25,4,'#9a5a44',0),{},{rot:-1.5,border:TEAL,id:'pa6',k:seg(pu,0,.12,E.back)})+panelBox(560,290,480,720,backPanel(pu,.45,9,'#9fc3d8',1),{},{rot:1.5,border:MARI,id:'pb6',k:seg(pu,.08,.2,E.back)});
   return g; }
 function sh6_b(pu,u,t){ const crankA=-pu*620, mins=lerp(4,0,seg(pu,.1,1.4,E.io)), cx=540, cy=650;
   let g=`<rect width="1080" height="1920" fill="url(#gSky)"/><g transform="translate(540 650) scale(1.55) translate(-540 -650)">`+steeple(540,300,GY+40,{cy:650,r:105,mins}) +`</g>`;
   g+=`<path d="M420 700L335 780" stroke="${INK}" stroke-width="18" stroke-linecap="round"/><path d="M420 700L335 780" stroke="#8a8a96" stroke-width="9" stroke-linecap="round"/><circle cx="335" cy="780" r="56" ${st('#6a6a76',8)}/>`;
-  const hp=[335+Math.cos(rad(crankA))*40, 780+Math.sin(rad(crankA))*40], fp=[300,960], s=.8;
+  const hp=[335+Math.cos(rad(crankA))*40, 780+Math.sin(rad(crankA))*40], fp=[235,1012], s=1.12;
   g+=`<path d="M335 780L${N(hp[0])} ${N(hp[1])}" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><circle cx="${N(hp[0])}" cy="${N(hp[1])}" r="12" ${st('#c9a03a',4)}/>`;
   g+=ladder(180,GY+20,300,820,52);
   g+=toon('workman',fp[0],fp[1],s,1,full({lean:4,tilt:4,hF:W2L(fp[0],fp[1],s,1,hp),hB:[-12,-130],handF:'fist',handB:'open',expr:'determined',look:[6,-2]}),t,5);
@@ -221,7 +220,7 @@ function sh7_a(pu,u,t){ const slam=1.55, sh=shakeV(pu,slam,16,.4); let g=WALLBG(
   g+=`<rect x="520" y="330" width="460" height="300" fill="#b8c9d3" stroke="${INK}" stroke-width="8"/><path d="M750 330V630M520 480H980" stroke="${INK}" stroke-width="7"/>`;
   g+=press(780,GY-6,1.05,pu,{spin:1})+`<g>`+[0,1,2].map(i=>{ const k=((pu*1.5+i*.33)%1); return `<rect x="${N(560+k*30)}" y="${N(930-k*260)}" width="90" height="60" transform="rotate(${N(-10+k*40)} ${N(600+k*30)} ${N(960-k*260)})" ${st('#f6f0dc',4)} opacity="${N((1-k)*100)/100}"/>`; }).join('')+`</g>`;
   const A=full({lean:-2,hF:[56,-150],hB:[44,-154],handF:'hold',handB:'hold',expr:'neutral',look:[4,2]}), B=full({lean:10,tilt:-4,hF:[62,-120],hB:[40,-118],handF:'fist',handB:'fist',expr:'angry',look:[4,2]});
-  g+=toon('editor',230,GY-10,1.1,1,tween(pu,slam-.35,A,B,.3,E.o),t,95);
+  g+=toon('editor',235,GY-10,1.42,1,tween(pu,slam-.35,A,B,.3,E.o),t,95);
   g+=`<g transform="translate(${N(sh[0])} ${N(sh[1])})"><rect x="40" y="880" width="420" height="${GY-880}" ${st('#7a4a2a',9)}/><rect x="20" y="860" width="460" height="34" rx="6" ${st('#9a6a3c',8)}/><rect x="190" y="832" width="150" height="30" fill="#f6f0dc" stroke="${INK}" stroke-width="5"/></g>`+impact(300,850,seg(pu,slam,slam+.35,E.lin),.9);
   return g; }
 function sh7_b(pu,u,t){ const py=lerp(1250,665,seg(pu,0,.3,E.o)), rv=seg(pu,.25,.85,E.lin), hl=seg(pu,.85,1.3,E.io);
@@ -242,7 +241,7 @@ function sh7_c(pu,u,t){ const sx=lerp(540,1250,seg(pu,.75,1.25,E.i)); let g=`<re
 function sh7(t){ const u=t-S(7), P=part(7,u); return finish(P.i===0?sh7_a(P.pu,u,t):P.i===1?sh7_b(P.pu,u,t):sh7_c(P.pu,u,t),t,{boil:2.2}); }
 
 /* ---------- 8 THE LAW: THIRTY-FIVE YEARS LATE ---------- */
-function bigWatch(open){ return {svg:`<g transform="scale(2.6)"><path d="M0 -4Q-12 -26 -4 -44" fill="none" stroke="${INK}" stroke-width="3"/><circle r="15" ${st('#e8d28a',3.5)}/><circle r="10.5" fill="#fbf6ea"/><path d="M0 0V-7M0 0L5 3" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>${open?'':`<circle r="15" ${st('#e8d28a',3.5)}/><path d="M-9 -6Q0 -12 9 -6" fill="none" stroke="#fff" stroke-width="2" opacity=".7"/>`}</g>`}; }
+function bigWatch(open){ return {svg:`<g transform="scale(2.6)"><circle cy="-18" r="4" fill="none" stroke="${INK}" stroke-width="2.6"/><circle r="15" ${st('#e8d28a',3.5)}/><circle r="10.5" fill="#fbf6ea"/><path d="M0 0V-7M0 0L5 3" stroke="${INK}" stroke-width="2.2" stroke-linecap="round"/>${open?'':`<circle r="15" ${st('#e8d28a',3.5)}/><path d="M-9 -6Q0 -12 9 -6" fill="none" stroke="#fff" stroke-width="2" opacity=".7"/>`}</g>`}; }
 function sh8_a(pu,u,t){ const z=lerp(1,1.14,seg(pu,0,1.7,E.io)); let g=`<rect width="1080" height="1920" fill="url(#gSky)"/>`;
   [[180,430,1.1],[860,520,1.4]].forEach(([x,y,s],i)=>g+=`<g transform="translate(${N(x+pu*18)} ${y}) scale(${s})" opacity=".9"><circle r="46" ${st('#fffaf0',6)}/><circle cx="50" cy="12" r="36" ${st('#fffaf0',6)}/><circle cx="-48" cy="14" r="32" ${st('#fffaf0',6)}/></g>`);
   g+=`<g transform="translate(540 ${GY}) scale(${N(z*1000)/1000}) translate(-540 ${-GY})">`+capitol(540,GY,1.05)+`</g>`+FLOOR(GY,'#9aa87a');
@@ -257,15 +256,16 @@ function sh8_b(pu,u,t){ let g=WALLBG('#8a7050')+FLOOR(GY,'#5a3e28');
   g+=`<g transform="rotate(-4 380 780)"><rect x="250" y="752" width="320" height="52" ${st('#f6f0dc',5)}/></g>`+stampMark(400,760,['OFFICIAL'],CRIM,seg(pu,st1,st1+.15,E.lin),-8,32);
   const tap=Math.abs(Math.sin(pu*7))*14;
   g+=toon('railman',850,GY+4,1.1,-1,full({lean:-2,tilt:3,hF:[40,-176],hB:[24,-120],handF:'hold',handB:'fist',fF:[22,-tap],fB:[-16,0],expr:'tired',look:[-6,2]}),t,97).replace(/$/,'');
-  g+=panelBox(690,290,320,320,`<rect width="320" height="320" fill="#d8c8a8"/>`+wallCalendar(160,170,.85,1883,seg(pu,.9,1.45,E.io)),{},{rot:2,k:seg(pu,.55,.75,E.back),border:CRIM,id:'cal8'});
+  g+=panelBox(730,290,270,270,`<rect width="270" height="270" fill="#d8c8a8"/>`+wallCalendar(135,145,.72,1883,seg(pu,.62,1.0,E.io)),{},{rot:2,k:seg(pu,.3,.5,E.back),border:CRIM,id:'cal8'});
   return g; }
 function sh8_c(pu,u,t){ const kl=cu(8,'late')-cutPts(8)[1], snap=seg(pu,kl-.15,kl,E.i), look=seg(pu,kl+.1,kl+.5,E.io);
   let g=WALLBG('#8a7050')+FLOOR(GY,'#5a3e28');
   g+=`<rect x="90" y="330" width="260" height="360" ${st('#6a3e1e',8)}/><rect x="110" y="350" width="220" height="320" fill="#b8c9d3" stroke="${INK}" stroke-width="6"/>`+`<rect x="730" y="340" width="260" height="330" ${st('#6a3e1e',8)}/>`;
-  const A=full({lean:-2,hF:[58,-236],hB:[-8,-120],handF:'hold',expr:'tired',look:[0,3]}), B=full({lean:2,tilt:-3,hF:[44,-206],hB:[-8,-120],handF:'fist',expr:'stern',look:[-4,0]});
+  const A=full({lean:-2,hF:[76,-196],hB:[-8,-120],handF:'hold',expr:'tired',look:[4,6]}), B=full({lean:2,tilt:-3,hF:[66,-148],hB:[-8,-120],handF:'fist',expr:'stern',look:[-4,0]});
   const pose=mix(A,B,snap), wob2=wob(pu,kl,1,22,8);
   g+=toon('railman',540,GY+16,1.55,1,{...pose,tilt:pose.tilt+look*5,lean:pose.lean+wob2*2,holdF:bigWatch(snap<.5)},t,98);
-  g+=impact(640,560,seg(pu,kl,kl+.3,E.lin),.8); return g; }
+  g+=impact(650,640,seg(pu,kl,kl+.3,E.lin),.8); const zz=lerp(1,1.12,seg(pu,0,kl+.8,E.io));
+  return `<g transform="translate(540 700) scale(${N(zz*1000)/1000}) translate(-540 -700)">${g}</g>`; }
 function sh8(t){ const u=t-S(8), P=part(8,u); return finish(P.i===0?sh8_a(P.pu,u,t):P.i===1?sh8_b(P.pu,u,t):sh8_c(P.pu,u,t),t,{boil:2.2}); }
 const CUT_EP={1:[['church',-.3],'four',['again',-.25]], 2:[['man',-.3]], 3:[['three',-.25],['restarted',-.2]], 4:[['telegraph',-.1],['jewelers',-.15]],
   5:[['wisconsin',-.15],['so',-.1],['zones',-.35],['no',-.1]], 6:[['went',-.1],['noon',-.25]], 7:[['sun',-.15],['job',-.2]], 8:[['official',-.2],['thirty',-.1]]};

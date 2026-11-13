@@ -9,8 +9,8 @@ REPL=[]
 PH=[]
 PHL={}
 SCRIPT=[
- (1,'N',"On November eighteenth, eighteen eighty-three, a New York church rang *noon.*",1.0,.0),
- (1,'N',"Four minutes later… it rang noon *again.*",.98,.1),
+ (1,'N',"On November eighteenth, eighteen eighty-three, New York's church bells rang *noon.*",1.0,.0),
+ (1,'N',"Four minutes later… noon rang *again.*",.98,.1),
  (2,'N',"Blame the *railroads.* And one man with a clock.",1.0,.05),
  (3,'N',"That morning, he *stopped* New York's master clock…",1.0,.0),
  (3,'N',"for three minutes and *fifty-eight* seconds.",.98,.05),
