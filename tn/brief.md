@@ -246,3 +246,42 @@ identical on the old build; already noted in `CLAUDE.md`).
 
 **Not checked:** big captions with `tn`'s own narration (there is no `tn` voice track yet; Stage C sees the real chunk list in `verify.js` → `captions`);
 the caption look at full speed in motion (only stills were checked).
+
+## 12. Stage C report (Sonnet 5.5, medium, 2026-11-13, built on 7907df6)
+**Built:** `tn/episode.json`, `tn/src/{meta,props,shots,defs,cos,cover,sfx}`, `tn/vo/*` (copied from `yo/vo/`, script from section 3). Engine untouched.
+Environment note for the next chat: `scripts/setup.sh` stops at `playwright install` (the proxy blocks cdn.playwright.dev). Run it without that line and set
+`CHROMIUM_PATH=/usr/bin/google-chrome`; the voice model and sample libraries download fine.
+
+**Voice:** 13 lines, total **50.19 s** at 104 bpm (inside 45-60 s). Shot starts 0 / 6.92 / 10.39 / 17.89 / 23.65 / 34.04 / 38.65 / 43.85 s.
+Pronunciation (eighteenth, eighty-three, fifty-eight, thirty-five, jewelers', Wisconsin, Indiana) is the Kokoro default; the phonemes look right but nobody has listened (Stage D / Farrukh).
+One change to the locked narration: the idiom in line 11 is now in quotation marks (`“*to boss the job.*”`) as section 3 asks, so the caption shows `"TO BOSS` / `THE JOB."`. The spoken audio is identical.
+
+**Picture:** 8 narrated shots, 26 cuts (`CUT_EP` in `shots.js`), longest gap 3.0 s (the final hold, `CUT_HOLD_EP=[8]`), no gap over 3.0 s anywhere.
+That is 4 more cuts than the storyboard: shot 1 got a belfry close-up (bell rings on "noon", not on "again" as drawn in section 4), shot 4 splits into roof / wire ride / jeweler,
+shot 5 into sun / Wisconsin / conference / four clocks / blank law book, shot 6 into two-city clocks / crank / second ring.
+Section 4 differences: 3b/3c stopwatch counts 0:00 to 3:58 on screen (verifiable, 3 min 58 s); 6a shows two clocks in two cities running back instead of the church;
+the calendar tear (1883 to 1918) is an inset in 8b on "nineteen"; the sun gag (7c) is the only face-on-a-sun.
+**On-screen text:** NOON?, NOON. AGAIN., +4 MIN, RAILROADS (tag on the locomotive; it repeats the caption and touches the smokestack, so cut it in Stage D), SUN TIME, WISCONSIN, 38, +1h, SENTINEL, 1883, 1918, OFFICIAL, WATCHES - CLOCKS (jeweler's sign), and the Sentinel line.
+The line is copied from the Rachel Carson Center page (environmentandsociety.org/exhibitions/railroad/adoption-railroad-time): **"The Sun is no longer to boss the job."** (capital S).
+Source conflict, for the pinned comment: other pages (americasbesthistory.com) print it with lower-case "sun", and Wikipedia dates the Sentinel item 17 Nov, the RCC page and Bartky 21 Nov. Brief keeps 21 Nov; no date is shown on screen.
+
+**Sound (`vo/sound.py`):** one 104 bpm grid, clock tick (claves) under every section, sections tick / rag / **stop** / rag / pizz / soft / pizz / tense / roll / out.
+The dropout runs 11.45 s ('stopped') to 15.00 s (downbeat after 'restarted'): the music bus is exactly 0.0 in that window (printed by the script); only soft stopwatch ticks and foley remain.
+Foley is built from VSCO 2 CE and Kenney CC0 samples plus three synths (whistle, fly buzz, chirps). **No CC0 church bell recording is in the sparse checkout**: the bell is a pitched-down gong plus glockenspiel (`bellD`). Check it by ear.
+
+**Gates:** `verify.js` **PASS**: determinism 60/60, reach 0 misses (worst 5.8 of 6), captions 87 chunks / 0 rule breaks / 0 too wide / smallest 119 px,
+subtitles 0 frames outside the safe area, every word covered, cadence 26 cuts. Warnings: 3 chunks under 0.25 s ("man" 0.21, "That" 0.19, "When" 0.19). renderMs 0.83.
+SAFE=1 contact sheets were checked for every sub-shot, with frames 0.1-0.2 s either side of every cut; shots 1-8 were checked at least twice after fixes.
+
+**Fix list for Stage D (no scene failed QC twice; these are quality notes):**
+1. **No bowler or top hat in the rig.** Men use hatless, flat-cap or fedora stand-ins; the top hat in 5e is an overlay drawn at the head position (sits right at rest, floats a little when his head tilts behind the book). Engine item: add `bowler`/`tophat` caps.
+2. 6b (workman cranking the church clock) and 7a (editor behind the desk) are small and read weakly: bigger figure or tighter framing.
+3. 5c wall map: the North America outline is a crude polygon, and the zone bands are plain stripes. It reads as "a map with four bands" but not as North America.
+4. 4b (wire ride) and 4a share a skyline; make 4b more different (night or rooftop angle) if 4c does not carry the section.
+5. The belfry shot 1b is 1.2 s, the second ring 1d 1.3 s: check by ear that bell, "noon" and cut land together (word times are estimates).
+6. Facts review by a fresh agent (CLAUDE.md gate) has **not** been run: Stage D. Points to check: the stopwatch "3:58" vs the source's 3 min 58.38 s; "Wisconsin 38" is shown as a counter, not as a claim about time zones; the "+1h" tags.
+7. Not heard: voice, bell, tick, dropout, loudness on phone speakers. Final loudness is measured by `mix.sh` (see below), but only Farrukh can listen.
+
+**Render:** full export done in Stage C for Stage D to inspect: `Day-Of-Two-Noons-1883.mp4` (project root, git-ignored like all MP4s; re-make with
+`node engine/tools/export.js tn && bash engine/tools/mix.sh tn`, ~5 min with `WORKERS=2`), 1080x1920, 30 fps, **50.19 s**, -14.0 LUFS, peak -2.7 dBFS.
+Bed (voice + music) measures -19.0 LUFS, foley -28.8 LUFS before the mix. 4K cover not made yet (`COVER_T=1.0`, the first frame).

@@ -29,7 +29,7 @@ assets/                   fonts (OFL), tts model, CC0 sample libraries (created 
 mo/   Monopoly / Lizzie Magie (2026-11) - CURRENT STANDARD: safe-area staging, pose tweens, one-tempo score
 lb/   Lal Bihari "dead for 18 years" (2026-11) - same kit; its subtitles still sit below the safe area (verify.js reports it)
 yo/   Pedro Flores and the word "yo-yo" (2026-11) - FINISHED (Stage D): final MP4 + cover + caption, waiting on Farrukh's listening check (yo/brief.md section 11)
-tn/   The Day of Two Noons (1883) - FORMAT TEST ep. 1, Stage A + Stage B part 1 (big captions, cut cadence) done 2026-11-13 (tn/brief.md); next: Stage C
+tn/   The Day of Two Noons (1883) - FORMAT TEST ep. 1, Stage C built 2026-11-13, verify.js PASS, rough cut rendered (tn/brief.md section 12); next: Stage D
 ic/   Ice to Calcutta (1833) - FORMAT TEST ep. 2, rich painted look, Stage A done 2026-11-13 (ic/brief.md); built after tn, needs Stage B part 2 (painted layer)
 px/ r2/ rc/               older stick-rig episodes with their own tool copies. Leave as they are.
 ```
