@@ -1,0 +1,216 @@
+# tn/ - The Day of Two Noons (18 Nov 1883) (brief)
+
+Stage A done 2026-11-13 (Opus 5.5). Episode 1 of the format test; **built first** (then `ic/`).
+Read `CLAUDE.md` and `ENGINE.md` first; this brief adds what is specific to this episode, plus the two engine changes
+both test episodes need (section 8, Stage B part 1).
+
+## 0. Format test (agreed with Farrukh, 2026-11-13)
+- **Mechanism hook:** "how/why did this work?", not a biography. The viewer gets the trick in steps they could retell.
+- **New shot every 2-3 s** (cuts inside the narrated shots; engine change B2).
+- **Big centred 1-2 word captions** (engine change B1).
+- **Pacing reference only:** youtube.com/@RicksClips3000. Not watched in Stage A (the page could not be opened from here). Copy nothing: no characters, no scripts.
+- **Look:** the current engine look (toon kit as in `yo`/`mo`). Episode 2 (`ic/`) tests the rich painted look.
+- Goes to **Reels and Shorts**. Farrukh posts; never publish.
+- How to read the result (Stage D, then the 72 h / 7-day review in `CLAUDE.md`): compare skip rate, average watch time, completion and shares
+  with the old reels and `yo`. Two episodes are two data points: a story effect and a format effect can't be separated yet. Record it that way.
+
+## 1. The story in one line
+On Sunday 18 November 1883 the railroads, not the government, put North America on standard time. Time already reached cities by telegraph,
+so they changed it at the source: in New York one man stopped the master clock for 3 minutes 58 seconds. Clocks east of each zone's
+centre went back, so some places got noon twice. Congress made it law in 1918, 35 years late.
+
+Why it works as a mechanism story: everyone uses time zones; nobody knows a private industry switched them on with a pendulum.
+
+## 2. Hook audit
+| Option | Line | Verdict |
+|---|---|---|
+| **A (chosen)** | "On November 18th, 1883, a New York church rang noon. Four minutes later... it rang noon *again.*" | A sound-based paradox the picture can show in frame 1 (bell + hands going back). The "how?" is automatic. "Blame the railroads. And one man with a clock." answers it at 7 s and leads straight into the pendulum. |
+| B | "In 1883, the railroads changed the time in every American city. Without a law." | True and big, but abstract: no image, no paradox. "No law told them to" is kept at ~29 s. |
+| C | "One man stopped New York's master clock for 3 minutes and 58 seconds." | The best visual gag, but it means nothing without the paradox first. It comes second, at ~10 s: the share moment lands well before the ~20 s average watch time. |
+
+**First frame (reads without sound, everything in y 290-1080):** a church steeple clock at exactly 12:00, the bell mid-swing with "DONG" motion
+lines, and a workman on a ladder cranking the minute hand **backwards** (curved arrow). Below, three people in 1880s coats hold up pocket watches,
+baffled. One small tag in the safe area: **NOON?** (then "NOON. AGAIN." on the second ring). No date on the first frame.
+
+## 3. Narration (paste into `tn/vo/gen.py` SCRIPT; copy `yo/vo/` as the template)
+~134 words, counting every spoken number word. Estimated 51-54 s at the `yo` pace (~0.4 s per word). Inside the 45-60 s target; cuts in section 10 if the voice runs long.
+**Order:** paradox (0-6 s) → the man and the pendulum (7-17 s, the share moment) → why one clock could do it (17-21 s) → why bother (21-30 s) → why noon twice (30-35 s) → the reaction (35-42 s) → the law, 35 years late (42-52 s).
+```python
+SCRIPT=[
+ (1,'N',"On November eighteenth, eighteen eighty-three, a New York church rang *noon.*",1.0,.0),
+ (1,'N',"Four minutes later… it rang noon *again.*",.98,.1),
+ (2,'N',"Blame the *railroads.* And one man with a clock.",1.0,.05),
+ (3,'N',"That morning, he *stopped* New York's master clock…",1.0,.0),
+ (3,'N',"for three minutes and *fifty-eight* seconds.",.98,.05),
+ (3,'N',"When it restarted, New York was on *railroad* time.",1.0,.05),
+ (4,'N',"One clock could do that: time already came down *telegraph* wires… into jewelers' windows.",1.02,.0),
+ (5,'N',"Why bother? Towns set their clocks by the *sun.* Wisconsin alone had *thirty-eight* different times.",1.02,.0),
+ (5,'N',"So the railroads drew *time zones,* one hour apart. No law told them to.",1.02,.05),
+ (6,'N',"Clocks in the east of each zone went *back*… so some places got noon *twice.*",1.0,.0),
+ (7,'N',"One Indiana paper grumbled: the sun was no longer *to boss the job.*",1.0,.0),
+ (8,'N',"And the law? Congress made it official in *nineteen eighteen.*",1.0,.0),
+ (8,'N',"Thirty-five years *late.*",.94,.25),
+]
+```
+- `MERGE_EP`: "eighteen eighty-three" → 1883, "nineteen eighteen" → 1918, "thirty-eight" → 38, "fifty-eight" → 58, "thirty-five" → 35.
+- Pronunciation to check in `vo/raw*.wav`: "jewelers'", "Wisconsin", "eighteenth". Don't speed lines up to hit timing.
+- "to boss the job" is a quote: the caption must show it in quotation marks ("TO BOSS / THE JOB"). See section 6 for the exact source text.
+- "Thirty-five years late" is the narrator's dry verdict (opinion, clearly framed), not a claim about anyone's intent.
+- "That morning": Hamblet stopped the clock at 9 a.m. on Sunday 18 Nov (section 6). The church clock was not on his wire, so its bells still rang the old noon first; the narration never claims the bells were his doing.
+- "Blame the railroads. And one man with a clock." Hamblet ran Western Union's time service, not a railroad; the line keeps them as two things.
+
+## 4. Timed storyboard (estimates; real times come from `vo/timing.json`)
+~22 cuts in ~51 s (B2: no gap over 3.4 s except the final hold). Current toon look. Poses change only with `tween(full(A),full(B))`.
+Faces and labels above y ~1080 (big captions occupy y 1090-1235). Every cut changes set, subject or framing (B2 rule).
+
+| Shot / cut | ~Time | Picture | Cue |
+|---|---|---|---|
+| **1a** hook | 0-2.6 | First frame above. Lower Manhattan street, a white church steeple (no label), clock at 12:00. Bell swings on "noon"; tag **NOON?** pops. | noon |
+| 1b | 2.6-4.4 | Tight on the clock face: the minute hand jerks **back** about four minutes under the workman's crank. Ticking stops for a beat. | four |
+| 1c | 4.4-6.4 | Wide again: the bell swings a second time; the three watchers look at their watches, then at each other; one holds his watch to his ear. Tag **NOON. AGAIN.** | again |
+| **2a** | 6.4-8.2 | Hard cut: a steam locomotive bursts into frame head-on (low angle), its headlamp a clock face. | railroads |
+| 2b | 8.2-9.8 | Western Union, Room 48 (no label needed): a man in a waistcoat (Hamblet; not named on screen) beside a tall regulator clock, long pendulum swinging, lit from a high window. He cracks his knuckles. | man |
+| **3a** | 9.8-11.8 | Extreme close-up: his hand stops the pendulum. The music drops out (the beat grid continues silently). | stopped |
+| 3b | 11.8-14.0 | Cut to a jeweler's window across town: every clock in it frozen, the crowd outside frozen mid-gesture; one fly keeps moving (small gag). A stopwatch hand races round in a corner insert. | fifty |
+| 3c | 14.0-16.6 | The pendulum swings again; the music drops back in on the downbeat; a city wide shot: clock faces flick to the same time in a wave down the street. | restarted, railroad |
+| **4a** | 16.6-18.8 | The camera rides a telegraph wire from the Western Union roof down the street (`cam` move), ticks travelling along it as little sparks. | telegraph |
+| 4b | 18.8-21.0 | The jeweler's window, alive now: a ticking telegraph sounder, rows of clocks, the crowd pressed to the glass (documented: crowds at jewelers' windows that day). | jewelers |
+| **5a** | 21.0-23.2 | A Midwestern main street: every building has its own clock, all different; a man sets his watch by the sundial in the square while the sun beats down. | sun |
+| 5b | 23.2-25.6 | Pull back fast and up: an outline map of Wisconsin covered in clock faces, each a different time; a counter clicks up to **38**. | thirty |
+| 5c | 25.6-28.0 | A railroad conference: men in frock coats around a big table-map of North America; one draws four bold vertical bands (colours, no labels). | zones |
+| 5d | 28.0-30.4 | Four station clocks in a row, exactly one hour apart, ticking in unison. A man in a top hat holds up a law book: blank pages. He shrugs. (Illustration.) | law |
+| **6a** | 30.4-33.0 | Back at the church: the workman cranks the hand back; a split-panel insert shows the same move on a station clock in another city. | back |
+| 6b | 33.0-35.4 | The bell rings a second time; this time the three watchers shrug and reset their watches. | twice |
+| **7a** | 35.4-37.6 | An Indiana newspaper office: a hand-cranked press; an editor slams his fist. | indiana |
+| 7b | 37.6-40.0 | The printed line on the page (verbatim, short): "The sun is no longer to boss the job." (in quotes, under a SENTINEL masthead). | boss |
+| 7c | 40.0-42.0 | Gag: the sun (a drawn sun with a simple face) packs a little desk into a box, fired. Dramatisation, clearly comic. | job |
+| **8a** | 42.0-44.4 | The Capitol dome; a wall calendar tears from 1883 to 1918 in a blur. | law |
+| 8b | 44.4-46.8 | A congressman stamps OFFICIAL on a document; next to him a railroad man has been waiting the whole time, grey-haired, holding a pocket watch. | nineteen |
+| 8c | 46.8-51.2 | Final: the railroad man snaps the watch shut, looks at camera. Hold 1.2 s on "late". No follow plug. (`CUT_HOLD_EP=[8]` allows the final hold.) | late |
+
+Cover: `COVER_T` ≈ 1.0 s (the first frame).
+
+**Art notes:** St. Paul's Chapel had a spire with a clock; draw a generic white Georgian steeple and don't label it. Hamblet's regulator was in
+"Room No. 48" of the Western Union building (NYT); no likeness exists in our sources, so he is a generic figure. Costumes: 1880s frock coats,
+bowler and top hats; the conference men must not reuse the Monopoly/yo silhouettes (`CLAUDE.md` continuity rule is per episode, but avoid confusion).
+The sun with a face is a one-off comic prop, not a recurring character (no mascots).
+
+## 5. Sound
+- **The clock is the metronome.** One tempo for the whole film (staging rule), 100-108 bpm, with a woodblock/clock tick on every beat as the base layer.
+- Sections: 1 `tick` (hook: ticks + one deep bell) → 2 `rag` (locomotive) → 3 **`stop`**: every instrument out from the pendulum stop until it
+  restarts (the beat grid keeps running; it is a dropout, not a restart), then `rag` back in on the downbeat → 4 `pizz` (telegraph) →
+  5 `soft` → 6 `pizz` → 7 `tense` (newspaper) → 8 `roll` → `out` on "late".
+- Foley (CC0 only, listed in `episode.json` → `foot`): church bell (two strikes), clock ticks, telegraph sounder clicks, locomotive whistle (if a CC0 one exists),
+  printing press thunk, rubber stamp, watch snap. **No vocal foley.**
+- `vo/sound.py`: the `stop` dropout runs from `W(3,'stopped')` to `W(3,'restarted')`. Level the sections around it as usual; the dropout itself is silence plus foley (the stopwatch tick).
+
+## 6. Facts and source tiers
+**Established (primary, or several independent sources):**
+- Sunday 18 November 1883: US and Canadian railroads switched to standard time; most at noon. (Law Library of Congress blog, Nov 2024; Linda Hall Library; Maine History Journal, Lasker; Heather Cox Richardson's notes citing the *Chicago Daily Tribune* 18 Nov 1883 p. 12)
+- The plan was William F. Allen's, secretary of the railroads' General Time Convention; the railroads adopted it in October 1883. Zones were one hour apart, on the 75th, 90th, 105th and 120th meridians (Eastern, Central, Mountain, Pacific; Canada also had an Intercolonial zone). (LoC Law blog; Newberry Library; American Heritage, Gordon 2001)
+- New York: James Hamblet, superintendent of the Time Telegraph Company / Western Union time service, stopped the pendulum of his standard clock in Room No. 48 of the Western Union building for "3 minutes and 58.38 seconds"; "Mr Hamblet had changed the time of New York City and State." The clicks on instruments across the city resumed with the pendulum. People "crowded the sidewalk in front of jewelry stores and watch repair establishments". The Western Union time-ball "fell sharply at the new 12 o'clock". (*New York Times*, Nov 1883, transcribed at historymatters.gmu.edu/d/5748)
+- No federal law until the Standard Time Act, 19 March 1918. (LoC Law blog; ABA Journal; Linda Hall)
+- Time signals were sold by telegraph to subscribers, "almost always a prominent jeweler". (Randel, American Heritage, "They Didn't Know What Time It Was")
+- Wisconsin had 38 different local times. (American Heritage: Randel; Gordon 2001)
+
+**Reported (one good source or an eyewitness via a secondary source):**
+- St. Paul's Chapel's bells rang 12 at local noon and again about four minutes later. (TIME, Ainissa Ramirez, 18 Nov 2019; William F. Allen's eyewitness account that New York had two noons, cited from Bartky, *Technology and Culture* 1989, by the tz database maintainers.)
+  The narration says "a New York church", not the name, so a dispute over which church can't break it.
+- **Clock-change time in New York:** Hamblet stopped the clock at **9 a.m.** to suit the New York Central's Sunday-morning schedule (NYT text; Madison Historical Society via Fox News;
+  culturenow.org). The NYT text says "yesterday morning" and History Matters dates the article 18 Nov; the other two sources put the stop on Sunday 18 Nov, so the article is
+  probably the 19 Nov issue. The narration says only "that morning". **Inference (ours, not a source):** St. Paul's clock wasn't on Hamblet's wire, so it rang the old noon and
+  then the new one. Don't show a clock reading 12:00 in shot 3; show the regulator at about 9:00 or keep its dial out of frame.
+- "Day of Two Noons": the usual name (LoC Law blog; History Matters). The tz maintainers note that where a place switched at exactly 18:00 GMT, there would have been no double noon; Bartky says eastern parts of zones saw noon twice.
+  The narration says "**some** places got noon twice", which survives that dispute.
+- Indianapolis *Sentinel*, 21 Nov 1883, p. 4: "The sun is no longer to boss the job. People—all 55,000,000 of them—must eat, sleep and work... by railroad time" (quoted in Bartky, *Selling the True Time*, 2000, p. 144; Rachel Carson Center exhibition page). **Stage C: copy the on-screen line from the Rachel Carson Center page, not from this brief, and check capitalisation ("Sun"/"sun").**
+- Attorney General Benjamin Brewster ruled that government clocks needed congressional approval to change; the Naval Observatory ignored him. (American Heritage, Gordon 2001) Not used (time).
+
+**Deliberately left out:**
+- Any count of times before 1883 other than Wisconsin's 38: sources give 49, 53, 56, "50 to 80", "80" for railroad times and "144" for local times. **"Over 300" was not found in any source.**
+- Which observatory sent "the" signal (Naval Observatory, Allegheny and Harvard are all claimed; the NYT names comparisons with Washington, Allegheny and Cambridge). The narration never names one.
+- Bangor's mayor vetoing standard time (Maine History Journal, solid) and Detroit holding out until 1905 (weak): good material for a sequel, too much for 55 s.
+- The 1853 Rhode Island collision as the "reason": it was a New England trigger 30 years earlier, not the cause of the 1883 plan.
+
+## 7. Production plan
+**Reuse:** toon kit rig and costumes; `courtroom()` set pieces for the blank law book (5d); `stage()`, `under()`, `panelBox()` (copy from `mo/src/shots.js`);
+`yo`'s `bigWord()` for the 38 counter if useful; `tag`, `ttl`, `stampMark`, `burst`, `wob`, `shakeV`.
+
+**New, episode-level (`tn/src/props.js`):** `clockFace(x,y,r,h,m,{tick,stopped})` (hands from a time in minutes, so "4 minutes back" is one number);
+`steeple()`, `regulator(x,y,{swing})` (pendulum from a phase, so "stop" freezes the phase, then resumes from the same phase), `sounder()` (telegraph key clicking on the beat),
+`locomotive()` (head-on), `jewelerWindow()`, `wisconsinMap()` (simple outline, clock faces scattered inside), `pressRoom()`, `capitol()`, `sun()` (comic, one shot).
+Costumes: 1880s frock coats, bowlers and top hats; workman in overalls; editor in sleeve garters.
+
+**Engine:** B1 + B2 (section 8). No other engine change.
+
+**Files Stage C creates:** `tn/episode.json`, `tn/src/{meta,props,shots,defs,cos,cover,sfx}`, `tn/vo/*` (copy `yo/vo/` as the template).
+Suggested `episode.json`: title "The Day America Got Noon Twice", out `two-noons`, file `Day-Of-Two-Noons-1883`, sub "THE STICK HISTORIAN".
+
+## 8. Engine changes for Stage B, part 1 (needed before Stage C of both episodes)
+Both are opt-in per episode, so `mo`, `lb` and `yo` must render identically afterwards: rebuild them and run
+`node engine/compare.js old.html new.html` (0 frames different), then update `ENGINE.md` in the same commit.
+Also add the big-caption mode to `CLAUDE.md` → Staging rules (caption lane y 1090-1235, faces above ~1080 in that mode), since the current rule assumes the one-line subtitle at 1190.
+
+### B1. Big chunk captions (`CAP_MODE_EP='big'` in `src/meta.js`)
+Format agreed 2026-11-13: big, centred captions of one or two words, replacing the one-line subtitle in the episodes that ask for it.
+- **Where:** `engine/toon/10_base.js`, next to `MYSUBS`/`mySubs()`. Build a second chunk list from the same `SUBW` words (so `MERGE_EP` numbers and `*highlight*` keep working).
+- **Chunking rules, in order:**
+  1. A highlighted word (`*word*`) is its own chunk, so the stressed word lands alone and big.
+  2. Otherwise pair words left to right; a chunk ends at punctuation (`, . ? ! …`) or after 2 words.
+  3. A short function word (a, an, the, of, to, in, on, at, and, but, so, by, for, it, is, was) never ends a chunk on its own: it joins the next word.
+     If that makes 3 words, allow it only when all three are 4 letters or fewer (e.g. "IT WAS NOON").
+  4. A chunk shorter than 0.25 s on screen merges into the previous one (same 3-short-words limit), otherwise it stays and `verify.js` warns.
+  5. A merged number ("1883") counts as one word.
+- **Look:** Baloo 800, 150 px, white fill, ink stroke `size*.16`, hard ink shadow offset (6, 9), highlight colour `MARI`.
+  Shrink to fit 900 px wide; never below 104 px (if a single word still doesn't fit at 104, verify fails: change the word in the script).
+  The whole chunk pops in together at its first word's time minus 0.05 s: scale .7 to 1 with `E.back` over 0.12 s, no rotation. No fade out: the next chunk replaces it.
+- **Position:** centred at x 540. Baseline default **y 1200** (`SHOT_META[n].subY` still overrides per shot). At 150 px the text runs from about y 1090 to 1235:
+  inside the Reels safe area (y < 1250), below faces. Shots must keep faces and labels above y ~1080 in this mode (stricter than the 1110 rule).
+  Assumption: "centred" means centred horizontally in the caption lane, not in the middle of the picture, because the channel rule forbids text over faces.
+  If Farrukh wants them mid-frame, that is one `subY` value per shot, but staging then has to leave the centre empty.
+- **verify.js:** the existing safe-area and coverage checks apply to the new `text.cap` elements unchanged. Add `captions: {chunks, maxWords, shortest:[t,dur], under025:[...]}`;
+  FAIL if any chunk has more than 2 words (except the 3-short-words case) or is narrower than 104 px font; WARN (listed, not a fail) for chunks under 0.25 s.
+
+### B2. Shot-change cadence (new shot every 2-3 s)
+The narrated "shots" (`sh1..shN`, one per beat of the script) stay 4-8 s long because the music grid and `vo/timeline.py` are built on them.
+A new picture every 2-3 s is made with **cuts inside a shot**. Make those cuts declarative, so the picture and the check can't disagree:
+- **Episode side** (`src/shots.js`): `const CUT_EP={3:['nineteen','own'], 5:[['bought',-.1], 2.4], ...}`: per shot, the cut points as a word prefix
+  (resolved with `cu()`), `[word, offset]`, or seconds into the shot.
+- **Engine side** (`10_base.js`): `part(n,u)` returns `{i, pu, p0, p1}`: which sub-shot of shot n the time u is in, time into it, and its bounds.
+  Shot code switches framing/set with `const P=part(3,u)`. Build `CUTS` = every `SEQ` start + every resolved `CUT_EP` point, sorted, in absolute seconds,
+  and export it on `window.film.CUTS`.
+- **verify.js:** add `cadence: {cuts, longestGap:[t0,t1,len], gapsOver3:[...], gapsUnder1:[...]}`.
+  FAIL if any gap between cuts is over **3.4 s**, except shots listed in `CUT_HOLD_EP` (the deliberate final hold, max 4.5 s).
+  WARN on gaps under 1.0 s (choppy) and over 3.0 s.
+- A cut must change the picture: a new set, a new subject, or a framing change of at least 1.4x zoom or a reversed angle. A slow push is not a cut.
+  `verify.js` can't judge that; the Stage C contact sheet must include a frame 0.1 s before and after every cut.
+- Cut points use word times from `timing.json`, which are estimates (`CLAUDE.md` gotcha). Cut on the word, not on a syllable: Stage D checks every cut by ear.
+
+### Measurements to record in this episode's brief after Stage B
+`verify.js` renderMs before/after on `yo` (B1/B2 must not slow the frame), and `compare.js` results for `mo`, `lb`, `yo`.
+
+## 9. Caption and pinned comment (draft; Stage D finalises)
+Caption:
+> In 1883, a New York church rang noon twice. The railroads did it, and no law told them to. ⏰🚂
+> Would you have reset your watch for a railroad?
+>
+> #history #timezones #railroad #nyc #animation
+
+Pinned comment (sources):
+> Sources:
+> - New York Times, Nov. 1883, on James Hamblet stopping Western Union's standard clock for 3 min 58.38 s: historymatters.gmu.edu/d/5748
+> - Library of Congress, Law Library blog, "Whose Time Is It Anyway?" (Nov 2024)
+> - A. Ramirez, "How Standardized Time Changed America", TIME, 18 Nov 2019 (the St. Paul's bells)
+> - I. Bartky, Selling the True Time (Stanford UP, 2000), incl. the Indianapolis Sentinel of 21 Nov 1883
+> - J. S. Gordon, "Standard Time", American Heritage (2001); Standard Time Act, 19 March 1918
+>
+> Notes: New York's master clock was actually changed at 9 a.m. that Sunday; the church bells caught up at noon. Not every town got two noons: it depended on which side of its zone it sat and when it switched. Counts of pre-1883 times vary a lot between sources; Wisconsin's 38 is the best-documented figure.
+
+## 10. Risks and fallbacks
+- **The share moment is the pendulum (~10-17 s).** It must be the best-animated beat in the film: the freeze, the silent beat, the restart wave.
+- **The "why bother" section (21-30 s) is exposition.** It is after the average watch time, so it has to keep moving (fast pull-back to the 38 clocks, the zones
+  drawn on a table, the blank law book). If Stage D finds it slow, cut "No law told them to." (-1.5 s) and merge 5c/5d.
+- **The second "noon twice" (line 10) repeats the hook.** It is the explanation the hook promised; keep it short.
+- **"Blame the railroads" could read as "the railroads rang the bell".** Line 10 resolves it; Stage D checks with fresh eyes.
+- **2-3 s cuts can turn into a slideshow.** Every cut needs motion in it (a gag, a camera move or a reaction); a cut to a static picture is a fail even if B2 passes.
+- **Captions at y 1090-1235 limit the lower picture.** Floors still overscan to the bottom of the frame (staging rule); just keep faces up.
+- **If the voice runs long (> 57 s):** cut "One clock could do that:" (keep the rest of line 7), then the Wisconsin sentence (keep "Towns set their clocks by the sun").
