@@ -28,7 +28,7 @@ Why it works as a mechanism story: everyone uses time zones; nobody knows a priv
 | B | "In 1883, the railroads changed the time in every American city. Without a law." | True and big, but abstract: no image, no paradox. "No law told them to" is kept at ~29 s. |
 | C | "One man stopped New York's master clock for 3 minutes and 58 seconds." | The best visual gag, but it means nothing without the paradox first. It comes second, at ~10 s: the share moment lands well before the ~20 s average watch time. |
 
-**First frame (reads without sound, everything in y 290-1080):** a church steeple clock at exactly 12:00, the bell mid-swing with "DONG" motion
+**First frame (reads without sound, everything in y 290-1040):** a church steeple clock at exactly 12:00, the bell mid-swing with "DONG" motion
 lines, and a workman on a ladder cranking the minute hand **backwards** (curved arrow). Below, three people in 1880s coats hold up pocket watches,
 baffled. One small tag in the safe area: **NOON?** (then "NOON. AGAIN." on the second ring). No date on the first frame.
 
@@ -61,7 +61,7 @@ SCRIPT=[
 
 ## 4. Timed storyboard (estimates; real times come from `vo/timing.json`)
 ~22 cuts in ~51 s (B2: no gap over 3.4 s except the final hold). Current toon look. Poses change only with `tween(full(A),full(B))`.
-Faces and labels above y ~1080 (big captions occupy y 1090-1235). Every cut changes set, subject or framing (B2 rule).
+Faces and labels above y ~1040 (big-caption letters sit in y ~1050-1175, as built in Stage B). Every cut changes set, subject or framing (B2 rule).
 
 | Shot / cut | ~Time | Picture | Cue |
 |---|---|---|---|
@@ -163,7 +163,7 @@ Format agreed 2026-11-13: big, centred captions of one or two words, replacing t
 - **Look:** Baloo 800, 150 px, white fill, ink stroke `size*.16`, hard ink shadow offset (6, 9), highlight colour `MARI`.
   Shrink to fit 900 px wide; never below 104 px (if a single word still doesn't fit at 104, verify fails: change the word in the script).
   The whole chunk pops in together at its first word's time minus 0.05 s: scale .7 to 1 with `E.back` over 0.12 s, no rotation. No fade out: the next chunk replaces it.
-- **Position:** centred at x 540. Baseline default **y 1200** (`SHOT_META[n].subY` still overrides per shot). At 150 px the text runs from about y 1090 to 1235:
+- **Position** (*superseded as built: baseline 1166, `capY`, see section 11*): centred at x 540. Baseline default **y 1200** (`SHOT_META[n].subY` still overrides per shot). At 150 px the text runs from about y 1090 to 1235:
   inside the Reels safe area (y < 1250), below faces. Shots must keep faces and labels above y ~1080 in this mode (stricter than the 1110 rule).
   Assumption: "centred" means centred horizontally in the caption lane, not in the middle of the picture, because the channel rule forbids text over faces.
   If Farrukh wants them mid-frame, that is one `subY` value per shot, but staging then has to leave the centre empty.
@@ -212,5 +212,37 @@ Pinned comment (sources):
 - **The second "noon twice" (line 10) repeats the hook.** It is the explanation the hook promised; keep it short.
 - **"Blame the railroads" could read as "the railroads rang the bell".** Line 10 resolves it; Stage D checks with fresh eyes.
 - **2-3 s cuts can turn into a slideshow.** Every cut needs motion in it (a gag, a camera move or a reaction); a cut to a static picture is a fail even if B2 passes.
-- **Captions at y 1090-1235 limit the lower picture.** Floors still overscan to the bottom of the frame (staging rule); just keep faces up.
+- **Captions at y ~1050-1175 limit the lower picture.** Floors still overscan to the bottom of the frame (staging rule); just keep faces up.
 - **If the voice runs long (> 57 s):** cut "One clock could do that:" (keep the rest of line 7), then the Wisconsin sentence (keep "Towns set their clocks by the sun").
+
+## 11. Stage B part 1 report (Opus 5.5, 2026-11-13, built on d97bfff)
+**Built:** B1 big captions and B2 in-shot cuts with the cadence check, both opt-in. Code: `engine/toon/10_base.js` (`capSplit`, `BIGCAPS`, `bigCapFit`,
+`bigSubs`, `cutPts`, `part`), `engine/template.html` (`film.CUTS`, `film.CAPS`, `film.part`), `engine/tools/verify.js` (`captions`, `cadence`).
+`ENGINE.md` and the `CLAUDE.md` staging rules are updated. To use them in `tn/`: `const CAP_MODE_EP='big';` in `src/meta.js`;
+`const CUT_EP={...}; const CUT_HOLD_EP=[8];` in `src/shots.js` (after the shot functions); per-shot caption height is `capY` (not `subY`).
+
+**Differences from the section 8 spec, and why (all found on a test copy of `yo` with big captions and cuts):**
+- Baseline **1166**, not 1200. SVG's text box runs ~79 px below the baseline at 150 px, so 1200 put boxes at y 1281 and `verify.js` failed.
+  At 1166 the box is y ~1004-1245 and the letters ~1050-1175. **Faces and labels stay above ~1040** (the storyboards above are updated).
+- Pop is scale .7 → 1 with `E.o` (no overshoot). With `E.back` the overshoot pushed wide chunks out to x 30-1050.
+- Words are placed one by one from measured widths (gap .34 em), so the fitted width is the drawn width (x 90-990 on the test).
+- Length limits added: a pair <= 12 characters, a short-led chunk <= 14 ("HE'D TRADEMARKED" and "FROM THE PHILIPPINES," didn't fit at 104 px).
+  If short words can't take the next word within the limit, they stand alone ("FROM THE" | "PHILIPPINES,"). Counted in characters so the
+  split doesn't depend on whether fonts have loaded.
+- Short-word list extended with from, with, as, or, if, he, she, we, they, his, her, its (a lone "FROM" / "HE" flashed for 0.2 s).
+- Merge of sub-0.25 s chunks goes **forward** when the previous chunk ends a phrase (it produced "YO-YO… HE" backwards).
+- `verify.js` treats `CUT_EP` as the opt-in for cadence: without it the gaps are printed but don't fail, so `mo`/`lb`/`yo` aren't failed for
+  their 4-8 s shots. It also runs against builds made with the old template.
+
+**Test results (on the throwaway `yo` copy, deleted):** 82 chunks, max 3 words, 0 rule breaks, 0 too wide, smallest 122 px, 0 frames outside the
+safe area, every word covered, determinism 60/60. Two warnings (chunks under 0.25 s that can't merge without overflowing): fine as warnings.
+Contact sheet checked: captions read big and centred, clear of the Reels bands. `part()` and `film.CUTS` checked against word times
+(word prefix, `[word, offset]`, seconds, and a shot without cuts).
+
+**Regression:** `compare.js` 0 of 24 frames different on `mo`, `lb`, `yo`; stronger check, the full SVG markup of every frame at 10 fps is identical
+(`mo` 550, `lb` 607, `yo` 523 frames). `verify.js`: `mo` PASS, `yo` PASS; `lb` FAIL as before (512 subtitle frames below the safe area + 20 reach misses,
+identical on the old build; already noted in `CLAUDE.md`).
+**renderMs on `yo`** (verify.js, ms per frame, 3 runs each): before 1.23 / 1.27 / 1.40; after 1.15 / 1.01 / 1.22. No slowdown (the spread is noise).
+
+**Not checked:** big captions with `tn`'s own narration (there is no `tn` voice track yet; Stage C sees the real chunk list in `verify.js` → `captions`);
+the caption look at full speed in motion (only stills were checked).

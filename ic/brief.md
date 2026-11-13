@@ -29,7 +29,7 @@ Boston-to-India link for the India audience.
 | B | "How do you ship ice to India with no refrigerator?" | A question opener is weaker than a fact, and "no refrigerator" is the second line anyway. |
 | C | "Calcutta's first ice came from a pond near Boston." | Charming, but it gives away the place twist and states no problem to solve. |
 
-**First frame (reads without sound, everything in y 290-1080):** a ship's deck at noon in the tropics, white-hot painted sky, glittering sea.
+**First frame (reads without sound, everything in y 290-1040):** a ship's deck at noon in the tropics, white-hot painted sky, glittering sea.
 A big translucent block of ice sits on the deck with cold mist rolling off it; a sweating sailor hugs it. Small tag top-left in the safe area: **1833**.
 No other text. The premise: ice + equator.
 
@@ -61,7 +61,7 @@ SCRIPT=[
 
 ## 4. Timed storyboard (estimates; real times come from `vo/timing.json`)
 ~22 cuts in ~56 s. **P** = painted layer (canvas), **S** = SVG (rig, props, labels). Every cut changes set, subject or framing (rule in `tn/brief.md` B2).
-Poses change only with `tween(full(A),full(B))`. Faces and labels above y ~1080 (big captions sit at y 1090-1235).
+Poses change only with `tween(full(A),full(B))`. Faces and labels above y ~1040 (big-caption letters sit in y ~1050-1175, as built in Stage B; see `tn/brief.md` section 11).
 
 | Shot / cut | ~Time | Picture | Cue |
 |---|---|---|---|

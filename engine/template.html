@@ -474,7 +474,12 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 {{COVER}}
-window.film={renderCover,renderAt,TOTAL,SHOTS,SEQ,SUBS,CUES,DBG,seek,play,pause,state:PL,renderSfxOffline};
+/* B2: every cut in the film (SEQ starts + in-shot cuts from CUT_EP), absolute seconds. Episodes without CUT_EP get the SEQ starts only. */
+const CUTS=(()=>{ const c=SEQ.map(q=>q.start); if(typeof CUT_EP!=='undefined'&&typeof cutPts==='function') for(const n of Object.keys(CUT_EP)) for(const p of cutPts(+n)) c.push(S(+n)+p);
+  return [...new Set(c.map(x=>+x.toFixed(3)))].sort((x,y)=>x-y); })();
+window.film={renderCover,renderAt,TOTAL,SHOTS,SEQ,SUBS,CUES,DBG,seek,play,pause,state:PL,renderSfxOffline,CUTS,part:typeof part==='function'?part:null,
+  CUT_OPT:typeof CUT_EP!=='undefined', CUT_HOLD:typeof CUT_HOLD_EP!=='undefined'?CUT_HOLD_EP:[],
+  CAPS:{mode:typeof CAP_MODE!=='undefined'?CAP_MODE:'line', chunks:typeof BIGCAPS!=='undefined'?BIGCAPS:[], fit:typeof bigCapFit==='function'?bigCapFit:null, ok:typeof capOk==='function'?capOk:null, min:typeof BIGCAP!=='undefined'?BIGCAP.min:0}};
 if(/[?&]export\b/.test(location.search)){ document.body.classList.add('export'); startBtn.hidden=true; }
 function boot(){ mcache.clear(); renderAt(3.9); PL.t=0; updateUI(); setPlayIcon(); setMuteIcon(); requestAnimationFrame(frame); }
 (document.fonts&&document.fonts.load?Promise.all(['100px Anton','40px Fell'].map(f=>document.fonts.load(f))).catch(()=>{}):Promise.resolve()).then(boot);

@@ -18,8 +18,12 @@ Update this file in the same change as any engine change. Rules and history are 
 Environment: `TTS_DIR`, `ASSETS_DIR` (default `assets/`), `CHROMIUM_PATH`, `WORKERS` (export browsers, default 2), `FPS`, `W`.
 
 `verify.js` checks: (1) determinism, any frame renders the same whatever was drawn before; (2) reach, no hand or foot
-target more than 6 units beyond the limb; (3) subtitles inside x 65-1015 / y 270-1250 and every narrated word covered.
+target more than 6 units beyond the limb; (3) subtitles inside x 65-1015 / y 270-1250 and every narrated word covered;
+(4) `captions` (big mode only): FAIL on a chunk that breaks the rules (`ruleBreaks`) or can't fit at 104 px (`tooWide`), WARN `under025`;
+(5) `cadence`: the gaps between `film.CUTS`. Enforced only when the episode declares `CUT_EP`: FAIL on a gap over 3.4 s (4.5 s in
+`CUT_HOLD_EP` shots), WARN `gapsOver3` / `gapsUnder1`. Without `CUT_EP` it is printed for information. Also prints `renderMs`.
 It does not check labels, faces or props against the safe area: look at a `SAFE=1` sheet for those.
+It also does not judge whether a cut changes the picture: put frames 0.1 s before and after every cut on a contact sheet.
 
 ## Frame and timing (engine/template.html)
 - Frame is 1080x1920. `renderAt(t)` draws any time from scratch. `S(n)` / `SE(n)` = start / end of shot n.
@@ -34,6 +38,17 @@ It does not check labels, faces or props against the safe area: look at a `SAFE=
 - `ttl(text,x,y,size,fill,{k,rot})` title type; `tag(text,x,y,size,bg,fg,{k,rot})` label; `stampMark(x,y,[lines],col,k,rot,size)`.
 - `wob(u,t0,amp,f,d)` damped wobble; `shakeV(u,t0,amp,dur)` + `jolt(v,svg)` impact shake.
 - Subtitles `mySubs(t)`: one line, word pop, y from `SHOT_META[n].subY`, width limit `SUB_MAXW_EP`, number words merged by `MERGE_EP`.
+- **Big captions** (`CAP_MODE_EP='big'` in `meta.js`; `mySubs` then draws `bigSubs`): 1-2 words, Baloo 800 at 150 px (shrinks to fit 900 px,
+  never below 104), centred at x 540, baseline `SHOT_META[n].capY` (default **1166**; the old `subY` is ignored in this mode). The text box is
+  y ~1004-1245 at full size; the letters sit in ~1050-1175, so faces and labels stay above ~1040. Highlights (`*word*`) in gold.
+  Chunk rules (see the comment in `10_base.js`): a highlighted word stands alone (short words may lead it); words pair up; punctuation ends a chunk;
+  short words (`CAP_SHORT`) never stand alone, they take the next word (3 words max, first two short); a pair is <= 12 characters and a
+  short-led chunk <= 14; a chunk under 0.25 s merges forward (if the previous ends a phrase) or backward when the result still fits.
+  Pop: scale .7 -> 1 over 0.12 s, no overshoot. Chunks are on `film.CAPS.chunks`.
+- **In-shot cuts** (`CUT_EP` in `shots.js`): `const CUT_EP={3:['nineteen',['own',-.1],2.4]}` per narrated shot: word prefix (`cu`), `[word, offset]`
+  or seconds into the shot. In the shot: `const P=part(3,u)` gives `{i, pu, p0, p1}` (sub-shot index, time into it, its bounds in shot seconds);
+  switch the set/framing on `P.i`. `film.CUTS` = every `SEQ` start + every cut point (absolute s). `CUT_HOLD_EP=[n]` allows the final hold up to 4.5 s.
+  A cut must change the set, the subject, or the framing (>= 1.4x zoom or a reversed angle); a slow push is not a cut.
 
 **20_rig.js**
 - `toon(who,x,y,scale,dir,pose,t,seed)`; feet at (x,y), figure ~340 units tall, `dir` 1 faces right, -1 left.

@@ -42,7 +42,7 @@ const MYSUBS=[]; SHOTS.forEach((s,si)=>s.lines.forEach((l,li)=>{ const ws=SUBW[s
   const nl=s.lines[li+1], end=Math.min(l.v0+l.vd+.4, nl?nl.v0-.04:SE(s.n)-.03);
   ch.forEach((c,ci)=>MYSUBS.push({shot:s.n,t0:c[0].t-.06,t1:ch[ci+1]?ch[ci+1][0].t-.06:end,words:c})); }));
 const MYSUB_MAXW=typeof SUB_MAXW_EP!=='undefined'?SUB_MAXW_EP:900;   // widest subtitle line (px); episodes may narrow it in src/meta.js
-function mySubs(t){ const c=MYSUBS.find(c=>t>=c.t0&&t<c.t1); if(!c) return ''; const sy=SHOT_META[c.shot-1].subY, pos=typeof sy==='function'?sy(t-S(c.shot)):(sy||1440);
+function mySubs(t){ if(CAP_MODE==='big') return bigSubs(t); const c=MYSUBS.find(c=>t>=c.t0&&t<c.t1); if(!c) return ''; const sy=SHOT_META[c.shot-1].subY, pos=typeof sy==='function'?sy(t-S(c.shot)):(sy||1440);
   let size=88; const words=c.words.map(w=>({s:w.w.toUpperCase().replace(/[“”]/g,'"'),hl:w.hl,t:w.t}));
   const sp=size*.28; let tot=words.reduce((a,w)=>a+tW(w.s,size)+sp,-sp); if(tot>MYSUB_MAXW){ size*=MYSUB_MAXW/tot; tot=MYSUB_MAXW; }
   let x=540-tot/2, g='';
@@ -51,3 +51,60 @@ function mySubs(t){ const c=MYSUBS.find(c=>t>=c.t0&&t<c.t1); if(!c) return ''; c
       g+=`<g transform="translate(${N(cx)} ${pos}) scale(${N(sc*100)/100}) rotate(${N((1-k)*-4)})" opacity="${op(k*2)}"><text x="4" y="7" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${N(size)}" fill="${INK}" stroke="${INK}" stroke-width="${N(size*.2)}" stroke-linejoin="round">${esc(w.s)}</text><text class="cap" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${N(size)}" fill="${w.hl?MARI:'#fffaf0'}" stroke="${INK}" stroke-width="${N(size*.16)}" stroke-linejoin="round" paint-order="stroke fill">${esc(w.s)}</text></g>`; }
     x+=ww+sp; }
   return g; }
+/* ============================== big chunk captions (B1, opt-in: CAP_MODE_EP='big' in src/meta.js)
+   One or two words at a time, 150 px, centred at x 540, baseline SHOT_META[n].capY (default 1166: the text box,
+   which runs ~79 px below the baseline at 150 px, then ends at ~1245, inside verify's y 1250 limit; the letters themselves sit in ~y 1050-1175). Same SUBW words as mySubs,
+   so MERGE_EP numbers and *highlights* still work. Rules, in order:
+   1. A highlighted word stands alone (short words in front of it may join it: "THE RAILROADS").
+   2. Otherwise words pair up; a chunk ends at punctuation.
+   3. A short word (CAP_SHORT) doesn't stand alone: it takes the next word, so a chunk is 3 words only when its first two are short ("WITH A CLOCK").
+   4. Length limits so chunks stay big: a pair <= 12 characters, a chunk led by short words <= 14. If short words can't take the next word
+      within that, they stand as their own chunk ("FROM THE" | "PHILIPPINES,").
+   5. A chunk under 0.25 s merges forward (if the previous chunk ends a phrase) or backward, when the result still follows 3 and 4;
+      otherwise it stays and verify.js warns. */
+const CAP_MODE=typeof CAP_MODE_EP!=='undefined'?CAP_MODE_EP:'line';
+const CAP_SHORT=new Set(['a','an','the','of','to','in','on','at','and','but','so','by','for','it','is','was','from','with','as','or','if','he','she','we','they','his','her','its']);
+const BIGCAP={size:150,min:104,maxw:900,y:1166,minDur:.25,pairChars:12,maxChars:14};
+const capEnds=w=>/[,.?!…:;]$/.test(w.w), capShort=w=>CAP_SHORT.has(normW(w.w))&&!capEnds(w);
+const capOk=c=>c.length<=2||(c.length===3&&capShort(c[0])&&capShort(c[1]));
+const capChars=c=>c.map(w=>w.w).join(' ').length, capFits=c=>capOk(c)&&(c.length<2||capChars(c)<=(c.length===2&&!capShort(c[0])?BIGCAP.pairChars:BIGCAP.maxChars));
+function capSplit(ws){ const out=[]; let i=0;
+  while(i<ws.length){ const c=[ws[i++]];
+    while(capShort(c[c.length-1])&&c.every(capShort)&&i<ws.length&&c.length<3&&capFits([...c,ws[i]])) c.push(ws[i++]);    // leading short words take the next word (if it fits)
+    const last=c[c.length-1];
+    if(c.length<2&&!capEnds(last)&&!last.hl&&i<ws.length&&!ws[i].hl&&(!capShort(ws[i])||i+1>=ws.length)
+       &&capFits([last,ws[i]])) c.push(ws[i++]);   // pair only if it fits big (character count, so it doesn't depend on font loading)
+    out.push(c); }
+  return out; }
+const BIGCAPS=[]; if(CAP_MODE==='big') SHOTS.forEach((s,si)=>s.lines.forEach((l,li)=>{ const ch=capSplit(SUBW[si][li]);
+  const nl=s.lines[li+1], end=Math.min(l.v0+l.vd+.4, nl?nl.v0-.04:SE(s.n)-.03), rows=[];
+  ch.forEach((c,ci)=>rows.push({shot:s.n,t0:c[0].t-.05,t1:ch[ci+1]?ch[ci+1][0].t-.05:end,words:c}));
+  const fits=capFits;
+  for(let k=0;k<rows.length;k++){ const r=rows[k]; if(r.t1-r.t0>=BIGCAP.minDur||rows.length<2) continue;   // merge chunks too short to read:
+    const pv=rows[k-1], nx=rows[k+1], back=pv&&[...pv.words,...r.words], fwd=nx&&[...r.words,...nx.words];   // forward if the previous chunk
+    const pvEnds=pv&&capEnds(pv.words[pv.words.length-1]);                                                 // ends a phrase, else backward
+    if(nx&&(pvEnds||!pv||!fits(back))&&!capEnds(r.words[r.words.length-1])&&fits(fwd)){ nx.words=fwd; nx.t0=r.t0; rows.splice(k--,1); }
+    else if(pv&&!pvEnds&&fits(back)){ pv.words=back; pv.t1=r.t1; rows.splice(k--,1); } }
+  BIGCAPS.push(...rows); }));
+/* fitted size of a chunk: shrink to BIGCAP.maxw, never below BIGCAP.min (fit:false means the words don't fit: change the script) */
+function bigCapFit(c){ const words=c.words.map(w=>({s:w.w.toUpperCase().replace(/[“”]/g,'"'),hl:w.hl}));
+  let size=BIGCAP.size; const sp=()=>size*.34, tot=()=>words.reduce((a,w)=>a+tW(w.s,size)+sp(),-sp());
+  let w=tot(); if(w>BIGCAP.maxw){ size=Math.max(BIGCAP.min,size*BIGCAP.maxw/w); w=tot(); }
+  return {words,size,w,fit:w<=BIGCAP.maxw+.5}; }
+function bigSubs(t){ const c=BIGCAPS.find(c=>t>=c.t0&&t<c.t1); if(!c) return '';
+  const m=SHOT_META[c.shot-1]||{}, y=m.capY!=null?(typeof m.capY==='function'?m.capY(t-S(c.shot)):m.capY):BIGCAP.y;
+  const {words,size,w}=bigCapFit(c), k=sat((t-c.t0)/.12), sc=lerp(.7,1,E.o(k)), sp=size*.34;   // pop without overshoot: the box never exceeds its fitted width
+  const at=`text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="${N(size)}" stroke-linejoin="round"`; let x=-w/2, g='';
+  for(const wd of words){ const ww=tW(wd.s,size), cx=x+ww/2;
+    g+=`<text ${at} x="${N(cx+6)}" y="9" fill="${INK}" stroke="${INK}" stroke-width="${N(size*.2)}">${esc(wd.s)}</text><text class="cap" ${at} x="${N(cx)}" y="0" fill="${wd.hl?MARI:'#fffaf0'}" stroke="${INK}" stroke-width="${N(size*.16)}" paint-order="stroke fill">${esc(wd.s)}</text>`;
+    x+=ww+sp; }
+  return `<g transform="translate(540 ${N(y)}) scale(${N(sc*1000)/1000})">${g}</g>`; }
+/* ============================== in-shot cuts (B2, opt-in: CUT_EP in src/shots.js)
+   CUT_EP={3:['nineteen',['own',-.1],2.4]}: per narrated shot, cut points as a word prefix (cu), [word, offset] or seconds into the shot.
+   part(n,u) -> {i, pu, p0, p1}: which sub-shot of shot n the time u falls in, time into it, and its bounds (seconds into the shot).
+   The template collects SEQ starts + these points into film.CUTS, which verify.js checks for cadence. */
+const CUT_PTS={};
+function cutPts(n){ if(CUT_PTS[n]) return CUT_PTS[n]; const L=(typeof CUT_EP!=='undefined'&&CUT_EP[n])||[];
+  return CUT_PTS[n]=L.map(c=>typeof c==='number'?c:Array.isArray(c)?cu(n,c[0])+c[1]:cu(n,c)).sort((a,b)=>a-b); }
+function part(n,u){ const p=cutPts(n), len=SE(n)-S(n); let i=0; while(i<p.length&&u>=p[i]) i++;
+  const p0=i?p[i-1]:0, p1=i<p.length?p[i]:len; return {i,pu:u-p0,p0,p1}; }

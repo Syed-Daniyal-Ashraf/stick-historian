@@ -29,7 +29,7 @@ assets/                   fonts (OFL), tts model, CC0 sample libraries (created 
 mo/   Monopoly / Lizzie Magie (2026-11) - CURRENT STANDARD: safe-area staging, pose tweens, one-tempo score
 lb/   Lal Bihari "dead for 18 years" (2026-11) - same kit; its subtitles still sit below the safe area (verify.js reports it)
 yo/   Pedro Flores and the word "yo-yo" (2026-11) - FINISHED (Stage D): final MP4 + cover + caption, waiting on Farrukh's listening check (yo/brief.md section 11)
-tn/   The Day of Two Noons (1883) - FORMAT TEST ep. 1, Stage A done 2026-11-13 (tn/brief.md); needs Stage B part 1 (big captions, cut cadence) before Stage C
+tn/   The Day of Two Noons (1883) - FORMAT TEST ep. 1, Stage A + Stage B part 1 (big captions, cut cadence) done 2026-11-13 (tn/brief.md); next: Stage C
 ic/   Ice to Calcutta (1833) - FORMAT TEST ep. 2, rich painted look, Stage A done 2026-11-13 (ic/brief.md); built after tn, needs Stage B part 2 (painted layer)
 px/ r2/ rc/               older stick-rig episodes with their own tool copies. Leave as they are.
 ```
@@ -42,6 +42,8 @@ Do not redeclare `world`, `capsEl` or `SUB_MAXW` in episode code; the template o
 - **Safe area.** The Reels interface covers the top 270 px and everything below 1250 px. Picture that matters sits in
   y 290-1110; the subtitle is one line with its baseline at 1190; below that only floor or paper. `verify.js` fails
   the build if a subtitle leaves x 65-1015 / y 270-1250. Check labels and faces with `SAFE=1` contact sheets.
+- **Big-caption episodes** (`CAP_MODE_EP='big'`, the format test `tn`/`ic` onward): the caption is 1-2 words at 150 px, baseline 1166,
+  letters in ~y 1050-1175. Faces and labels stay in y 290-1040 there. New shot every 2-3 s via `CUT_EP` (`verify.js` enforces gaps <= 3.4 s).
 - **Fill the frame.** Floors and walls must overscan to the bottom of the frame at any zoom (check the last 60 px of a sheet).
   Split-screen panels run past the subtitle (y 130-1530) with the action kept in y 300-1110. Never leave the lower third one flat colour.
 - **No clumps.** Two or three small figures need a head-width of space each; three overlapping copies read as a glitch.
