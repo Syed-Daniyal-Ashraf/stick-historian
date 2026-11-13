@@ -1,0 +1,157 @@
+# yo/ - Pedro Flores and the word "yo-yo" (brief)
+
+Stage A done 2026-11-13 (Opus 5.5). Next: Stage C (Build), Sonnet 5.5, medium effort.
+Read `CLAUDE.md` and `ENGINE.md` first; this brief only adds what is specific to this episode.
+
+## 1. The story in one line
+A Filipino immigrant made America love the yo-yo, an American company ended up owning the word,
+and in 1965 a court took it back. Part of the court's evidence was the company owner's own words from 1931.
+Pedro Flores had died the year before.
+
+Same shape as Monopoly (`mo/`): an everyday object, an unknown creator, someone else owns it, an ironic ending.
+
+## 2. Hook audit
+| Option | Line | Verdict |
+|---|---|---|
+| **A (chosen)** | "A Filipino immigrant got America hooked on the yo-yo. An American company ended up owning the *word*." | Two people in contrast in the first 5 s, like Monopoly's opener. "Owning a word" makes people want to know how. Keeps the court twist for the end. |
+| B | "In 1965, a court ruled a toy company never owned its most famous word." | Accurate but cold: no person, no feeling. |
+| C | "This toy's name came from the Philippines. An American company spent 30 years claiming it." | Spoils the payoff in second 3. |
+
+**First frame (must read with no sound, all inside y 290-1110):** a split screen. On the left, Pedro in his bellboy
+uniform, a yo-yo "asleep" (spinning) at the end of its string, with motion lines. On the right, Duncan in his suit
+hugging a giant 3D word **YO-YO** with a big **®** on it. No other text. The premise is a man with the toy against
+a man holding the *word*.
+
+## 3. Narration (paste into `yo/vo/gen.py` SCRIPT)
+132 words. Estimated 50-54 s at Monopoly's pace (140 words came to 55 s). Inside the 45-60 s target.
+```python
+SCRIPT=[
+ (1,'N',"A Filipino immigrant got America hooked on the *yo-yo.*",1.0,.0),
+ (1,'N',"An American company ended up owning the *word.*",1.0,.15),
+ (2,'N',"Pedro Flores worked in a California *hotel.*",1.03,.0),
+ (2,'N',"From the *Philippines,* he knew a trick: a looped string that let it *sleep.*",1.02,.05),
+ (3,'N',"In *nineteen twenty-eight,* he opened his own yo-yo company.",1.04,.0),
+ (3,'N',"The next year: *three factories.*",1.0,.05),
+ (4,'N',"He'd trademarked the name: *Flores Yo-Yo.*",1.02,.0),
+ (4,'N',"When businessman *Donald Duncan* tried to trademark *Yo-Yo*… he was *rejected.*",1.04,.05),
+ (5,'N',"So Duncan *bought him out.* The company… and the *name.*",1.0,.0),
+ (5,'N',"Pedro stayed on, showing kids tricks… with *Duncan* yo-yos.",1.0,.1),
+ (6,'N',"Decades later, Duncan sued a rival over the word… and *lost.*",1.03,.0),
+ (7,'N',"The court ruled *yo-yo* was a *Philippine* word. Nobody could own it.",1.02,.0),
+ (8,'N',"Part of the evidence? Duncan's *own* words, from *nineteen thirty-one.*",1.0,.0),
+ (9,'N',"Pedro Flores never heard the ruling.",.96,.0),
+ (9,'N',"He had died the year *before.*",.92,.3),
+]
+```
+- `MERGE_EP`: "nineteen twenty-eight" → 1928, "nineteen thirty-one" → 1931.
+- Pronunciation to check in `vo/raw*.wav`: "Flores" (FLOR-es), "Yo-Yo" in the middle of a sentence, and "Philippine".
+- Don't speed lines up to hit timing (channel rule). If it runs long, use the cuts in section 9.
+
+## 4. Storyboard (times are estimates; real times come from `vo/timing.json`)
+Every shot needs a gag, a reveal or a camera move. Poses change only with `tween(full(A),full(B))`.
+
+| Shot | ~Time | Picture | Cues (`cu`) |
+|---|---|---|---|
+| 1 Hook | 0-5.5 | Opens on the first frame above (`panelBox` split, like `mo` sh4). On "hooked", the left panel fills with small kids, each with a yo-yo bobbing in time. On "company", a quick push to the right panel: Duncan hugs the word, and the ® stamps on at "word". In the left panel, Pedro's yo-yo zips back to his hand and his smile drops. | hooked, company, word |
+| 2 Hotel | 5.5-12.5 | Santa Barbara hotel lobby (palm, bell desk, revolving door). Pedro carries a wobbling tower of suitcases. At "Philippines", a thought-bubble wipe to a sunny Philippine yard (house on stilts, palm) with kids playing with yo-yos. At "looped", an extreme close-up of the axle: the knot slides into a loop. At "sleep", the yo-yo spins at the bottom wearing a tiny nightcap with "z z z". Back in the lobby, guests lean in. | hotel, philippines, looped, sleep |
+| 3 Company | 12.5-17.5 | A painted sign: YO-YO MANUFACTURING CO. · SANTA BARBARA · 1928. Pedro turns one yo-yo by hand at a bench. At "three", the camera pulls back fast and three factories pop up (`burst`) with yo-yo-shaped smoke rings and a conveyor of yo-yos. | twenty, three |
+| 4 Rejected | 17.5-24 | Patent Office counter. Pedro's certificate **FLORES YO-YO** gets a REGISTERED · 1930 `stampMark` and is pinned to the wall. Duncan slides his form **YO-YO** across the counter. The examiner looks at the wall and stamps REJECTED in red at "rejected", and Duncan's hat pops up. | trademarked, duncan, rejected |
+| 5 Bought out | 24-31.5 | Duncan pushes a money bag across the desk (**no figure shown**: the price is disputed). At "name", a roller paints FLORES out letter by letter and DUNCAN in. Then a street corner: Pedro wears a DUNCAN sash and shows kids a trick. A kid holds up the label, DUNCAN, and Pedro's grin tightens (smile → tight, tweened). | bought, name, duncan |
+| 6 Lawsuit | 31.5-36 | Calendar pages flip from 1932 to 1965 while Duncan greys (`grey` only goes up). Courtroom (reuse `courtroom()` from `mo`). Duncan points at a rival holding a box marked ROYAL. At "lost", the gavel lands and the ® cracks off the giant word. | rival, lost |
+| 7 Ruling | 36-40.5 | The judge (`TC.judge`) holds up a yo-yo. At "Philippine", the letters Y-O-Y-O lift off the word. At "own", the letters float out of the courtroom window and get caught by kids outside. | philippine, own |
+| 8 Evidence | 40.5-45 | A lawyer slides an old yellow document out of a file (adapt `censusForm`). Push in on a typed excerpt (exact wording: see section 6), signed by Duncan. At "own", Duncan's jaw drops. | evidence, own, thirty |
+| 9 Ending | 45-51 | Quiet; the music drops to `hush`. The empty hotel bell desk, with a framed toon portrait marked **PEDRO FLORES** (**no years**: see section 6). A yo-yo hangs from the frame corner, spinning asleep and slowing. At "before", it rolls back up the string. Hold for 1 s. No follow plug. | ruling, before |
+
+Cover: `COVER_T` ≈ 1.5 s (the split first frame).
+
+## 5. Sound
+- One tempo for the whole film (staging rule); 108 bpm like `mo` is fine.
+- Jazz-age upright piano (VSCO), with pizzicato strings for yo-yo bounces, timed to the string moving up and down.
+- Sections: 1 `rag` → 2 `soft`, then `pizz` at "trick" → 3 `rag` → 4 `pizz` with a stinger on REJECTED → 5 `roll`, then `sad` on the
+  Duncan-sash beat → 6-7 `tense` → 8 `roll` (reveal) → 9 `hush` → `out`.
+- Foley (CC0 only, listed in `episode.json` → `foot`): yo-yo string zip and whirr, hotel desk bell, stamp thud ×2, money-bag
+  thump, paint-roller swish, gavel (from `mo`), paper slide. **No vocal foley** (crowd "ooh" and so on), because of the voices rule.
+- If VSCO 2 CE has a CC0 plucked-string sample that could suggest a Filipino rondalla for Pedro's theme, try it.
+  If it doesn't, use pizzicato.
+
+## 6. Facts and source tiers
+**Established (primary or several independent sources):**
+- Flores came to the US in 1915. (encyclopedia.com/IDCH; SFSU APIA; Wikipedia)
+- He opened his yo-yo company in Santa Barbara in 1928. (encyclopedia.com: June 9, 1928; Wikipedia via Hirahara 2003; Smithsonian: "by early 1929")
+- His slip-string loop instead of a knot let the yo-yo "sleep". (Lienhard, UH *Engines of Our Ingenuity* #2796; Wikipedia; SFSU)
+- Flores Yo-Yo Corporation registered "Flores Yo-Yo" on **July 22, 1930**. (*Duncan v. Royal Tops*, 343 F.2d 655, 7th Cir. 1965)
+- Duncan Sr.'s first application was **rejected because of "Flores Yo-Yo"**. (same opinion)
+- On **Dec 19, 1931**, Duncan Sr. told the Patent Office the term is "used in the Philippine Islands". (same opinion, quoting his filing)
+- Duncan acquired the Flores registration by assignment (same opinion) and Flores's remaining assets, including the trademark,
+  by Oct 1932. (Smithsonian)
+- Decided May 4, 1965: "Yo-Yo" is "a descriptive term and not entitled to trademark protection", and the toy was "in use in
+  the Philippines" long before the US. (same opinion)
+- Flores died in **1964** (Wikipedia, SFSU, Positively Filipino all give 1964). The month is disputed (January or June), so the narration gives no month.
+
+**Reported or dramatised (fine as worded):**
+- "Got America hooked" = popularised (UH). Duncan's advertising turned it into the national craze (UH), which the script shows from shot 5.
+- "Worked in a California hotel": encyclopedia.com says bellboy in Santa Barbara; UH says porter at a Santa Monica hotel.
+  The narration stays general and the uniform is illustration.
+- "Three factories" by the end of 1929 (encyclopedia.com; Wikipedia lists Santa Barbara, Los Angeles and Hollywood).
+- After the sale, Flores promoted and demonstrated for Duncan (UH; encyclopedia.com; Wikipedia via Hirahara).
+  "Showing kids tricks" dramatises this.
+- "From the Philippines, he knew a trick" is an inference: the court says the toy was used there first, and sources call the
+  loop a Filipino technique.
+
+**Deliberately left out:**
+- Sale price: sources say $5,000 for first rights (Smithsonian), "more than $250,000" (encyclopedia.com, Positively Filipino)
+  and $750,000 (ThoughtCo). They conflict, so no number appears on screen.
+- Both companies going bankrupt from legal costs (single source: encyclopedia.com).
+- "Yo-yo means *come back*". That gloss came from Duncan's own 1931 filing, and linguists disagree (Merriam-Webster: probably Ilocano;
+  another view: Chinese). The narration attributes "Philippine word" to **the court**, which is exactly what it ruled.
+- Flores as *inventor* of the yo-yo (false: the toy is ancient), the weapon myth, and the Rizal anecdote.
+- Flores's birth year (1896 appears only in uncited sources), so the portrait in shot 9 shows his name only.
+
+**On-screen quote in shot 8 must be verbatim.** Copy it from the opinion text, not from this brief:
+https://law.justia.com/cases/federal/appellate-courts/F2/343/655/109434/ (the Dec 19, 1931 response; start of the sentence:
+"the applicant understands the term 'Yo-Yo' is used in the Philippine Islands"). Check the exact punctuation there.
+
+## 7. Production plan
+**Reuse:** `stage()`, `under()`, `panelBox()` (copy from `mo/src/shots.js`); `courtroom()`, `TC.judge`, `censusForm()` and `check()`
+pattern from `mo/src/props.js`; `stampMark`, `tag`, `ttl`, `burst`, `wob`, `shakeV` from the toon kit; costumes `darrow`,
+`exec`, `pal` and `clerk` as starting points to recolour.
+
+**New, episode-level (`yo/src/props.js`):**
+- `yoyo(hx,hy,u,mode)`: string from the hand point to the yo-yo, with modes `drop`, `sleep` (spin with motion lines), `return` and `walk`.
+  Work out the hand point from the pose target in world space: `[x + hF[0]*s*dir, y + hF[1]*s]`. Keep targets within reach
+  (~114 units); `verify.js` lists misses.
+- Sets: `hotelLobby`, `philYard`, `factoryRow`, `patentCounter`, `duncanOffice` (recolour `parkerOffice`), `streetCorner`.
+- Costumes: `pedroBell` (maroon jacket, gold belt, black hair, `young:true`), `pedroSuit` (same face, tan suit),
+  `duncan`, `examiner`, `rival` (flat cap), and kids (`young:true`).
+  **Make Duncan clearly different from Monopoly's Darrow** (Darrow = fedora + thin moustache). Use a lighter fedora, round glasses,
+  a bow tie, no moustache and a heavier build.
+
+**Engine changes: none required.** Two optional, small and additive changes, fine to do inside Stage C (no Stage B chat needed):
+1. A bellboy pillbox hat. Try `cap:'topi'` recoloured maroon with a gold band first. Only if that doesn't read as a bellboy hat,
+   add `cap:'pillbox'` in `engine/toon/20_rig.js`.
+2. `courtroom()` + `TC.judge` are now used twice. Move them into `engine/toon/30_world.js` and remove the copy from `mo`.
+For either change, rebuild `mo` and `lb`, run `node engine/compare.js old.html new.html`, and update `ENGINE.md` in the same commit.
+
+**Files Stage C creates:** `yo/episode.json`, `yo/src/{meta,props,shots,defs}`, `yo/vo/*` (copy `mo/vo/` as the template).
+Suggested `episode.json`: title "He Gave America the Yo-Yo. Duncan Owned the Word.", out `yoyo-flores`,
+file `YoYo-Pedro-Flores`.
+
+## 8. Caption and pinned comment (draft)
+Caption: *He sold America the yo-yo craze. Then someone else owned the word. 🪀*
+(a question for the comments is optional, e.g. "Did you know the word came from the Philippines?")
+
+Pinned sources comment:
+- Court ruling: Donald F. Duncan, Inc. v. Royal Tops Mfg. Co., 343 F.2d 655 (7th Cir. 1965)
+- Smithsonian: Yo-Yo History in America
+- Lienhard, "The Yo-Yo", Engines of Our Ingenuity #2796 (Univ. of Houston)
+- Encyclopedia.com: Duncan Toys Company (International Directory of Company Histories)
+- Note: Flores popularised the yo-yo in the US; he didn't invent it (the toy is ancient). Where the word comes from is debated;
+  the 1965 court called it a Philippine word.
+
+## 9. Risks and fallbacks
+- **Duncan appears late (~17-20 s) apart from the hook.** The hook already shows him in second 3. If the rough cut feels slow in
+  shots 2-3, cut "The next year: three factories." first (-2 s), then shorten the Philippines thought bubble.
+- **The yo-yo string is the hardest new thing to animate.** Build `yoyo()` first, check it on a 0.1 s strip, then build the shots.
+- **Too much text:** shots 4-5 and 8 carry signs, stamps and a document. Keep one text layer at a time, and check with `SAFE=1`.
+- **Comment pushback is likely on "inventor".** The script never says he invented it, and the pinned comment says so.
+- **The ending must stay quiet, not sentimental:** no tears or sad faces, just the empty desk and the yo-yo coming back.

@@ -28,6 +28,7 @@ build/fonts.css           embedded fonts (Anton, Fell, Fraktur, Baloo 2, Kalam, 
 assets/                   fonts (OFL), tts model, CC0 sample libraries (created by scripts/setup.sh)
 mo/   Monopoly / Lizzie Magie (2026-11) - CURRENT STANDARD: safe-area staging, pose tweens, one-tempo score
 lb/   Lal Bihari "dead for 18 years" (2026-11) - same kit; its subtitles still sit below the safe area (verify.js reports it)
+yo/   Pedro Flores and the word "yo-yo" (2026-11) - IN PRODUCTION: Stage A brief done (yo/brief.md), Stage C next
 px/ r2/ rc/               older stick-rig episodes with their own tool copies. Leave as they are.
 ```
 An episode folder holds only what is its own: `episode.json` (title, `out` html name, `file` mp4 name), `src/meta.js`
@@ -93,4 +94,4 @@ This is the single results log. Don't keep a second copy anywhere else (includin
   Confirmed (Farrukh, 2026-11-10): the 1904 Olympic Marathon was already made and already has these metrics. It is not a planned story.
 - `lb` (Lal Bihari) was the first video to generate shares, after the rig was rebuilt with expressive faces/poses and real CC0 audio replaced synthesized sound. Full metrics not yet recorded — add at the next 72h/7-day review instead of estimating.
 - Account-wide profile visits: 23 (not necessarily attributable to any one Reel).
-- Biggest audiences are the USA, India and the Philippines. Planned next stories: Philippines, the staged "mock" Battle of Manila (1898); USA, a story still to be picked (the Olympic Marathon above is already done, not a candidate).
+- Biggest audiences are the USA, India and the Philippines. Philippines: Pedro Flores and the yo-yo is in production (`yo/`). Backlog: the staged "mock" Battle of Manila (1898). USA: Kellogg brothers' fight over their own name was pitched and is the front-runner (the Olympic Marathon above is already done, not a candidate). India: Sake Dean Mahomed, "Shampooing Surgeon" to George IV, was pitched; note the word "shampoo" was in English from 1762, before him.
