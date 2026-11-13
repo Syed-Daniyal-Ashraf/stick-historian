@@ -28,7 +28,7 @@ build/fonts.css           embedded fonts (Anton, Fell, Fraktur, Baloo 2, Kalam, 
 assets/                   fonts (OFL), tts model, CC0 sample libraries (created by scripts/setup.sh)
 mo/   Monopoly / Lizzie Magie (2026-11) - CURRENT STANDARD: safe-area staging, pose tweens, one-tempo score
 lb/   Lal Bihari "dead for 18 years" (2026-11) - same kit; its subtitles still sit below the safe area (verify.js reports it)
-yo/   Pedro Flores and the word "yo-yo" (2026-11) - IN PRODUCTION: Stage A brief done (yo/brief.md), Stage C next
+yo/   Pedro Flores and the word "yo-yo" (2026-11) - IN PRODUCTION: Stage C done (draft built, `verify.js` PASS), Stage D next (see yo/brief.md section 10)
 px/ r2/ rc/               older stick-rig episodes with their own tool copies. Leave as they are.
 ```
 An episode folder holds only what is its own: `episode.json` (title, `out` html name, `file` mp4 name), `src/meta.js`

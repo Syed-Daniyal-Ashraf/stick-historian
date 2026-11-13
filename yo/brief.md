@@ -155,3 +155,12 @@ Pinned sources comment:
 - **Too much text:** shots 4-5 and 8 carry signs, stamps and a document. Keep one text layer at a time, and check with `SAFE=1`.
 - **Comment pushback is likely on "inventor".** The script never says he invented it, and the pinned comment says so.
 - **The ending must stay quiet, not sentimental:** no tears or sad faces, just the empty desk and the yo-yo coming back.
+
+## 10. Stage C report (built on a3bc3b8)
+**Built:** 9 shots, 53.3 s, Kokoro `af_heart`, one-tempo score (108 BPM), foley from Kenney/VSCO only. `verify.js` PASS. Draft `DRAFT=1 export.js yo` ran (540 px, 15 fps).
+**Engine (additive, `compare.js` shows 0 frames different on mo and lb):** `cap:'pillbox'`; `courtroom()` + `TC.judge` moved to `30_world.js`; `CLIP` env in `shots.js`. ENGINE.md updated.
+**Narration/locked content unchanged.** Subtitles on one line at baseline 1178.
+**Quote (shot 8):** copied from the 1965 opinion via WebFetch only; the shell cannot reach justia. The excerpt stops before "to mean 'come back' or 'springy'" on purpose. NOT independently re-checked: Stage D must compare it word for word with the opinion.
+**Not checked:** audio by ear (music balance, foley), pronunciation of Flores and Philippine, phone speakers, final 1080x1920 export, cover, independent facts/visual review pass. Loudness: bed.mp3 -19.6 LUFS integrated (before the -14 LUFS final mix); the per-section levels are in the sound.py output (rag 0, soft -3, pizz -5, rag -1, pizz -5, roll -3, sad -6, tense -4, roll -3, hush -9 dB targets).
+**Fix list for Stage D:** (1) verify quote; (2) fresh-agent review with SAFE=1 sheets: labels and faces in y 290-1110, text collisions in shots 4, 5, 8; (3) check the first 3 s hook (premise visible in frame 1) and that the best material lands before ~20 s; (4) check the sad section at the Duncan-sash beat (shot 5) is not too sad; (5) final export, `mix.sh`, `cover.js`.
+**Gotcha:** `yo/src/scenes.js` is generated; it is now gitignored.

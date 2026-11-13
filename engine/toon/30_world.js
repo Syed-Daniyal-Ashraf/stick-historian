@@ -123,3 +123,13 @@ function petals(n,u,t0,seed,box=[-60,-200,1200,2300]){ let g=''; for(let i=0;i<n
 function burst(cx,cy,u,col1='#ffd25a',col2='#f6a23a',n=16){ let g=`<rect x="-400" y="-400" width="1880" height="2800" fill="${col2}"/>`; const r0=u*12; for(let i=0;i<n;i++){ const a=rad(i*360/n+r0), b=rad((i+.5)*360/n+r0); g+=`<path d="M${cx} ${cy}L${N(cx+Math.cos(a)*2400)} ${N(cy+Math.sin(a)*2400)}L${N(cx+Math.cos(b)*2400)} ${N(cy+Math.sin(b)*2400)}Z" fill="${col1}"/>`; } return g; }
 function placard(txt,sub,col,w=300){ return `<g><path d="M0 0V300" stroke="${INK}" stroke-width="16"/><path d="M0 0V300" stroke="#8a5a2a" stroke-width="8"/><rect x="${-w/2}" y="-150" width="${w}" height="160" rx="10" ${st('#fbf6ea',6)}/><text y="-78" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="46" fill="${col}">${txt}</text><text y="-26" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="30" fill="${INK}">${sub}</text></g>`; }
 function plough(x,y,s=1){ return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-160 -150L120 -10" stroke="${INK}" stroke-width="20" stroke-linecap="round"/><path d="M-160 -150L120 -10" stroke="#8a5a2a" stroke-width="11" stroke-linecap="round"/><path d="M100 -30L150 10L80 6Z" ${st('#7a7a7a',5)}/><path d="M-170 -160L-200 -200" stroke="${INK}" stroke-width="16" stroke-linecap="round"/></g>`; }
+/* ---- courtroom + judge (shared by mo/ and yo/). slam = time (episode seconds) of the gavel blow. */
+TC.judge={skin:'#e8c0a0',hair:'#d8d4cc',suit:true,top:'#1c1c22',topDk:'#121216',shirt:'#f4efe2',tie:'#1c1c22',pants:'#1c1c22',shoe:'#120c08',bald:true,glasses:true,mus:'thick',grey:.9,headS:1.2,build:.5};
+function courtroom(u,t,slam=-9){ let g=`<rect x="-300" y="-300" width="1680" height="2600" fill="#c97a3a"/>`;
+  for(let i=0;i<14;i++) g+=`<rect x="${-200+i*100}" y="-200" width="60" height="1600" fill="#b86a30" opacity=".6"/>`;
+  g+=`<rect x="-300" y="1380" width="1680" height="1800" fill="#5a3a22"/><path d="M-300 1380H1380" stroke="${INK}" stroke-width="7"/>`;
+  const bang=seg(u,slam-.14,slam,E.i)*(1-seg(u,slam+.05,slam+.35,E.o));
+  g+=toon('judge',570,1420,1.7,1,{expr:bang>.3?'angry':'stern',look:[0,3],tilt:bang*8,lean:bang*6,hF:mix([40,-304],[80,-238],bang),handF:'hold',hB:[-30,-230],noShadow:true,
+    holdF:{svg:`<g transform="rotate(${N(-60+bang*70)})"><rect x="-5" y="-70" width="10" height="80" rx="4" ${st('#8a5a32',3)}/><rect x="-26" y="-92" width="52" height="30" rx="8" ${st('#6a3e1e',4)}/></g>`,over:true}},t,9);
+  g+=`<rect x="375" y="1040" width="420" height="36" rx="6" ${st('#8a5630',6)}/><rect x="395" y="1076" width="380" height="330" ${st('#6a3e1e',6)}/><rect x="435" y="1116" width="300" height="200" rx="6" fill="none" stroke="#4a2a14" stroke-width="5"/>`;
+  return g; }

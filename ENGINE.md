@@ -41,12 +41,19 @@ It does not check labels, faces or props against the safe area: look at a `SAFE=
   `handF handB` (`open fist point flat hold`), `expr` (keys of `EX`), `look [x,y]`, `holdF holdB {svg,rot,over}`, `sq` squash, `cos {...}` costume override.
 - `full(pose)` fills every animated field; `tween(u,t0,A,B,d,ease)` goes A to B from t0 over d seconds with anticipation and overshoot.
 - Costumes `TC.<name>`: `skin hair top topDk pants shoe headS build` plus flags `suit dress sari khaki dhoti vest updo bun bald young beard glasses fem grey cap capC mus`.
+  `cap` is `flat`, `topi` or `pillbox` (bellboy hat: `capC` colour, `band` gold by default).
   `suit`, `dress` or `shoes` gives closed shoes; otherwise sandals. Episode costumes are added in the episode's `props.js`.
 - `LIFE_EP=1` (in `meta.js`) adds a slow idle sway of spine and head.
 - Limits: arm reach ~114 units from the shoulder, leg ~128 from the hip. One fixed three-quarter view; no front or back view.
 
 **30_world.js**: `st(fill,w)`, `desk`, `deskTop`, `paper`, `bigArm(shoulder,hand,skin,sleeve,hand,propSvg,w)` for top-down inserts,
 `strut(u,x0,x1,u0,u1,s,step,swing)` walk, `burst`, `dust`, `web`, and the Indian village / office / police sets from Lal Bihari.
+`courtroom(u,t,slam)` and `TC.judge` (shared by mo/ and yo/).
+
+**yo/src/props.js** (copy, don't import, if another episode needs them): `yoyo(hx,hy,u,mode,o)` string prop, modes `drop sleep return bob walk`;
+`handPt(x,y,s,dir,pose)` converts a world point to an `hF` local; `bigWord(x,y,size,{reg,crack,...})` 3D word with a crackable (R).
+
+`engine/tools/shots.js` also takes `CLIP=x,y,w,h` to crop dense strips (e.g. `CLIP=200,300,600,600`).
 
 ## Episode files
 - `episode.json`: `title sub aria foot out file`.

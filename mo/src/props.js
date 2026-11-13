@@ -1,6 +1,5 @@
 /* ============================== Monopoly episode: sets and props (no Monopoly trademarks: the board drawn is
    Magie's 1904 patent layout - railroads, a "Go to Jail" corner and a "Public Park" corner - as public-domain reference) */
-TC.judge={skin:'#e8c0a0',hair:'#d8d4cc',suit:true,top:'#1c1c22',topDk:'#121216',shirt:'#f4efe2',tie:'#1c1c22',pants:'#1c1c22',shoe:'#120c08',bald:true,glasses:true,mus:'thick',grey:.9,headS:1.2,build:.5};
 const DOLLAR='#5f8f5a', DOLLAR_DK='#3f6a3c';
 function wallpaper(col1,col2,u=0){ let g=`<rect x="-300" y="-300" width="1680" height="2600" fill="${col1}"/>`;
   for(let r=0;r<16;r++) for(let c=0;c<9;c++){ const x=-120+c*150+(r%2)*75, y=-120+r*140; g+=`<path d="M${x} ${y-34}Q${x+22} ${y} ${x} ${y+34}Q${x-22} ${y} ${x} ${y-34}Z" fill="${col2}" opacity=".55"/><circle cx="${x}" cy="${y}" r="6" fill="${col2}" opacity=".7"/>`; }
@@ -52,14 +51,6 @@ function kitchen(u,t){ let g=wallpaper('#d9c48a','#c9ae6a'); g+=`<rect x="-300" 
 function parkerOffice(u,t){ let g=`<rect x="-300" y="-300" width="1680" height="2600" fill="#7a4e2e"/>`;
   for(let i=0;i<9;i++) g+=`<rect x="${-120+i*160}" y="160" width="140" height="1080" rx="6" fill="#86583a" stroke="#5a3a22" stroke-width="5"/>`;
   g+=`<rect x="-300" y="1300" width="1680" height="1800" fill="#3a2a1e"/>`;
-  return g; }
-function courtroom(u,t,slam=-9){ let g=`<rect x="-300" y="-300" width="1680" height="2600" fill="#c97a3a"/>`;
-  for(let i=0;i<14;i++) g+=`<rect x="${-200+i*100}" y="-200" width="60" height="1600" fill="#b86a30" opacity=".6"/>`;
-  g+=`<rect x="-300" y="1380" width="1680" height="1800" fill="#5a3a22"/><path d="M-300 1380H1380" stroke="${INK}" stroke-width="7"/>`;
-  const bang=seg(u,slam-.14,slam,E.i)*(1-seg(u,slam+.05,slam+.35,E.o));
-  g+=toon('judge',570,1420,1.7,1,{expr:bang>.3?'angry':'stern',look:[0,3],tilt:bang*8,lean:bang*6,hF:mix([40,-304],[80,-238],bang),handF:'hold',hB:[-30,-230],noShadow:true,
-    holdF:{svg:`<g transform="rotate(${N(-60+bang*70)})"><rect x="-5" y="-70" width="10" height="80" rx="4" ${st('#8a5a32',3)}/><rect x="-26" y="-92" width="52" height="30" rx="8" ${st('#6a3e1e',4)}/></g>`,over:true}},t,9);
-  g+=`<rect x="375" y="1040" width="420" height="36" rx="6" ${st('#8a5630',6)}/><rect x="395" y="1076" width="380" height="330" ${st('#6a3e1e',6)}/><rect x="435" y="1116" width="300" height="200" rx="6" fill="none" stroke="#4a2a14" stroke-width="5"/>`;
   return g; }
 function gameBox(x,y,rot,s,title,sub,col){ return `<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><rect x="-150" y="-100" width="300" height="200" rx="8" ${st(col,6)}/><rect x="-130" y="-80" width="260" height="160" rx="4" fill="none" stroke="#fff" stroke-width="4"/><text y="-6" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="32" fill="#fff">${title}</text><text y="38" text-anchor="middle" font-family="${BAL}" font-weight="700" font-size="22" fill="#fff">${sub}</text></g>`; }
 function censusForm(u,k0,k1,k2){ let g=`<g transform="translate(540 980) rotate(-2)"><rect x="-440" y="-560" width="880" height="1120" ${st('#efe6cc',6)}/>`;
