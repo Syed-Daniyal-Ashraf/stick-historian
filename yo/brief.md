@@ -1,6 +1,6 @@
 # yo/ - Pedro Flores and the word "yo-yo" (brief)
 
-Stage A done 2026-11-13 (Opus 5.5). Next: Stage C (Build), Sonnet 5.5, medium effort.
+Stage A done 2026-11-13 (Opus 5.5). Stage C done. Stage D done 2026-11-13 (Opus 5.5): final MP4, cover, caption and sources comment ready (section 11). Waiting on Farrukh's listening check.
 Read `CLAUDE.md` and `ENGINE.md` first; this brief only adds what is specific to this episode.
 
 ## 1. The story in one line
@@ -31,7 +31,7 @@ SCRIPT=[
  (2,'N',"Pedro Flores worked in a California *hotel.*",1.03,.0),
  (2,'N',"From the *Philippines,* he knew a trick: a looped string that let it *sleep.*",1.02,.05),
  (3,'N',"In *nineteen twenty-eight,* he opened his own yo-yo company.",1.04,.0),
- (3,'N',"The next year: *three factories.*",1.0,.05),
+ (3,'N',"The next year: *three factories.*",1.0,.05),   # CUT in Stage D (section 11)
  (4,'N',"He'd trademarked the name: *Flores Yo-Yo.*",1.02,.0),
  (4,'N',"When businessman *Donald Duncan* tried to trademark *Yo-Yo*… he was *rejected.*",1.04,.05),
  (5,'N',"So Duncan *bought him out.* The company… and the *name.*",1.0,.0),
@@ -84,7 +84,7 @@ Cover: `COVER_T` ≈ 1.5 s (the split first frame).
 - On **Dec 19, 1931**, Duncan Sr. told the Patent Office the term is "used in the Philippine Islands". (same opinion, quoting his filing)
 - Duncan acquired the Flores registration by assignment (same opinion) and Flores's remaining assets, including the trademark,
   by Oct 1932. (Smithsonian)
-- Decided May 4, 1965: "Yo-Yo" is "a descriptive term and not entitled to trademark protection", and the toy was "in use in
+- Decided March 3, 1965 (rehearing denied May 4, 1965): "Yo-Yo" is "a descriptive term and not entitled to trademark protection", and the toy was "in use in
   the Philippines" long before the US. (same opinion)
 - Flores died in **1964** (Wikipedia, SFSU, Positively Filipino all give 1964). The month is disputed (January or June), so the narration gives no month.
 
@@ -136,17 +136,22 @@ For either change, rebuild `mo` and `lb`, run `node engine/compare.js old.html n
 Suggested `episode.json`: title "He Gave America the Yo-Yo. Duncan Owned the Word.", out `yoyo-flores`,
 file `YoYo-Pedro-Flores`.
 
-## 8. Caption and pinned comment (draft)
-Caption: *He sold America the yo-yo craze. Then someone else owned the word. 🪀*
-(a question for the comments is optional, e.g. "Did you know the word came from the Philippines?")
+## 8. Caption and pinned comment (final, Stage D)
+Caption:
+> He got America hooked on the yo-yo. Then an American company owned the word. 🪀
+> Would you let a company own a word?
+>
+> #history #yoyo #filipinohistory #philippines #animation
 
-Pinned sources comment:
-- Court ruling: Donald F. Duncan, Inc. v. Royal Tops Mfg. Co., 343 F.2d 655 (7th Cir. 1965)
-- Smithsonian: Yo-Yo History in America
-- Lienhard, "The Yo-Yo", Engines of Our Ingenuity #2796 (Univ. of Houston)
-- Encyclopedia.com: Duncan Toys Company (International Directory of Company Histories)
-- Note: Flores popularised the yo-yo in the US; he didn't invent it (the toy is ancient). Where the word comes from is debated;
-  the 1965 court called it a Philippine word.
+Pinned comment (sources):
+> Sources:
+> - The 1965 court ruling: Donald F. Duncan, Inc. v. Royal Tops Mfg. Co., 343 F.2d 655 (7th Cir. 1965). The 1931 quote in the video is from Duncan Sr.'s Dec. 19, 1931 reply to the Patent Office, as quoted in this opinion: law.justia.com/cases/federal/appellate-courts/F2/343/655/109434/
+> - Smithsonian, "Yo-Yo History in America": si.edu/spotlight/yo-yo
+> - J. Lienhard, "The Yo-Yo", Engines of Our Ingenuity #2796, Univ. of Houston: engines.egr.uh.edu/episode/2796
+> - "Duncan Toys Company", International Directory of Company Histories (encyclopedia.com)
+> - SFSU Asian Pacific Islander American biography of Pedro Flores (dates: 1896-Jan 3, 1964)
+>
+> Notes: Flores didn't invent the yo-yo (the toy is ancient); he popularised it in the US with his slip-string design. Where the word comes from is debated (Ilocano and Tagalog are both suggested); the 1965 court called it a Philippine word. Sources give very different prices for the sale to Duncan, so the video shows none. Most sources date Flores's death to January 1964; one gives December 1963.
 
 ## 9. Risks and fallbacks
 - **Duncan appears late (~17-20 s) apart from the hook.** The hook already shows him in second 3. If the rough cut feels slow in
@@ -164,3 +169,30 @@ Pinned sources comment:
 **Not checked:** audio by ear (music balance, foley), pronunciation of Flores and Philippine, phone speakers, final 1080x1920 export, cover, independent facts/visual review pass. Loudness: bed.mp3 -19.6 LUFS integrated (before the -14 LUFS final mix); the per-section levels are in the sound.py output (rag 0, soft -3, pizz -5, rag -1, pizz -5, roll -3, sad -6, tense -4, roll -3, hush -9 dB targets).
 **Fix list for Stage D:** (1) verify quote; (2) fresh-agent review with SAFE=1 sheets: labels and faces in y 290-1110, text collisions in shots 4, 5, 8; (3) check the first 3 s hook (premise visible in frame 1) and that the best material lands before ~20 s; (4) check the sad section at the Duncan-sash beat (shot 5) is not too sad; (5) final export, `mix.sh`, `cover.js`.
 **Gotcha:** `yo/src/scenes.js` is generated; it is now gitignored.
+
+## 11. Stage D report (Opus 5.5, built on 370ae73)
+**Quote (shot 8): verified word for word** against two copies of the opinion (law.justia.com and law.resource.org): "* * * the applicant
+understands the term 'Yo-Yo' is used in the Philippine Islands to mean 'come back' or 'springy', ..." Introduced by the court as "In response to
+this rejection, on December 19, 1931, Duncan, Sr. argued as follows". On screen it is cut after "Islands" with an ellipsis.
+The header was "PATENT OFFICE · RESPONSE OF DEC. 19, 1931" (it read as if the Office had written it); it is now "DUNCAN'S REPLY TO THE PATENT OFFICE · DEC. 19, 1931".
+**Cut:** "The next year: three factories." (section 9 fallback). Shot 3 was ~4 s of one pose. `MIN[3]` 4.8 -> 3.6, so the film is 51.7 s (was 53.3).
+The factories now pop on "own" ("his own yo-yo company"); `vo/sound.py` `KF3` follows. The other lines regenerated with identical timing (max drift 0.000 s).
+The rejection lands at ~23 s (was ~24.8), and Duncan enters by name at ~20.3 s (he is already in the hook at 0 s).
+**Visual fixes (SAFE=1 sheets + an independent reviewer agent):**
+- Shot 1: the YO-YO® was ~55 px with the Y hidden by Duncan's hand. Duncan now stands behind a giant word (size 150) and clutches its top edge, so the premise reads in frame 1.
+- Shot 3: the shop sign sat entirely under the Reels top bar (screen y 135-290). Moved down.
+- Shot 4: the pinned FLORES YO-YO certificate sat at screen y ~80 (under the top bar). The shot is now wider (z .8) and the certificate is pinned up-left, clear of the hats; the examiner looks at it.
+  REJECTED was unreadable on the small form, so a large stamp on a paper slip now lands in screen space below the faces. Duncan was moved off the right edge.
+- Shot 5: the FLORES -> DUNCAN repaint never finished before the cut. It now starts on "company", ends on "name", and the cut to the street moved to "Pedro" +0.3 s (J-cut).
+  The sign was half under the top bar and behind Duncan's hat; it is now lower, smaller and to the left. The kid's DUNCAN card no longer covers her face (it is held above her head).
+- Shot 6: the cracked ® halves landed in the subtitle lane as stray marks; they now fall off-screen.
+- Shot 7: the kids' heads were cut by the window frame; the judge's head covered the board. The board is lower and left, and the letters lift less and arc over the judge's face, staying out of the top bar.
+- Shot 8: the arm no longer crosses the caption lane.
+- Shot 9: there is a slow push-in from the lobby onto the portrait (6 s static before). The yo-yo hangs just outside the frame corner, clear of the PEDRO FLORES plate.
+**Gates:** `verify.js` PASS (determinism 60/60, reach worst 3.7, subtitles 0 frames outside). Final export 1080x1920, 30 fps, 51.67 s, -14.1 LUFS, true peak -0.7 dBTP
+(one transient in the court section; every other section is -2.9 to -3.0).
+**Reviewer findings not acted on (and why):** "From the Philippines, he knew a trick" and "a Philippine word" are kept as locked narration (tiers in section 6).
+"He had died the year before" is kept: SFSU APIA, Wikipedia and Positively Filipino give Jan 3, 1964; one blog (toytales) says Dec 1963 (noted in the comment).
+Duncan suing in person in shot 6 (the plaintiff was his company) is accepted as illustration.
+**Not checked:** listening (music balance, the sad section at the sash beat, foley, pronunciation of Flores = flˈɔːɹɛs and Philippine = fˈɪlᵻpˌiːn), phone speakers.
+**Loudness per section (final mix, LUFS):** hook -13.9, hotel -13.7, loop -14.1, company -14.1, rejected -13.7, buyout -13.5, sash -14.9, court -14.1, evidence -14.3, ending -14.3.

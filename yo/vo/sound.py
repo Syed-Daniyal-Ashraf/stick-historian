@@ -94,10 +94,10 @@ PROG_MAJ=[(48,'maj'),(48,'maj'),(53,'maj'),(48,'maj'),(43,'maj'),(43,'maj'),(48,
 PROG_MIN=[(48,'min'),(48,'min'),(44,'maj'),(44,'maj'),(41,'min'),(41,'min'),(43,'maj'),(43,'maj')]   # Cm Ab Fm G
 BED=np.zeros((n,2),np.float32); bed=lambda x,t0,g=1,pan=0: put(BED,x,t0,g,pan)
 C5=72; G5=79
-kt2=W(2,'trick'); kj=W(4,'rejected'); ksash=W(5,'pedro'); kn5=W(5,'name'); kb9=W(9,'before')
+kt2=W(2,'trick'); KF3=W(3,'own')+.1; kj=W(4,'rejected'); ksash=W(5,'pedro'); kn5=W(5,'name'); kb9=W(9,'before')
 # (start time, mode, level in dB relative to the loudest section). Modes: rag (oom-pah + melody), soft (rag without tuba/snare),
 # pizz (plucked strings), sad (minor, half-time, soft piano), roll (drum roll over the bass), tense (tuba pedal), hush (bass only), out (silence)
-SECT=[(0,'rag',0),(S[2],'soft',-3),(kt2-.1,'pizz',-5),(S[3],'rag',-1),(S[4],'pizz',-5),(S[5],'roll',-3),(ksash-.05,'sad',-6),
+SECT=[(0,'rag',0),(S[2],'soft',-3),(kt2-.1,'pizz',-5),(S[3],'rag',-1),(S[4],'pizz',-5),(S[5],'roll',-3),(ksash+.25,'sad',-6),
       (S[6],'tense',-4),(S[8],'roll',-3),(S[9],'hush',-9),(kb9+1.1,'out',-99)]
 SECT=[(beat(t)*Q,m,l) for t,m,l in SECT]
 def mode_at(t):
@@ -158,7 +158,7 @@ print('sections (start, mode, target dB, measured before, gain applied):'); [pri
 [mus(GLOCK.note(m),W(1,'hooked')+i*.06,.26) for i,m in enumerate([C5,C5+4,G5])]
 kw1=W(1,'word'); mus(TIMP[2],kw1-.05,.45); mus(CRASH,kw1,.2); mus(TUBA.note(43),kw1,.35)
 [mus(GLOCK.note(m),W(2,'sleep')+i*.07,.22) for i,m in enumerate([G5,C5+12,G5+12])]
-mus(TIMP[1],W(3,'three')-.05,.4); [mus(GLOCK.note(m),W(3,'three')+i*.2,.28) for i,m in enumerate([C5,C5+4,G5])]
+mus(TIMP[1],KF3-.05,.4); [mus(GLOCK.note(m),KF3+i*.2,.28) for i,m in enumerate([C5,C5+4,G5])]
 mus(TIMP[0],kj,.6); mus(TUBA.note(36),kj,.5); mus(CRASH,kj,.25)
 mus(TBF.note(55),W(5,'bought')+.05,.34); mus(TBF.note(48),kn5+.1,.34)
 mus(TBF.note(52),W(6,'lost')+.05,.42); mus(TIMP[2],W(6,'lost')-.05,.45)
@@ -186,16 +186,16 @@ zip_(W(1,'company')+.05,.3,True,.35); stamp(kw1-.02,.85); bell(kw1+.05,.35)
 fx(k('RPG sounds (50 sounds)/creak2.ogg'),S[2]+.3,.45); room(S[2],W(2,'philippines'),.08,200,1800)
 bell(W(2,'hotel'),.4); fx(pop(2),W(2,'philippines')-.1,.5)
 zip_(W(2,'looped')-.05,.4,False,.35,300,1100); whirr(W(2,'looped')+.45,SE(2),.1); fx(pop(3),W(2,'sleep')+.05,.5)
-# 3 workshop whirr, then three factories pop up
-whirr(S[3],W(3,'three')-.05,.14)
-for i in range(3): fx(pop(1+i),W(3,'three')+i*.2,.5); fx(shift(TIMP[2],-5)[:int(.45*SR)],W(3,'three')+i*.2,.3)
-for i in range(4): fx(noise(.12,300,1500,1),W(3,'three')+.2+i*.3,.12)
+# 3 workshop whirr, then the factories pop up (on "own"; the 'three factories' line was cut in Stage D)
+whirr(S[3],KF3-.05,.14)
+for i in range(3): fx(pop(1+i),KF3+i*.2,.5); fx(shift(TIMP[2],-5)[:int(.45*SR)],KF3+i*.2,.3)
+for i in range(4): fx(noise(.12,300,1500,1),KF3+.2+i*.3,.12)
 # 4 patent office: slide, REGISTERED, form slides, REJECTED
 fx(cs(2),S[4]+.25,.6); stamp(W(4,'flores'),.8); fx(cs(3),W(4,'donald')+.35,.6); stamp(kj,1.25); fx(pop(1),kj+.3,.4)
 # 5 bag thump, paint roller, street
 fx(k('RPG sounds (50 sounds)/handleCoins2.ogg'),W(5,'bought')-.1,.4); fx(shift(TIMP[2],-7)[:int(.35*SR)],W(5,'bought')+.12,.4)
-fx(noise(.75,1200,5000,0.5)*np.hanning(int(.75*SR)).astype(np.float32),kn5-.35,.22)
-for i in range(3): fx(pop(1+i),ksash+.4+i*.1,.3)
+fx(noise(.85,1200,5000,0.5)*np.hanning(int(.85*SR)).astype(np.float32),W(5,'company')-.05,.22)  # roller swish (Stage D: repaint starts on 'company')
+for i in range(3): fx(pop(1+i),ksash+.65+i*.1,.3)  # Stage D: street cut moved to 'Pedro'+.3
 whirr(ksash+.8,W(5,'with'),.09); fx(pop(2),W(5,'with')+.2,.4)
 # 6 the years flip, then the gavel
 for i in range(7): fx(flip(1+i%3),S[6]+.05+i*.15,.3)

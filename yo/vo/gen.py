@@ -14,7 +14,6 @@ SCRIPT=[
  (2,'N',"Pedro Flores worked in a California *hotel.*",1.03,.0),
  (2,'N',"From the *Philippines,* he knew a trick: a looped string that let it *sleep.*",1.02,.05),
  (3,'N',"In *nineteen twenty-eight,* he opened his own yo-yo company.",1.04,.0),
- (3,'N',"The next year: *three factories.*",1.0,.05),
  (4,'N',"He'd trademarked the name: *Flores Yo-Yo.*",1.02,.0),
  (4,'N',"When businessman *Donald Duncan* tried to trademark *Yo-Yo*… he was *rejected.*",1.04,.05),
  (5,'N',"So Duncan *bought him out.* The company… and the *name.*",1.0,.0),
