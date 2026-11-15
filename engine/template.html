@@ -22,7 +22,9 @@ h1{font-family:var(--display);font-weight:400;font-size:26px;margin:0;color:var(
 /* 9:16 stage, scaled to fit both width and height */
 .stage{position:relative;width:min(100%,460px,calc((100vh - 250px) * .5625));min-width:180px;aspect-ratio:9/16;
   border-radius:12px;overflow:hidden;background:#000;box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 0 1px var(--line)}
-#sv{display:block;width:100%;height:100%}
+#sv{display:block;position:relative;width:100%;height:100%}
+/* painted layer: a canvas under the SVG; empty (transparent) unless a shot calls paint() */
+#paint{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
 .start{position:absolute;inset:0;width:100%;border:0;margin:0;padding:24px;cursor:pointer;font:inherit;color:var(--fg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;
   background:radial-gradient(ellipse at 50% 45%,rgba(10,12,14,.2),rgba(10,12,14,.85))}
@@ -53,6 +55,7 @@ body.export .stage{width:1080px;height:1920px;border-radius:0;box-shadow:none;mi
 <div class="app">
   <header><h1>{{TITLE}}</h1><span class="sub">{{SUB}}</span></header>
   <div class="stage" id="stage">
+    <canvas id="paint" width="2" height="2" aria-hidden="true"></canvas>
     <svg id="sv" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{{ARIA}}">
       <defs>
 {{DEFS}}
@@ -374,25 +377,58 @@ function composeAt(t){
   else if(prev&&prev.out==='whip'&&t<q.start+W.whip){ const k=.5+.5*(t-q.start)/W.whip; blur=Math.sin(Math.PI*k)*80; svg=whipPair(prev,q,t,k); }
   else if(next&&q.out==='push'&&t>q.end-W.push){ const k=.5*(t-(q.end-W.push))/W.push; svg=pushPair(q,next,t,k); }
   else if(prev&&prev.out==='push'&&t<q.start+W.push){ const k=.5+.5*(t-q.start)/W.push; svg=pushPair(prev,q,t,k); }
-  else if(next&&q.out==='dissolve'&&t>q.end-W.dissolve){ const k=.5*(t-(q.end-W.dissolve))/W.dissolve; svg=q.r(t)+`<g opacity="${N(E.io(k)*100)/100}">${next.r(next.start)}</g>`; }
-  else if(prev&&prev.out==='dissolve'&&t<q.start+W.dissolve){ const k=.5+.5*(t-q.start)/W.dissolve; svg=prev.r(prev.end-1e-3)+`<g opacity="${N(E.io(k)*100)/100}">${q.r(t)}</g>`; }
+  else if(next&&q.out==='dissolve'&&t>q.end-W.dissolve){ const k=.5*(t-(q.end-W.dissolve))/W.dissolve; svg=q.r(t)+`<g opacity="${N(E.io(k)*100)/100}">${paintState({alpha:N(E.io(k)*100)/100},()=>next.r(next.start))}</g>`; }
+  else if(prev&&prev.out==='dissolve'&&t<q.start+W.dissolve){ const k=.5+.5*(t-q.start)/W.dissolve; svg=prev.r(prev.end-1e-3)+`<g opacity="${N(E.io(k)*100)/100}">${paintState({alpha:N(E.io(k)*100)/100},()=>q.r(t))}</g>`; }
   else svg=q.r(t);
   if(blur>0) svg=`<g filter="url(#whip)">${svg}</g>`;
   return {svg, blur};
 }
-function whipPair(a,b,t,k){ const e=E.io(k), ta=Math.min(t,a.end-1e-3), tb=Math.max(t,b.start);
-  return `<g transform="translate(${N(-e*1080)} 0)">${a.r(ta)}</g><g transform="translate(${N(1080-e*1080)} 0)">${b.r(tb)}</g>`; }
+/* ============================== painted layer (canvas under the SVG). Painters and textures: engine/toon/15_paint.js
+   A shot calls paint(ctx=>{...}); that only queues the painter. renderAt() empties the queue, composes the SVG (which runs the shots),
+   then clears the canvas and runs the queue. Painters work in 1080x1920 units and must be pure functions of their arguments (no
+   Math.random, Date or performance.now, no state kept from an earlier frame), or verify.js fails the determinism check. */
+const PAINT={el:$('paint'),ctx:null,tmp:null,s:1,q:[],st:{dx:0,alpha:1,blur:0},dirty:false,off:false,frames:0,bakeMs:0,timing:false,lastMs:0};
+function paint(fn){ PAINT.q.push({fn,st:PAINT.st}); }
+/* transitions run a shot inside a paint state so its painters slide, fade or smear with the SVG */
+function paintState(st,f){ const o=PAINT.st; PAINT.st={dx:o.dx+(st.dx||0),alpha:o.alpha*(st.alpha==null?1:st.alpha),blur:Math.max(o.blur,st.blur||0)}; try{ return f(); } finally{ PAINT.st=o; } }
+const paintIso=()=>PAINT.st.alpha<1||PAINT.st.blur>0;   // true inside a dissolve or whip: SVG blend modes can't reach the canvas there
+function paintInit(){ const ex=document.body.classList.contains('export'), s=ex?Math.min(Math.max(window.devicePixelRatio||1,.25),2):1;
+  PAINT.s=s; PAINT.el.width=Math.round(1080*s); PAINT.el.height=Math.round(1920*s);
+  PAINT.ctx=PAINT.el.getContext('2d',{willReadFrequently:ex}); const c=document.createElement('canvas'); c.width=PAINT.el.width; c.height=PAINT.el.height; PAINT.tmp=c.getContext('2d',{willReadFrequently:ex}); }
+function paintRun(ctx,items){ for(const it of items){ ctx.save(); ctx.setTransform(PAINT.s,0,0,PAINT.s,0,0); ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over'; it.fn(ctx); ctx.restore(); } }
+function paintFlush(){ const P_=PAINT, q=P_.q;
+  if(!q.length||P_.off){ if(P_.dirty){ P_.ctx.setTransform(1,0,0,1,0,0); P_.ctx.clearRect(0,0,P_.el.width,P_.el.height); P_.dirty=false; } return; }
+  if(!P_.ctx) paintInit(); const ctx=P_.ctx, W=P_.el.width, H=P_.el.height, s=P_.s, tm=P_.timing?performance.now():0;
+  ctx.setTransform(1,0,0,1,0,0); ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over'; ctx.clearRect(0,0,W,H);
+  for(let i=0;i<q.length;){ let j=i; while(j<q.length&&q[j].st===q[i].st) j++; const st=q[i].st, items=q.slice(i,j); i=j;
+    if(!st.dx&&st.alpha>=1&&!st.blur){ paintRun(ctx,items); continue; }
+    const tc=P_.tmp; tc.setTransform(1,0,0,1,0,0); tc.clearRect(0,0,W,H); paintRun(tc,items);
+    ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation='source-over';
+    if(st.blur>0){ /* horizontal smear: 5 copies with gaussian weights (sigma = st.blur), drawn so the result is their weighted mean */
+      const off=[0,-.75,.75,-1.5,1.5], w=[1,.755,.755,.325,.325]; let acc=0;
+      for(let k=0;k<5;k++){ acc+=w[k]; ctx.globalAlpha=st.alpha*w[k]/acc; ctx.drawImage(tc.canvas,Math.round((st.dx+off[k]*st.blur)*s),0); } }
+    else { ctx.globalAlpha=st.alpha; ctx.drawImage(tc.canvas,Math.round(st.dx*s),0); }
+    ctx.globalAlpha=1; }
+  if(P_.timing){ ctx.getImageData(0,0,1,1); P_.lastMs=performance.now()-tm; }   // the 1x1 read makes the canvas finish before the clock stops
+  P_.dirty=true; P_.frames++; }
+/* hash of the canvas pixels (FNV-1a), for verify.js; '0' when nothing is painted */
+function paintHash(){ if(!PAINT.ctx||!PAINT.dirty) return '0'; const d=PAINT.ctx.getImageData(0,0,PAINT.el.width,PAINT.el.height).data; let h=0x811c9dc5;
+  for(let i=0;i<d.length;i++){ h^=d[i]; h=Math.imul(h,0x01000193); } return (h>>>0).toString(16); }
+function whipPair(a,b,t,k){ const e=E.io(k), ta=Math.min(t,a.end-1e-3), tb=Math.max(t,b.start), blur=N(Math.sin(Math.PI*k)*80);
+  return `<g transform="translate(${N(-e*1080)} 0)">${paintState({dx:N(-e*1080),blur},()=>a.r(ta))}</g><g transform="translate(${N(1080-e*1080)} 0)">${paintState({dx:N(1080-e*1080),blur},()=>b.r(tb))}</g>`; }
 function pushPair(a,b,t,k){ const e=E.io(k), ta=Math.min(t,a.end-1e-3), tb=Math.max(t,b.start);
-  return `<g transform="translate(${N(e*1080)} 0)">${a.r(ta)}</g><g transform="translate(${N(-1080+e*1080)} 0)">${b.r(tb)}</g><rect x="${N(-12+e*1080)}" y="0" width="24" height="1920" fill="#000" opacity=".25"/>`; }
+  return `<g transform="translate(${N(e*1080)} 0)">${paintState({dx:N(e*1080)},()=>a.r(ta))}</g><g transform="translate(${N(-1080+e*1080)} 0)">${paintState({dx:N(-1080+e*1080)},()=>b.r(tb))}</g><rect x="${N(-12+e*1080)}" y="0" width="24" height="1920" fill="#000" opacity=".25"/>`; }
 function flashAt(t){ return 0; }
 let lastFrameT=-1;
 function renderAt(t){
   t=clamp(t,0,TOTAL-1e-4); DBG.now=t;
+  PAINT.q.length=0;
   const c=composeAt(t);
   whipBlur.setAttribute('stdDeviation',`${N(c.blur)} 0`);
   world.innerHTML=c.svg;
   capsEl.innerHTML=overlays(t)+subSvg(t);
   flashEl.setAttribute('opacity',N(flashAt(t)*100)/100);
+  paintFlush();
   lastFrameT=t; updateNow(t);
 }
 
@@ -477,7 +513,8 @@ function frame(now){
 /* B2: every cut in the film (SEQ starts + in-shot cuts from CUT_EP), absolute seconds. Episodes without CUT_EP get the SEQ starts only. */
 const CUTS=(()=>{ const c=SEQ.map(q=>q.start); if(typeof CUT_EP!=='undefined'&&typeof cutPts==='function') for(const n of Object.keys(CUT_EP)) for(const p of cutPts(+n)) c.push(S(+n)+p);
   return [...new Set(c.map(x=>+x.toFixed(3)))].sort((x,y)=>x-y); })();
-window.film={renderCover,renderAt,TOTAL,SHOTS,SEQ,SUBS,CUES,DBG,seek,play,pause,state:PL,renderSfxOffline,CUTS,part:typeof part==='function'?part:null,
+PAINT.bakeMs=typeof PBAKE!=='undefined'?PBAKE.ms:0;
+window.film={PAINT,paintHash,PNT:typeof PNT!=='undefined'?PNT:null,renderCover,renderAt,TOTAL,SHOTS,SEQ,SUBS,CUES,DBG,seek,play,pause,state:PL,renderSfxOffline,CUTS,part:typeof part==='function'?part:null,
   CUT_OPT:typeof CUT_EP!=='undefined', CUT_HOLD:typeof CUT_HOLD_EP!=='undefined'?CUT_HOLD_EP:[],
   CAPS:{mode:typeof CAP_MODE!=='undefined'?CAP_MODE:'line', chunks:typeof BIGCAPS!=='undefined'?BIGCAPS:[], fit:typeof bigCapFit==='function'?bigCapFit:null, ok:typeof capOk==='function'?capOk:null, min:typeof BIGCAP!=='undefined'?BIGCAP.min:0}};
 if(/[?&]export\b/.test(location.search)){ document.body.classList.add('export'); startBtn.hidden=true; }

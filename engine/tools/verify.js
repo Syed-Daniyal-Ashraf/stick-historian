@@ -2,13 +2,31 @@
 // Gates: (1) any frame renders the same whatever was rendered before, (2) no hand or foot target out of the rig's reach,
 // (3) every subtitle inside the Reels safe area, one line, and every narrated word covered by a subtitle,
 // (4) big captions (CAP_MODE_EP='big'): chunk rules and minimum size, (5) cut cadence when the episode declares CUT_EP (gaps <= 3.4 s, CUT_HOLD_EP shots <= 4.5 s).
-// Warnings (listed, not failing): captions under 0.25 s, gaps over 3 s or under 1 s.
-const {episode,open,SAFE}=require('./common');
+// (6) painted layer (only when a shot paints): canvas pixels identical in any order on one page AND on a second page, as the export uses 2 browsers.
+// Warnings (listed, not failing): captions under 0.25 s, gaps over 3 s or under 1 s, painted frames changed since the last run, paint time over budget.
+const {episode,open,SAFE}=require('./common'); const fs=require('fs'); const path=require('path');
 (async()=>{ const ep=episode(process.argv[2]); const {b,p,errs}=await open(ep.html); const out={};
   out.determinism=await p.evaluate(()=>{ const W=window.film,w=document.getElementById('world'),c=document.getElementById('caps');
     const ts=[...Array(60)].map((_,i)=>+(i*W.TOTAL/60+.13).toFixed(3)); const ref=ts.map(t=>{ W.renderAt(t); return w.innerHTML+c.innerHTML; });
     const order=[...ts.keys()].sort((a,b)=>Math.sin(a*7.1)-Math.sin(b*7.1)), bad=[]; for(const i of order){ W.renderAt(ts[i]); if(w.innerHTML+c.innerHTML!==ref[i]) bad.push(ts[i]); }
     return {checked:ts.length,mismatches:bad}; });
+  /* painted layer: hash the canvas pixels + the SVG markup at 60 times, in order and scrambled, on this page and on a second page */
+  const paintPass=pg=>pg.evaluate(()=>{ const W=window.film,w=document.getElementById('world'),c=document.getElementById('caps'); if(!W.PAINT) return null;
+    const fnv=s=>{ let h=0x811c9dc5; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193); } return (h>>>0).toString(16); };
+    const ts=[...Array(60)].map((_,i)=>+(i*W.TOTAL/60+.13).toFixed(3)), H=t=>{ W.renderAt(t); return W.paintHash()+':'+fnv(w.innerHTML+c.innerHTML); };
+    const ref=ts.map(H); if(!W.PAINT.frames) return {painted:false};
+    const order=[...ts.keys()].sort((a,b)=>Math.sin(a*7.1)-Math.sin(b*7.1)), bad=[]; for(const i of order) if(H(ts[i])!==ref[i]) bad.push(ts[i]);
+    W.PAINT.timing=true; const ms=[]; for(let q=0;q<120;q++){ W.renderAt((q+.5)*W.TOTAL/120); if(W.PAINT.lastMs>0) ms.push(W.PAINT.lastMs); W.PAINT.lastMs=0; } W.PAINT.timing=false; ms.sort((a,b)=>a-b);
+    return {painted:true,ts,ref,bad,bakeMs:W.PAINT.bakeMs,paintMs:{frames:ms.length,median:+ms[ms.length>>1].toFixed(1),p95:+ms[Math.floor(ms.length*.95)].toFixed(1),max:+ms[ms.length-1].toFixed(1)}}; });
+  const pp=await paintPass(p);
+  if(!pp||!pp.painted) out.paint={painted:false};
+  else { const two=await open(ep.html), pp2=await paintPass(two.p); await two.b.close(); errs.push(...two.errs);
+    const across=pp.ts.filter((t,i)=>pp.ref[i]!==pp2.ref[i]), hf=path.join(ep.dir,'out','paint_hashes.json'); let changed=null;
+    if(fs.existsSync(hf)){ const old=JSON.parse(fs.readFileSync(hf,'utf8')); changed=pp.ts.filter((t,i)=>old[t]!==pp.ref[i]).length; }
+    fs.mkdirSync(path.dirname(hf),{recursive:true}); fs.writeFileSync(hf,JSON.stringify(Object.fromEntries(pp.ts.map((t,i)=>[t,pp.ref[i]]))));
+    out.paint={painted:true,pages:2,checked:pp.ts.length,mismatchesSamePage:pp.bad,mismatchesAcrossPages:across,changedSinceLastRun:changed,paintMs:pp.paintMs,bakeMs:pp.bakeMs,
+      overBudget:[pp.paintMs.median>30&&'median>30ms',pp.paintMs.p95>60&&'p95>60ms',pp.bakeMs>3000&&'bake>3s'].filter(Boolean)}; }
+  await p.evaluate(()=>{ if(window.film.PAINT) window.film.PAINT.off=true; });   // the checks below read the SVG only
   out.reach=await p.evaluate(()=>{ const W=window.film; W.DBG.maxGrip=0; W.DBG.log=[]; W.DBG.figs=0; for(let t=0;t<W.TOTAL;t+=1/15) W.renderAt(t);
     const seen=new Map(); for(const [t,who,e] of W.DBG.log){ if(e<6) continue;   /* under 6 units is a tween overshoot, not a miss */ const k=who+'@'+Math.floor(t); if(!seen.has(k)||seen.get(k)[2]<e) seen.set(k,[t,who,e]); }
     return {figuresChecked:W.DBG.figs,worstUnits:+W.DBG.maxGrip.toFixed(1),outOfReach:[...seen.values()].slice(0,20)}; });
@@ -34,8 +52,9 @@ const {episode,open,SAFE}=require('./common');
     const long=gaps.reduce((a,g)=>g.len>a.len?g:a,gaps[0]), f=g=>[+g.t0.toFixed(2),+g.t1.toFixed(2),g.len];
     return {enforced:!!W.CUT_OPT,cuts:c.length-1,longestGap:f(long),
       fails:gaps.filter(g=>g.hold?g.len>4.5:g.len>3.4).map(f),gapsOver3:gaps.filter(g=>g.len>3&&!g.hold).map(f),gapsUnder1:gaps.filter(g=>g.len<1).map(f)}; });
-  out.renderMs=await p.evaluate(()=>{ const W=window.film,s=performance.now(); for(let q=0;q<200;q++) W.renderAt((q*.37)%W.TOTAL); return +((performance.now()-s)/200).toFixed(2); });
+  out.renderMs=await p.evaluate(()=>{ const W=window.film; if(W.PAINT) W.PAINT.off=false; const s=performance.now(); for(let q=0;q<200;q++) W.renderAt((q*.37)%W.TOTAL); return +((performance.now()-s)/200).toFixed(2); });
   out.errors=errs; await b.close();
   const capFail=out.captions.mode==='big'&&(out.captions.ruleBreaks.length||out.captions.tooWide.length), cutFail=out.cadence.enforced&&out.cadence.fails.length;
-  const pass=!capFail&&!cutFail&&!out.determinism.mismatches.length&&!out.reach.outOfReach.length&&out.reach.figuresChecked>0&&!out.subtitles.framesOutsideSafeArea&&!out.subtitles.uncoveredWords.length&&!errs.length;
+  const paintFail=out.paint.painted&&(out.paint.mismatchesSamePage.length||out.paint.mismatchesAcrossPages.length);
+  const pass=!paintFail&&!capFail&&!cutFail&&!out.determinism.mismatches.length&&!out.reach.outOfReach.length&&out.reach.figuresChecked>0&&!out.subtitles.framesOutsideSafeArea&&!out.subtitles.uncoveredWords.length&&!errs.length;
   console.log(JSON.stringify(out,null,1)); console.log(pass?'VERIFY: PASS':'VERIFY: FAIL'); process.exit(pass?0:2); })();

@@ -8,13 +8,21 @@ const tW=(txt,size,fam=BAL,wt=800)=>{ cv.font=`${wt} ${size}px ${fam}`; return c
 const op=k=>N(sat(k)*100)/100;
 /* hand-drawn feel: subtle line boil (10 fps) applied to the drawn world, plus paper grain */
 function finish(svg,t,{boil=2.6,paper=.28,grade=null,vig=.9}={}){ const sd=1+Math.floor(t*10)%5; UID=0;
+  /* inside a dissolve or whip the SVG is an isolated group, so multiply rects can't reach the painted canvas: a painted shot applies them in the canvas for those frames */
+  if((grade||paper>0)&&PAINT.q.length&&paintIso()){ const g_=grade, p_=paper; paint(ctx=>PNT.post(ctx,{grade:g_,paper:p_})); grade=null; paper=0; }
   let g=boil>0?`<filter id="boil${sd}" x="-2%" y="-2%" width="104%" height="104%" filterUnits="objectBoundingBox"><feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" seed="${sd*13}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="${boil}" xChannelSelector="R" yChannelSelector="G"/></filter><g filter="url(#boil${sd})">${svg}</g>`:svg;
   if(grade) g+=`<rect width="1080" height="1920" fill="${grade[0]}" opacity="${grade[1]}" style="mix-blend-mode:${grade[2]||'multiply'}"/>`;
   if(paper>0) g+=`<rect width="1080" height="1920" fill="url(#paper)" opacity="${paper}" style="mix-blend-mode:multiply"/>`;
   if(vig>0) g+=`<rect width="1080" height="1920" fill="url(#gVig2)" opacity="${vig}"/>`;
   return g; }
 /* camera: world point (c.x,c.y) lands at screen (540, oy). oy defaults to c.oy, then to the frame centre (960). */
-const cam=(c,svg,oy)=>`<g transform="translate(540 ${N(oy!=null?oy:(c.oy!=null?c.oy:960))}) scale(${N(c.z*1000)/1000}) translate(${N(-c.x)} ${N(-c.y)})">${svg}</g>`;
+/* camM is the one camera matrix (rounded exactly as the SVG prints it); cam() uses it for the SVG and camCtx() for the painted canvas,
+   so a shot that paints passes the SAME camera object to both and the two layers cannot drift apart. */
+const camM=(c,oy)=>({oy:N(oy!=null?oy:(c.oy!=null?c.oy:960)),z:N(c.z*1000)/1000,nx:N(-c.x),ny:N(-c.y)});
+const cam=(c,svg,oy)=>{ const m=camM(c,oy); return `<g transform="translate(540 ${m.oy}) scale(${m.z}) translate(${m.nx} ${m.ny})">${svg}</g>`; };
+const camCtx=(ctx,c,oy)=>{ const m=camM(c,oy); ctx.translate(540,m.oy); ctx.scale(m.z,m.z); ctx.translate(m.nx,m.ny); };
+/* a camera that moves only k of the way from the neutral camera: use it for far painted planes (parallax). k=1 is the real camera. */
+const camPar=(c,k)=>({x:lerp(CAM0.x,c.x,k),y:lerp(CAM0.y,c.y,k),z:1+(c.z-1)*k,oy:c.oy});
 /* damped spring: 0 -> settles, used for wobble after an impact */
 const wob=(u,t0,amp=1,f=18,d=6)=>u<t0?0:amp*Math.exp(-(u-t0)*d)*Math.sin((u-t0)*f);
 const shakeV=(u,t0,amp=18,dur=.4)=>{ const k=(u-t0)/dur; if(k<0||k>1) return [0,0]; const a=amp*(1-k)*(1-k); return [Math.sin(u*91)*a,Math.cos(u*73)*a*.7]; };

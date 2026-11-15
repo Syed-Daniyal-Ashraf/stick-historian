@@ -15,6 +15,8 @@ Update this file in the same change as any engine change. Rules and history are 
 | Cover | `node engine/tools/cover.js EP` | `<file>-Cover-4K.png` (frame at `COVER_T`) |
 | Regression | `node engine/compare.js old.html new.html` | pixel-compares 24 frames of two builds |
 
+`export.js` also writes `EP/out/render_time.json` (`render_time_draft.json` for drafts): wall seconds, seconds per frame per worker, median and p95 frame time, the 10 slowest frames.
+
 Environment: `TTS_DIR`, `ASSETS_DIR` (default `assets/`), `CHROMIUM_PATH`, `WORKERS` (export browsers, default 2), `FPS`, `W`.
 
 `verify.js` checks: (1) determinism, any frame renders the same whatever was drawn before; (2) reach, no hand or foot
@@ -22,6 +24,10 @@ target more than 6 units beyond the limb; (3) subtitles inside x 65-1015 / y 270
 (4) `captions` (big mode only): FAIL on a chunk that breaks the rules (`ruleBreaks`) or can't fit at 104 px (`tooWide`), WARN `under025`;
 (5) `cadence`: the gaps between `film.CUTS`. Enforced only when the episode declares `CUT_EP`: FAIL on a gap over 3.4 s (4.5 s in
 `CUT_HOLD_EP` shots), WARN `gapsOver3` / `gapsUnder1`. Without `CUT_EP` it is printed for information. Also prints `renderMs`.
+(6) `paint` (only when a shot paints): the canvas pixels + SVG markup are hashed at 60 times, rendered in order and scrambled on one page and again on a
+second page (the export uses 2 browsers); any mismatch is a FAIL. Hashes are kept in `EP/out/paint_hashes.json` and `changedSinceLastRun` reports how many
+moved (information, not a failure). `paintMs` = paint pass alone over 120 frames (median, p95, max) and `bakeMs`; `overBudget` lists what misses
+median 30 ms / p95 60 ms / bake 3 s (warning). `renderMs` does NOT include the paint raster (the canvas rasterises lazily): read `paintMs` for painted episodes.
 It does not check labels, faces or props against the safe area: look at a `SAFE=1` sheet for those.
 It also does not judge whether a cut changes the picture: put frames 0.1 s before and after every cut on a contact sheet.
 
@@ -34,7 +40,7 @@ It also does not judge whether a cut changes the picture: put frames 0.1 s befor
 ## Toon kit (engine/toon)
 **10_base.js**
 - `finish(svg,t,{boil,paper,grade,vig})` wraps a shot: line boil (10 fps), paper grain, colour grade, vignette.
-- `cam({x,y,z,oy},svg,oy)` world point (x,y) lands at screen (540, oy); oy defaults to 960.
+- `cam({x,y,z,oy},svg,oy)` world point (x,y) lands at screen (540, oy); oy defaults to 960. `camM(c,oy)` is the matrix it uses (shared with `camCtx`).
 - `ttl(text,x,y,size,fill,{k,rot})` title type; `tag(text,x,y,size,bg,fg,{k,rot})` label; `stampMark(x,y,[lines],col,k,rot,size)`.
 - `wob(u,t0,amp,f,d)` damped wobble; `shakeV(u,t0,amp,dur)` + `jolt(v,svg)` impact shake.
 - Subtitles `mySubs(t)`: one line, word pop, y from `SHOT_META[n].subY`, width limit `SUB_MAXW_EP`, number words merged by `MERGE_EP`.
@@ -49,6 +55,31 @@ It also does not judge whether a cut changes the picture: put frames 0.1 s befor
   or seconds into the shot. In the shot: `const P=part(3,u)` gives `{i, pu, p0, p1}` (sub-shot index, time into it, its bounds in shot seconds);
   switch the set/framing on `P.i`. `film.CUTS` = every `SEQ` start + every cut point (absolute s). `CUT_HOLD_EP=[n]` allows the final hold up to 4.5 s.
   A cut must change the set, the subject, or the framing (>= 1.4x zoom or a reversed angle); a slow push is not a cut.
+
+**15_paint.js + the paint core in template.html: the painted layer** (a `<canvas id="paint">` under the SVG; empty unless a shot paints)
+- An episode that paints sets `PAINT_EP=1` in `meta.js` (textures are baked before `window.film` exists; ~0.3 s). Other episodes pay nothing.
+- In a shot: `paint(ctx=>{ ... })` queues a painter; the shot still returns its SVG. `renderAt` runs the shots, then clears the canvas and runs the queue.
+  `ctx` is in 1080x1920 frame units. `camCtx(ctx,c)` applies the shot camera (same matrix as `cam(c,svg)`: pass the SAME camera object to both);
+  `camPar(c,k)` is a camera that moves only k of the way (far planes: sky .25, sea .6). Wrap each plane in `ctx.save()/restore()`.
+- **Painter rules:** a pure function of its arguments. No `Math.random`, `Date`, `performance.now`, no state from an earlier frame, no `ctx.setTransform`
+  (use `PNT.frame(ctx,fn)` for frame-space work). A cache is allowed only when its key is the full input (see `PNT.tint`).
+- Seeded helpers: `rng(seed)` (mulberry32), `vnoise(x,y,seed)`, `fbm(x,y,oct,seed)`, `tileField(size,[[cellsX,cellsY,amp],...],seed)`.
+  Colour: `pMix(a,b,k)`, `pA(hex,alpha)`, `pCycle(phase,[[phase,'#hex'],...])` (wraps; used for the day cycle).
+- Textures `TEX` (512 px, tiling): `grain`, `cloud`, `water` / `waterDk` / `spark` (+ smaller copies for far strips), `wood`. `grain` and `wood` are black
+  with alpha, so a plain draw equals a multiply.
+- Painters (namespace `PNT`, not `P`: shots use `const P=part(n,u)`):
+  `PNT.sky(ctx,{top,mid,bot,y0,y1,midAt,to,sun})`, `PNT.sun(ctx,x,y,r,col,halo,disc)`, `PNT.glow(ctx,x,y,r,col,a)`, `PNT.stars(ctx,t,{n,a,seed,y0,y1})`,
+  `PNT.clouds(ctx,t,{alt,h,drift,alpha,sc,col,seed,flat})`, `PNT.sea(ctx,t,{horizon,bottom,far,mid,near,rip,dk,ripCol,glint:[x,halfWidth,col,a],swell,speed,n,to})`
+  (perspective strips; `to` stops drawing where a deck or shore covers the sea: the biggest saving), `PNT.wood(ctx,[x,y,w,h] or Path2D,{tone,sc,rot,ox,oy,light:[x0,y0,x1,y1,strength]})`,
+  `PNT.shafts(ctx,t,{x,y,angle,spread,n,len,alpha,col,motes,seed})`, `PNT.haze(ctx,y0,y1,col,a)`, `PNT.band(ctx,y,h,col,a)`, `PNT.shadow(ctx,x,y,rx,ry,a)`,
+  `PNT.vignette(ctx,a)`, `PNT.post(ctx,{grade,paper})`. `PNT.shafts` is written but not yet used in a shot: check it on a sheet before relying on it.
+- **Grade, paper, vignette:** `finish()` draws them as SVG rects with `mix-blend-mode:multiply`. Measured in the export browser: they DO blend with the canvas
+  on a hard cut and on a push. Inside a dissolve or a whip the SVG is an isolated group and they do not, so for those frames `finish()` hands a painted shot's
+  grade and paper to the canvas (`PNT.post`) and the figures lose them for the length of the transition. Prefer hard cuts or pushes on painted shots.
+- **Transitions:** push and whip slide the painters with the SVG, dissolve fades them, whip smears them with 5 offset copies (coarser than the SVG blur).
+- `ic/src/props.js` has the first painted set: `dayLight(ph)`, `paintDoldrums(ctx,t,L,c,{crate,fig})`, `lit(svg,col,k)` (multiplies the scene's light colour
+  onto SVG figures so they sit in the painting), `tally(x,y,n,k)`.
+- Measured on `ic` (2-core cloud machine, 1080x1920, 5 runs): paint median 28.6-32.8 ms (budget 30), p95 41-49 ms (budget 60), bake ~0.3 s. Costs per painter and the export comparison are in `ic/brief.md` section 11.
 
 **20_rig.js**
 - `toon(who,x,y,scale,dir,pose,t,seed)`; feet at (x,y), figure ~340 units tall, `dir` 1 faces right, -1 left.

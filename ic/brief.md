@@ -239,3 +239,49 @@ Report: `paint: {pages:2, checked:60, mismatchesSamePage:[], mismatchesAcrossPag
   colour grade per shot so figures pick up the scene's light (the `finish()` grade), and haze on far planes only.
 - **Comments will say "sawdust".** The pinned comment answers it with the 1834 source.
 - **Colonial framing:** it is a luxury for British Calcutta. Keep it dry and factual: no celebration of the Raj, no servant jokes; the gag is on the buyer.
+
+## 11. Stage B part 2 results: the painted layer (2026-11-15)
+Built in one chat on Fable 5.2 at Farrukh's request (the stage table says Opus). Branch `painted-layer`.
+
+**What exists now**
+- `engine/template.html`: `<canvas id="paint">` under the SVG, the painter queue (`paint`, `paintState`, `paintFlush`, `paintHash`), transitions carry a paint state.
+- `engine/toon/15_paint.js`: seeded textures and the `PNT.*` painters. `engine/toon/10_base.js`: `camM`, `camCtx`, `camPar`; `finish()` hands grade and paper to the canvas inside a dissolve or whip.
+- `engine/tools/verify.js`: gate 6 (`paint`), `paintMs`, `bakeMs`, `EP/out/paint_hashes.json`. `engine/tools/export.js`: `render_time.json`.
+- `ic/`: scaffold with ONE test shot (`sh1` = storyboard cut 5b slowed to 3 days in 9 s, three framings). `ic/src/props.js` holds the reusable parts:
+  `dayLight(ph)`, `paintDoldrums()`, `lit()`, `tally()`, `TC.sailor`. `ic/src/shots.js` is a test and is replaced in Stage C.
+- **Placeholders, to be overwritten in Stage C step 1-2:** `ic/vo/timing.json` (invented word times for line 5 only, marked `placeholder`) and `ic/vo/voice.mp3` (9 s of silence).
+  There is no `ic/vo/gen.py` yet: copy `tn/vo/*.py` and paste the SCRIPT from section 3.
+
+**Differences from the design in section 9 (and why)**
+- The namespace is `PNT`, not `P`: shots already use `const P=part(n,u)`, and `tn` declares `PT`.
+- Painters take `(ctx,t,opts)` and draw in whatever transform is current; the caller applies `camCtx(ctx,camPar(c,k))` per plane. No `cam` argument.
+- Item 7, measured (grey multiply rect over a red canvas, headless Chrome 153): plain rect -> (128,0,0), inside a transformed group -> (128,0,0): it blends.
+  Inside a group with opacity or a filter -> (128,128,128): it does not. So `finish()`'s grade/paper/vignette work on painted shots on hard cuts and pushes;
+  in a dissolve or whip they are handed to the canvas for those frames. No second canvas was needed. `ic` uses hard cuts only.
+- `grain` and `wood` are stored as black-with-alpha, and glow/shadow use normal blending: multiply/screen/soft-light fills were the slowest operations.
+- Textures bake only when the episode sets `PAINT_EP=1` (so old episodes pay nothing); 512 px tiles plus smaller copies of the water for far strips.
+- Extra painters: `PNT.sun`, `PNT.stars`, `PNT.band`, `PNT.shadow`, `PNT.tint`. `PNT.shafts` was checked on one still, not in a shot.
+
+**Acceptance**
+- `compare.js`, baseline build vs new build: `mo`, `lb`, `yo`, `tn` all `framesDifferent: 0`, `dataIdentical: true`.
+- `verify.js ic`: PASS. Determinism 60/60 same page, 60/60 across two pages. `verify.js` on `mo`, `yo`, `tn`: PASS (`painted:false`). `lb`: FAIL as before
+  (512 subtitle frames outside the safe area, the known issue in CLAUDE.md), nothing else.
+- Paint time on `ic` (1080x1920, 2-core cloud machine, 5 runs): median 28.6 / 29.7 / 29.8 / 30.7 / 32.8 ms, p95 40.9-48.7 ms, max ~52 ms, bake 270-330 ms.
+  Budget: median <= 30, p95 <= 60, bake <= 3000. **The median sits on the budget line, not under it.** Per painter (ms, one frame): sea ~9, wood ~10 (4 calls), clouds ~7 (2 bands), sky ~4, glow/sun ~3.
+  Cheapest next savings if a heavier shot needs them: bake the deck/bulwark wood once per camera (keyed cache), one cloud band instead of two.
+- Export (final, 2 workers): `yo` 1567 frames, 405 s, **0.506 s per frame per worker**, median frame 465 ms (clean run; an earlier run with other jobs: 0.508).
+  `ic` test, 270 frames: 0.766 then 0.678 s per frame per worker (**1.51x and 1.34x** of `yo`; budget 1.5x), median frame 454 and 394 ms.
+  The median is no slower than `yo`; the mean is higher because of 1.5-2.9 s stalls that both films show (x264 `slow` and two browsers sharing 2 cores) and that weigh more on a 9 s film.
+  Not measured: a full-length painted film. Re-read `render_time.json` after the first full `ic` export.
+- Transitions: push, whip and dissolve rendered on a temporary two-shot sequence; both layers move together. The whip smear on the canvas is visibly coarser (5 copies).
+- 4K cover (`cover.js`, scale 2): the canvas is sharp at 2160x3840.
+- Contact sheet + 9 s silent MP4 sent to Farrukh for the yes/no on the look. **Stage C must not start until he answers.**
+
+**For Stage C (staging notes from the test)**
+- `renderMs` in `verify.js` does not include paint raster. Use `paintMs`.
+- Storyboard cut 5b asks for **ten day/night cycles in 2.2 s** (0.22 s per day = ~7 frames each). At that speed the sky strobes. Recommended: 3 cycles shown, tally marks
+  jump in groups ("III", then five, then ten), or hold the shot for the 4.5 s `CUT_HOLD_EP` limit. Decide in Stage C with a dense strip, not from this test.
+- Keep the sun and moon arc inside x 110-970 and below y 330 (done in `dayLight`). With the big caption at y 1050-1175 a seated figure needs scale >= 1.3, or the caption covers the torso.
+- `lit(svg,col,k)` is what stops the figure looking pasted on: k .8 for figures, .55 for line work over painted wood. Painted `PNT.shadow` under feet, not an SVG ellipse.
+- The deck is flat-on planks (no perspective). If a shot looks down the deck, paint it with strips like `PNT.sea` or accept the flat look; not built.
+- Painted shots: hard cuts or pushes. Not verified in a full film: whip and dissolve.
