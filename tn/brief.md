@@ -316,7 +316,13 @@ Sentinel 21 Nov 1883 wording, Standard Time Act 19 Mar 1918, "+1h" clocks 9/10/1
 - Opening and 6b show a workman cranking a clock back. This illustrates the general mechanism (New York's clocks went back), not a sourced act at St. Paul's.
 - Lower frame below the captions is plain floor (under the Reels UI anyway).
 - 4a/4b skylines (section 12 item 4): 4b now reads as a wire ride with roof clocks; not changed.
-- Engine item still open: no bowler/top-hat caps in the rig (`fedora` stand-in plus the `topHat()` overlay). For a Stage B, not here.
+- Engine item still open (Stage B, benefits every 19th-century episode incl. `ic`): high-buttoned 1880s coats with a short tie
+  (the rig draws an open jacket and a long tie, which reads 20th-century), and a true bowler/derby and top hat in the rig.
+
+**Costume pass (2026-11-15, Farrukh asked if the clothes fit 1883 NY):** men in the street were hatless, which is wrong for the period
+(derby/bowler was the everyday business hat; Historical Emporium 1880s guide). coatA-D now wear the rig's round-crowned `fedora`, which reads as a derby;
+coatB takes it off indoors (5c, `cos:{cap:null}`). Green and purple suits are now dark brown and charcoal; ties darkened (railmen dark red).
+Re-spaced 1d (coatA 110, coatC 320) and 6c (men at 235/850, clear of the bell). verify PASS, final re-exported (-14.0 LUFS), cover re-made.
 
 **Loudness of the final, per section (ebur128, integrated LUFS):** 0-6.9 s -14.0 · 6.9-11.5 -13.4 · dropout 11.5-15.0 -14.2 · 15.0-17.9 -14.2 · 17.9-23.7 -13.6 · 23.7-34.0 -13.9 · 34.0-38.7 -13.9 · 38.7-43.9 -14.5 · 43.9-50.2 -14.2. Music bus is 0.0 inside the dropout.
 

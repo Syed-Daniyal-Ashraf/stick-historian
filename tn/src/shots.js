@@ -56,7 +56,7 @@ function sh1_c(pu,u,t){ // the clock face: four minutes pass (elapsed time; no s
 function sh1_d(pu,u,t){ // wide again, low and close: the second noon
   const k=cu(1,'again')-cutPts(1)[2]; let g=church(u,t,{trinity:1,mins:0,swing:bellSwing(pu,Math.max(0,k),28),dong:seg(pu,k,k+.45,E.lin)});
   g=`<g transform="translate(540 1005) scale(1.12) translate(-540 -1005)">${g}</g>`;
-  [['coatA',130,'look','ear'],['coatB',900,'shrug','shrug'],['coatC',280,'ear','look']].forEach(([w,x,a,b],i)=>{ const tw=tween(pu,.9+i*.2,PS[a],PS[b],.35); g+=toon(w,x,GY+4,1.1,i===1?-1:1,{...tw,holdF:(a==='look'||a==='ear')?watchSvg():undefined},t,20+i); });
+  [['coatA',110,'look','ear'],['coatB',900,'shrug','shrug'],['coatC',320,'ear','look']].forEach(([w,x,a,b],i)=>{ const tw=tween(pu,.9+i*.2,PS[a],PS[b],.35); g+=toon(w,x,GY+4,1.1,i===1?-1:1,{...tw,holdF:(a==='look'||a==='ear')?watchSvg():undefined},t,20+i); });
   g+=tag('NOON. AGAIN.',540,330,60,'#fff3c4',INK,{k:seg(pu,k,k+.2,E.back),rot:2});
   return g; }
 function sh1(t){ const u=t-S(1), P=part(1,u); let g=P.i===0?sh1_a(u,t):P.i===1?sh1_b(P.pu,u,t):P.i===2?sh1_c(P.pu,u,t):sh1_d(P.pu,u,t);
@@ -175,7 +175,7 @@ function sh5_c(pu,u,t){ let g=WALLBG('#a8855a')+FLOOR(GY,'#5a3e28');
   g+=`</g>`;
   const A=full({lean:4,hF:[70,-300],hB:[-6,-114],handF:'point',expr:'determined',look:[8,-6],tilt:-4}), B=full({...A,hF:[84,-312],lean:6});
   const gx=Math.min(1,pu/1.1);
-  g+=toon('railman',200,GY+4,.9,1,{...A,hF:[60+gx*40,-300],lean:2+gx*4},t,80)+toon('coatB',500,GY+4,.9,1,full({hF:[40,-170],hB:[30,-176],handF:'fist',handB:'fist',expr:'stern',look:[6,-8]}),t,81)+toon('coatD',860,GY+4,.9,-1,full({hF:[56,-176],hB:[44,-170],handF:'fist',handB:'fist',expr:'smug',look:[4,-6]}),t,82);
+  g+=toon('railman',200,GY+4,.9,1,{...A,hF:[60+gx*40,-300],lean:2+gx*4},t,80)+toon('coatB',500,GY+4,.9,1,{...full({hF:[40,-170],hB:[30,-176],handF:'fist',handB:'fist',expr:'stern',look:[6,-8]}),cos:{cap:null}},t,81)+toon('coatD',860,GY+4,.9,-1,full({hF:[56,-176],hB:[44,-170],handF:'fist',handB:'fist',expr:'smug',look:[4,-6]}),t,82);
   return g; }
 function sh5_d(pu,u,t){ let g=WALLBG('#9a5a44')+FLOOR(GY,'#6a5a46'); for(let r=0;r<6;r++) for(let c=0;c<9;c++) g+=`<rect x="${-30+c*130+(r%2)*60}" y="${280+r*108}" width="124" height="100" fill="none" stroke="#7a4636" stroke-width="3" opacity=".5"/>`;
   for(let i=0;i<4;i++){ const cx=140+i*267, sec=((t*6)%360); g+=`<g>`+clockFace(cx,560,106,540+i*60,{rim:'#2a2a32',sw:6})+`<circle cx="${N(cx+Math.sin(rad(sec))*88)}" cy="${N(560-Math.cos(rad(sec))*88)}" r="8" fill="${CRIM}" stroke="${INK}" stroke-width="3"/></g>`;
@@ -211,7 +211,7 @@ function sh6_c(pu,u,t){ const k=.1; let g=`<rect width="1080" height="1920" fill
   for(let i=0;i<7;i++) g+=`<path d="M${i*180} 0V1005" stroke="#cfc6ae" stroke-width="5"/>`;
   g+=bellProp(540,380,1.6,bellSwing(pu,k,30),seg(pu,k,k+.45,E.lin))+FLOOR(GY+10,'#8b8678');
   const A=PS.shrug, B=PS.reset;
-  g+=toon('coatB',300,GY+14,1.5,1,{...tween(pu,.1,A,B,.5),holdF:watchSvg()},t,90)+toon('coatC',790,GY+14,1.5,-1,{...tween(pu,.25,A,B,.5),holdF:watchSvg()},t,91);
+  g+=toon('coatB',235,GY+14,1.5,1,{...tween(pu,.1,A,B,.5),holdF:watchSvg()},t,90)+toon('coatC',850,GY+14,1.5,-1,{...tween(pu,.25,A,B,.5),holdF:watchSvg()},t,91);
   return g; }
 function sh6(t){ const u=t-S(6), P=part(6,u); return finish(P.i===0?sh6_a(P.pu,u,t):P.i===1?sh6_b(P.pu,u,t):sh6_c(P.pu,u,t),t,{boil:2.2}); }
 

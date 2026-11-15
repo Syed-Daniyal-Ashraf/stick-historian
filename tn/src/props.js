@@ -3,16 +3,18 @@
    big-caption lane (letters y 1050-1175). Floors overscan to the bottom of the frame. */
 const FLOOR=(y,c,line=true)=>`<rect x="-600" y="${y}" width="2280" height="2400" fill="${c}"/>`+(line?`<path d="M-300 ${y}H1380" stroke="${INK}" stroke-width="7"/>`:'');
 const WALLBG=c=>`<rect x="-600" y="-600" width="2280" height="4400" fill="${c}"/>`;
-/* ---- costumes: 1880s frock coats and waistcoats. The rig has no bowler or top hat (fix list): 'flat' caps and fedoras stand in, many men go hatless. */
+/* ---- costumes: 1880s sack suits and waistcoats in dark colours, dark ties. Men in the street wear hats: the rig's 'fedora' is drawn with a round crown
+   and reads as a derby/bowler (the business hat of the 1880s). Indoors (5c conference) coatB takes it off via cos:{cap:null}.
+   Still engine work: high-buttoned coats with short ties and a true bowler/top hat in the rig (brief section 13). */
 Object.assign(TC,{
   workman:{skin:'#d9a37a',hair:'#3a2a1e',top:'#6a7f9a',topDk:'#4f6580',pants:'#6a7f9a',shoe:'#3a2a1e',cap:'flat',capC:'#4a4a52',mus:'thick',headS:1.14,build:.3},
-  coatA:{skin:'#efc6a0',hair:'#4a3626',suit:true,top:'#3a3a44',topDk:'#2a2a32',shirt:'#f4efe2',tie:'#7a1f2a',pants:'#3a3a44',shoe:'#1e1610',beard:true,headS:1.14,build:.3},
-  coatB:{skin:'#e2b48c',hair:'#8a8378',grey:.4,suit:true,top:'#5a4636',topDk:'#44342a',shirt:'#f4efe2',tie:'#2a3a5a',pants:'#5a4636',shoe:'#1e1610',mus:'thick',glasses:true,headS:1.16,build:.6},
-  coatC:{skin:'#d9a37a',hair:'#1e1610',suit:true,top:'#2e4a3e',topDk:'#223a30',shirt:'#f4efe2',tie:'#c8a23a',pants:'#2e4a3e',shoe:'#120c08',bald:true,mus:'curl',headS:1.12,build:.2},
-  coatD:{skin:'#f0c4a0',hair:'#d8d4cc',grey:.8,suit:true,top:'#4a3a56',topDk:'#382c42',shirt:'#f4efe2',tie:'#8a2a2a',pants:'#4a3a56',shoe:'#1e1610',beard:true,glasses:true,headS:1.18,build:.5},
+  coatA:{skin:'#efc6a0',hair:'#4a3626',suit:true,top:'#3a3a44',topDk:'#2a2a32',shirt:'#f4efe2',tie:'#5a1e22',cap:'fedora',capC:'#24242a',pants:'#3a3a44',shoe:'#1e1610',beard:true,headS:1.14,build:.3},
+  coatB:{skin:'#e2b48c',hair:'#8a8378',grey:.4,suit:true,top:'#5a4636',topDk:'#44342a',shirt:'#f4efe2',tie:'#1e1e24',cap:'fedora',capC:'#3a2e26',pants:'#5a4636',shoe:'#1e1610',mus:'thick',glasses:true,headS:1.16,build:.6},
+  coatC:{skin:'#d9a37a',hair:'#1e1610',suit:true,top:'#3e342c',topDk:'#2e2620',shirt:'#f4efe2',tie:'#1e1e24',cap:'fedora',capC:'#24242a',pants:'#2e4a3e',shoe:'#120c08',bald:true,mus:'curl',headS:1.12,build:.2},
+  coatD:{skin:'#f0c4a0',hair:'#d8d4cc',grey:.8,suit:true,top:'#3a3a40',topDk:'#2a2a30',shirt:'#f4efe2',tie:'#4a1a1e',cap:'fedora',capC:'#24242a',pants:'#4a3a56',shoe:'#1e1610',beard:true,glasses:true,headS:1.18,build:.5},
   hamblet:{skin:'#efc6a0',hair:'#6a4a2e',vest:'#7a4a2a',top:'#f1ead8',topDk:'#d6ccb2',pants:'#4a4640',shoe:'#2a1e16',mus:'thick',glasses:false,headS:1.14,build:.2},
-  railman:{skin:'#e2b48c',hair:'#cfc9bf',grey:.9,suit:true,top:'#2a3a5a',topDk:'#1e2c46',shirt:'#f4efe2',tie:'#c8372d',pants:'#2a3a5a',shoe:'#1e1610',cap:'fedora',capC:'#2a2a32',mus:'thick',headS:1.16,build:.4},
-  railyoung:{skin:'#e2b48c',hair:'#4a3626',suit:true,top:'#2a3a5a',topDk:'#1e2c46',shirt:'#f4efe2',tie:'#c8372d',pants:'#2a3a5a',shoe:'#1e1610',cap:'fedora',capC:'#2a2a32',mus:'thick',headS:1.16,build:.4},
+  railman:{skin:'#e2b48c',hair:'#cfc9bf',grey:.9,suit:true,top:'#2a3a5a',topDk:'#1e2c46',shirt:'#f4efe2',tie:'#6a1f24',pants:'#2a3a5a',shoe:'#1e1610',cap:'fedora',capC:'#2a2a32',mus:'thick',headS:1.16,build:.4},
+  railyoung:{skin:'#e2b48c',hair:'#4a3626',suit:true,top:'#2a3a5a',topDk:'#1e2c46',shirt:'#f4efe2',tie:'#6a1f24',pants:'#2a3a5a',shoe:'#1e1610',cap:'fedora',capC:'#2a2a32',mus:'thick',headS:1.16,build:.4},
   senator:{skin:'#efc4a0',hair:'#b8b2a6',grey:.5,suit:true,top:'#1e1e26',topDk:'#14141a',shirt:'#f4efe2',tie:'#1e1e26',pants:'#1e1e26',shoe:'#120c08',beard:true,headS:1.2,build:.7},
   editor:{skin:'#e8bc98',hair:'#3a2a1e',top:'#f1ead8',topDk:'#d6ccb2',vest:'#3c5a6e',pants:'#4a4640',shoe:'#2a1e16',glasses:true,mus:'thick',headS:1.14,build:.4},
   farmer:{skin:'#d9a37a',hair:'#6a4a2e',top:'#c9b98a',topDk:'#a99a6a',pants:'#5a4a3a',shoe:'#3a2a1e',cap:'flat',capC:'#6a5a48',beard:true,headS:1.14,build:.3},
