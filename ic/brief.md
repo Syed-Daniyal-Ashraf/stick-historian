@@ -285,3 +285,31 @@ Built in one chat on Fable 5.2 at Farrukh's request (the stage table says Opus).
 - `lit(svg,col,k)` is what stops the figure looking pasted on: k .8 for figures, .55 for line work over painted wood. Painted `PNT.shadow` under feet, not an SVG ellipse.
 - The deck is flat-on planks (no perspective). If a shot looks down the deck, paint it with strips like `PNT.sea` or accept the flat look; not built.
 - Painted shots: hard cuts or pushes. Not verified in a full film: whip and dissolve.
+
+## 12. Stage C results: voice and picture (2026-11-16, Sonnet 5.5, medium)
+Branch `painted-layer`. Farrukh approved the painted look before this stage.
+
+**Built**
+- `ic/vo/gen.py` (SCRIPT from section 3, unchanged), `timeline.py`, `lines.json`, `timing.json`, `voice.mp3`: real voice. Total **51.92 s**; shot starts 0 / 8.08 / 15.00 / 21.35 / 27.69 / 34.04 / 38.08 / 46.15. `sound.py` and `bed.py` are still the `tn` copies: not adapted, no music or foley yet.
+- `ic/src/props.js`: costumes (`sailor2 mate worker worker2 tanner buyer buyer2 porter`), SVG props (`iceBlock shipSide horse cutterSled slate` and hand props), painters (`paintHold paintGlobe paintOpenSea paintPond paintTannery paintRiver paintDocks paintIceHouse paintStone`). `ic/src/shots.js`: all 26 sub-shots of section 4, cut points in `CUT_EP` by word.
+- Every shot paints; hard cuts only (no push, whip or dissolve used).
+
+**Gates**: `verify.js ic` PASS (determinism 60/60 on two pages, reach 0 misses, captions no rule breaks, cadence no fails). `paintMs` median 29.5 / p95 39.2 / max 46.4 ms, bake 274 ms: **still on the 30 ms line**. Warn only: caption chunks under 0.25 s ("did", "cut", "it."); longest gap 3.33 s (3c).
+Draft export (`DRAFT=1`, 779 frames, 2 workers): 116 s wall, 0.290 s per frame per worker (draft size, not comparable to the `yo` final figure). Full-length painted film renders without errors. A final-size export was not run.
+
+**Decisions on the open items**
+- Cut 5b: not ten cycles in 2.2 s. The sky runs 2.3 cycles at 1.0 s per day (checked with a 0.2 s strip, no strobe); the tally marks count to 10 on their own clock; 5c carries a "DAY 10" tag. 5b runs 2.39-4.70 s because the voice leaves silence after "warm up".
+- Deck perspective: not built. No shot looks down the deck; the flat planks are only used side-on.
+- 2c: the ruler slides in as a plain SVG (no top-down arm). 8c: door leaves are SVG over a painted stone wall.
+- Removed a "FREE" tag from 4b (the tannery handing over bark): not supported by the sources. The gag stays unlabelled.
+
+**Environment note for the next chat**: Playwright's Chromium download is blocked here. Use `export CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome`. Kokoro model files came from the GitHub release (`scripts/setup.sh` step), not committed.
+
+**Fix list for Stage D (not yet looked at in motion; only still frames were checked)**
+1. 2b: the horse reads as a brown blob; the ice cutter sled is barely visible. Bigger or simpler silhouette.
+2. 5a (split screen) and 6a (crowd) have small figures; judge them in the rough cut.
+3. 8b: the ice house is a pale box with a dome; 8c: the puff from the keyhole appears only in the last second.
+4. Ship hull in 1c/1d sits low and the sailor overlaps the sails.
+5. Sound: adapt `sound.py` to section 5 (sections, foley CC0 list in `episode.json` → `foot`), then `bed.py`.
+6. Independent facts pass and the SAFE=1 text-collision pass (CLAUDE.md gates); frames 0.1 s before and after every cut on a sheet.
+7. Pronunciation to listen for: "Calcutta", "equator", "two-foot", "tannery". Cannot be heard here.
