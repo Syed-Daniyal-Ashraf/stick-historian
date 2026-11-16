@@ -313,3 +313,50 @@ Draft export (`DRAFT=1`, 779 frames, 2 workers): 116 s wall, 0.290 s per frame p
 5. Sound: adapt `sound.py` to section 5 (sections, foley CC0 list in `episode.json` → `foot`), then `bed.py`.
 6. Independent facts pass and the SAFE=1 text-collision pass (CLAUDE.md gates); frames 0.1 s before and after every cut on a sheet.
 7. Pronunciation to listen for: "Calcutta", "equator", "two-foot", "tannery". Cannot be heard here.
+
+## 13. Stage D results: review and finish (2026-11-16, Opus 5.5, medium)
+Branch `painted-layer`. Narration, timing (51.92 s), shot list and sources unchanged.
+
+**Delivered (project root):** `Ice-To-Calcutta-1833.mp4` (1080x1920, 30 fps, 51.92 s, -14.0 LUFS integrated, true peak -2.9 dBFS), `Ice-To-Calcutta-1833-Cover-4K.png` (frame at `COVER_T`), caption + pinned comment below. Draft with sound: `ic/out/draft_sound.mp4`. Not published.
+
+**Fix list (section 12)**
+1. 2b: horse and cutter stay in frame for the whole cut (horse 330 -> 600); new `cutterSled`: wooden frame, two toothed steel blades in the ice, handles, ice chips; traces to a red collar; the odd ring on the horse's body removed.
+2. 5a / 6a: 5a reads at full size (checked); 6a crowd figures .5 -> .66. 6b's onlookers stay small (accepted).
+3. 8b: the ice house is now a large windowless masonry block with one deep door (the "+" finial read as a church cross and is gone). Its real look is undocumented; it stays an unlabelled illustration. 8c: the door slams at 0.75 s into the cut with a camera jolt, the cold puff and frost sparkles come out at the slam (no longer only in the last second).
+4. 1c/1d: ship scale .8 -> .95, enters from x 170 (less cropping), sailor .58 standing on the bow deck clear of the sails, no jib behind him.
+- Cuts that only pushed: 3b now opens tight on the stack (z 1.55); 4d opens tight on the hay (z 1.45). Every cut now changes set, subject or framing (sheet 0.1 s around each cut checked).
+- 2c: blocks already landing on the cut frame (no empty frame); sea painted to the top (a black band above y 200 is gone). 1b: BOSTON label on the cut. 4d: end framing lowered so the hammerer's head clears the top band. 8b: porter enters on screen (no stray block at the left edge).
+
+**Independent facts pass** (fresh agent, frames + script only). All narrated claims supported by the 1834 Asiatic Society account (Mechanics' Magazine reprint) and Bean 1991. Caveats it raised, and what was done:
+- "they acted like one giant block": the 1834 account also says the ice melted between the blocks, not only from outside. Narration locked; added to the pinned comment.
+- "180 tons ... to India" = tons loaded, not landed; "more than half still ice" covers that. Comment already says so implicitly; no change.
+- Slate "DAYS ≈ -30 T": the sources give 26-28 t. Kept: matches "almost thirty" in the narration; the comment gives 6-8 + about 20.
+- Customers (8a) all read as Indian men in white caps; the buyers and subscribers were mostly British/European residents. Fixed: `buyer`/`buyer2` lost the `topi` cap (it reads as a skullcap); they now read as bareheaded European men in white suits; the porter (pagri, dhoti) is the only Indian figure in 8a.
+- Ice house: domed round ice houses are Bombay/Madras, not Calcutta (reviewer). Fixed (see 3 above).
+- Not acted on: "weak hook" (the hook is the agreed format; Farrukh's call), the mirrored equator cut at 7.0 s (by design: "the same line from the other side"), the same dock wall across 7a-8a (subject and framing change; a different set per cut would be a rebuild), feet overlapping caption letters (no faces involved).
+- The reviewer could not verify: the ship's owner/home port, which pond, whether this cargo used Wyeth's cutter specifically (Bean says horse-drawn; the narration says "a machine"), the ice house's look.
+
+**Gates**: `verify.js ic` PASS (determinism 60/60 on two pages, reach 0, subtitles 0 outside, cadence no fails; longest gap 3.33 s in 3c). `paintMs` median 26.0 / p95 36.3 / max 43 ms, bake 267 ms (under budget now). Warn only: caption chunks under 0.25 s ("did", "cut", "it.").
+SAFE=1 text pass (1 s strip + every cut): no text over faces, no text collisions, no captions cropped.
+**Render time (first full-length painted film):** final export 1558 frames, 292 s wall, **0.37 s per frame per worker** (median 327 ms, p95 640 ms) = 0.73x `yo` (budget 1.5x). Draft 0.26 s.
+
+**Sound** (`ic/vo/sound.py`, rewritten from the `tn` copy; `bed.py` now reads `voice.mp3` when there is no `voice.wav`). One 104 bpm grid; sections bright (harp eighths + glock + cello pizz) -> soft (bassoon + harp) -> pizz (from "step one") -> tense (bassoon ostinato + a tap per beat) -> roll (harp rolls + cello) -> pizz (trombone fall on "thirty") -> hush -> out at the door slam (final harp chord rings out). Foley on the `CUT_EP` times: frost crackle, sea wash, creaks, jump landings, cutter scrape and horse steps, 20 block thunks in 2c and in the hold, shovels, sack drop, hay rustle and stomps, the last nail, tally ticks, hatch open, drips, chalk, footsteps, coins, door slam + cold hiss. No vocal foley. CC0 list in `episode.json` -> `foot`.
+Loudness per section in the final MP4 (LUFS): bright -14.0, soft -13.5, pizz -14.3, tense -15.0, roll -13.4, pizz -13.1, hush -14.2, slam/out -18.4.
+**Not heard (cannot be heard here). Farrukh to listen for:** "Calcutta", "equator", "two-foot", "tannery"; whether the harp and pizz score suits the ice; the 20-thunk block sequences in 2c and 3a (could be busy); the door slam level.
+
+**Caption**
+> 180 tons of ice. Boston to Calcutta. 1833. No refrigeration. 🧊🚢
+> The ship was the Tuscany; the ice was Frederic Tudor's.
+> Would you have trusted bark and hay?
+>
+> #history #india #kolkata #boston #animation
+
+**Pinned comment**
+> Sources:
+> - "The Ice Trade between America and India", Journal of the Asiatic Society of Bengal (Sept 1834), from J. J. Dixwell, agent for the shippers; reprinted in Mechanics' Magazine, 9 Apr 1836 (transcript: todayinsci.com/T/Tudor_Frederic/IceTradeAmericaToIndia.htm)
+> - Susan S. Bean, "Cold Mine", American Heritage (1991), from Frederic Tudor's diaries (Baker Library, Harvard) and Capt. Littlefield's notes: americanheritage.com/cold-mine
+> - Gavin Weightman, The Frozen Water Trade (2003)
+>
+> Notes: Most retellings say sawdust; the 1834 account of this voyage says a foot of tanners' bark under and around the ice and a foot of hay on top. Packing the blocks tight was meant to make one solid mass, but the same account says the ice still melted between the blocks, not only from the outside. 180 tons were loaded; about 100 reached the ice store. Arrival dates differ (6, 10 or 13 September), so the video says September. "Almost thirty more" = 6-8 tons lost on the river + about 20 in unloading (the agent's estimate). Calcutta's residents raised money for an ice house; the first cargo was kept in a lower room of a house at Brightman's Ghaut, and the building in the video is an illustration. The voyage was organised with Samuel Austin and William C. Rogers; Rogers sold the ice in Calcutta.
+
+**For the 72 h / 7-day review:** `tn` vs `ic` is look + story at once (two data points, not a verdict); record both against the results log in `CLAUDE.md`.

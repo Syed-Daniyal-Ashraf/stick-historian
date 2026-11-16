@@ -2,7 +2,7 @@
  "title": "Boston Shipped Ice to India in 1833. Here's How It Survived.",
  "sub": "THE STICK HISTORIAN",
  "aria": "Animated short about the 1833 voyage that carried about 180 tons of New England ice from Boston to Calcutta, and how bark and hay kept it from melting",
- "foot": "Backgrounds are drawn in code (no image files). Voice: Kokoro af_heart (local). Music and foley: not yet added (Stage D).",
+ "foot": "Backgrounds are painted in code at render time (no image files, no AI images). Narration is an AI voice (Kokoro, af_heart, run locally). Music and effects: original score and foley from CC0 samples (VSCO 2 Community Edition: harp, violin and cello pizzicato, cello, bassoon, tuba, old trombone fall, glockenspiel, timpani, claves, quinto tap; Kenney audio packs: footsteps, creaks, cloth, chop, leather drop, coins, metal click, door open/close, card slide, poker chips), plus noise-synthesized sea, scrape, hiss and crackle. Events follow the Journal of the Asiatic Society of Bengal (Sept 1834, reprinted in Mechanics' Magazine, 1836) and Susan S. Bean, \"Cold Mine\", American Heritage (1991); the ship, people, ice house and staging are illustration.",
  "out": "ice-calcutta",
  "file": "Ice-To-Calcutta-1833"
 }

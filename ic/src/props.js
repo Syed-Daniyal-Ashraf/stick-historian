@@ -61,8 +61,8 @@ Object.assign(TC,{
   worker:{skin:'#e9b98e',hair:'#3a2a1e',top:'#6a4a38',topDk:'#523a2c',pants:'#3a3a40',shoe:'#2a1e16',cap:'flat',capC:'#3a3a40',headS:1.14,build:.3,shoes:true},
   worker2:{skin:'#d9a67a',hair:'#1e1610',top:'#4a5a6e',topDk:'#38465a',pants:'#4a3a30',shoe:'#2a1e16',cap:'flat',capC:'#5a4a3a',mus:'thin',headS:1.12,build:.15,shoes:true},
   tanner:{skin:'#d6a274',hair:'#2a2420',top:'#cbb690',topDk:'#a9946c',vest:'#6a4a2e',pants:'#5a4a3a',shoe:'#3a2a1e',mus:'thick',headS:1.14,build:.6,shoes:true},
-  buyer:{skin:'#f0c4a0',hair:'#cfc9bf',suit:true,top:'#f4efe2',topDk:'#d6cdb8',shirt:'#fffaf0',tie:'#8a2a2a',pants:'#f4efe2',shoe:'#1e1610',cap:'topi',capC:'#f1e8d2',mus:'thick',headS:1.16,build:.55},
-  buyer2:{skin:'#efc6a0',hair:'#7a5a3a',suit:true,top:'#d9d2c0',topDk:'#bdb6a2',shirt:'#fffaf0',tie:'#2c5e8a',pants:'#d9d2c0',shoe:'#1e1610',cap:'topi',capC:'#e6dcc4',headS:1.14,build:.2},
+  buyer:{skin:'#f0c4a0',hair:'#cfc9bf',suit:true,top:'#f4efe2',topDk:'#d6cdb8',shirt:'#fffaf0',tie:'#8a2a2a',pants:'#f4efe2',shoe:'#1e1610',mus:'thick',headS:1.16,build:.55},
+  buyer2:{skin:'#efc6a0',hair:'#7a5a3a',suit:true,top:'#d9d2c0',topDk:'#bdb6a2',shirt:'#fffaf0',tie:'#2c5e8a',pants:'#d9d2c0',shoe:'#1e1610',headS:1.14,build:.2},
   porter:{skin:'#a8723f',hair:'#1a120c',top:'#efe7d2',topDk:'#cfc5ab',pants:'#efe7d2',shoe:'#4a2e1a',cap:'pagri',capC:'#e6a23a',dhoti:true,headS:1.14,build:.2},
 });
 const walkPose=(u,v=2.4,amp=1)=>{ const s=Math.sin(u*v*Math.PI*2), c=Math.cos(u*v*Math.PI*2);
@@ -86,12 +86,12 @@ function iceBlock(x,y,w,h,{melt=0,frost=0,mist=0,t=0,drip=0,wob=0}={}){
     g+=`<ellipse cx="${N(mx)}" cy="${N(my)}" rx="${N(r*1.4)}" ry="${N(r*.7)}" fill="#fff" opacity="${N((1-q)*.55*mist*100)/100}"/>`; }
   return g; }
 /* square-rigger seen from the side. Origin = waterline centre; bow at +x when dir=1. Foam hides the hull's bottom edge. */
-function shipSide(x,y,s,dir,{name=true,sails=1,t=0}={}){
+function shipSide(x,y,s,dir,{name=true,sails=1,jib=1,t=0}={}){
   const sail=(cx,y0,w,h)=>`<path d="M${cx-w/2} ${y0}Q${cx} ${y0+14} ${cx+w/2} ${y0}L${cx+w/2-8} ${y0+h}Q${cx} ${y0+h+20} ${cx-w/2+8} ${y0+h}Z" fill="url(#gSail)" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`;
   let g=`<g transform="translate(${N(x)} ${N(y)}) scale(${N(s*dir*1000)/1000} ${s})">`;
   [[-250,-380,230],[-40,-560,300],[220,-470,260]].forEach(([mx,top,hh])=>{ g+=`<path d="M${mx} -100V${top}" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><path d="M${mx} -100V${top}" stroke="#7a5230" stroke-width="5" stroke-linecap="round"/>`; });
   if(sails){ g+=sail(-40,-540,250,150)+sail(-40,-370,300,190)+sail(220,-450,210,120)+sail(220,-310,250,150)+sail(-250,-360,170,140);
-    g+=`<path d="M410 -96L320 -330" stroke="${INK}" stroke-width="5"/><path d="M420 -118L322 -312L330 -140Z" fill="url(#gSail)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`; }
+    if(jib) g+=`<path d="M410 -96L320 -330" stroke="${INK}" stroke-width="5"/><path d="M420 -118L322 -312L330 -140Z" fill="url(#gSail)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`; }
   g+=`<path d="M-250 -100L-300 -112M-40 -100L-300 -112M-40 -100L220 -108M220 -100L420 -118" stroke="${INK}" stroke-width="3.5" opacity=".7" fill="none"/>`;
   g+=`<path d="M-400 -126L-376 -20Q-352 22 -296 28L300 28Q372 20 410 -66L452 -140Z" fill="#2c3a5a" stroke="${INK}" stroke-width="8" stroke-linejoin="round"/>`;
   g+=`<path d="M-396 -104L450 -118L444 -96L-390 -82Z" fill="#f4efe2" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><path d="M-402 -134L452 -148" stroke="${INK}" stroke-width="7"/>`;
@@ -105,9 +105,13 @@ function horse(x,y,s,dir,u){ const sw=a=>Math.sin(u*5+a)*22, lift=a=>Math.max(0,
   return `<g transform="translate(${N(x)} ${N(y)}) scale(${N(s*dir*1000)/1000} ${s})">${leg(-70,0)}${leg(-40,Math.PI)}${leg(60,Math.PI)}${leg(90,0)}`
     +`<path d="M-120 -170Q-120 -250 -40 -250L70 -250Q130 -250 130 -190Q130 -130 60 -120L-60 -118Q-120 -120 -120 -170Z" ${st(col,7)}/>`
     +`<path d="M110 -230Q150 -300 190 -330L230 -310Q246 -280 224 -262Q196 -240 160 -204Z" ${st(col,7)}/><path d="M196 -330L190 -354L214 -334Z" ${st(dk,5)}/><circle cx="214" cy="-296" r="5" fill="${INK}"/><path d="M110 -236Q130 -300 170 -338L160 -290Z" fill="${dk}" stroke="${INK}" stroke-width="5"/>`
-    +`<path d="M-118 -214Q-166 -190 -150 -128" fill="none" stroke="${dk}" stroke-width="16" stroke-linecap="round"/><path d="M-60 -250Q0 -262 60 -250" fill="none" stroke="#2a1e16" stroke-width="12"/><circle cx="-12" cy="-195" r="26" fill="none" stroke="#2a1e16" stroke-width="8"/></g>`; }
+    +`<path d="M-118 -214Q-166 -190 -150 -128" fill="none" stroke="${dk}" stroke-width="16" stroke-linecap="round"/><path d="M-60 -250Q0 -262 60 -250" fill="none" stroke="#2a1e16" stroke-width="12"/><path d="M112 -246Q96 -196 122 -150" fill="none" stroke="#2a1e16" stroke-width="16" stroke-linecap="round"/><path d="M112 -246Q96 -196 122 -150" fill="none" stroke="#c8372d" stroke-width="7" stroke-linecap="round"/></g>`; }
 /* ice cutter: two blades on a low sled, pulled by the horse; grooves are drawn separately */
-function cutterSled(x,y,s,dir){ return `<g transform="translate(${N(x)} ${N(y)}) scale(${N(s*dir*1000)/1000} ${s})"><path d="M0 -20H-190" stroke="${INK}" stroke-width="10"/><path d="M-190 -34H-330V-6H-190Z" ${st('#8a8f9a',6)}/><path d="M-250 -34V-110M-300 -34V-110" stroke="${INK}" stroke-width="12"/><path d="M-330 -110H-240" stroke="${INK}" stroke-width="12"/><path d="M-330 -6L-346 18H-190" fill="none" stroke="${INK}" stroke-width="8"/></g>`; }
+function cutterSled(x,y,s,dir,u=0){ const ch=[0,1,2,3,4].map(i=>{ const q=(u*1.7+i*.2)%1; return `<rect x="${N(-300-q*90)}" y="${N(-16-Math.sin(q*Math.PI)*70)}" width="13" height="9" rx="3" fill="#e8f6ff" stroke="${INK}" stroke-width="2.5" opacity="${N((1-q)*100)/100}" transform="rotate(${N(q*200)} ${N(-300-q*90)} ${N(-16-Math.sin(q*Math.PI)*70)})"/>`; }).join('');
+  const blade=bx=>`<path d="M${bx} -40H${bx-110}V-10H${bx}Z" fill="#9aa3ae" stroke="${INK}" stroke-width="6"/>`+[0,1,2,3,4].map(i=>`<path d="M${bx-6-i*22} -10l-11 18l-11 -18Z" fill="#9aa3ae" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>`).join('');
+  return `<g transform="translate(${N(x)} ${N(y)}) scale(${N(s*dir*1000)/1000} ${s})"><path d="M0 -60L-150 -52" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><path d="M0 -60L-150 -52" stroke="#c9a06a" stroke-width="5" stroke-linecap="round"/>`
+    +blade(-150)+blade(-205)+`<path d="M-140 -70H-330V-40H-140Z" fill="#8a5a32" stroke="${INK}" stroke-width="7" stroke-linejoin="round"/>`
+    +`<path d="M-300 -70L-370 -200M-326 -66L-396 -196" stroke="${INK}" stroke-width="14" stroke-linecap="round"/><path d="M-300 -70L-370 -200M-326 -66L-396 -196" stroke="#a9784a" stroke-width="6" stroke-linecap="round"/>`+ch+`</g>`; }
 function slate(x,y,w,h,lines,k=1,rot=0,size=64){ if(k<=0) return ''; const n=lines.length, id='sl'+Math.round(x+y);
   let g=`<g transform="translate(${N(x)} ${N(y)}) rotate(${rot})"><rect x="${-w/2-14}" y="${-h/2-14}" width="${w+28}" height="${h+28}" rx="10" ${st('#8a5a32',8)}/><rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="4" fill="#2f4a42" stroke="${INK}" stroke-width="5"/>`;
   g+=`<clipPath id="${id}"><rect x="${-w/2+4}" y="${-h/2}" width="${N((w-8)*sat(k))}" height="${h}"/></clipPath><g clip-path="url(#${id})">`;

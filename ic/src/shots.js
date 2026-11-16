@@ -20,17 +20,17 @@ function sh1_a(pu,u,t){ const c=DECKCAM(lerp(1,1.07,seg(pu,0,2.5,E.lin)),560), L
 function sh1_b(pu,u,t){ const k=seg(pu,0,2.07,E.io), cl=lerp(-48,36,k), rt=seg(pu,.15,1.9,E.io);
   paint(ctx=>paintGlobe(ctx,t,{cl,route:rt}));
   const b=gproj(-71,42,cl), cc=gproj(88,21.5,cl); let g='';
-  if(b[2]>.2) g+=tag('BOSTON',b[0]-70,b[1]-50,48,'#fff3c4',INK,{k:seg(pu,.1,.35,E.back),rot:-3});
+  if(b[2]>.2) g+=tag('BOSTON',b[0]-70,b[1]-50,48,'#fff3c4',INK,{k:seg(pu,0,.15,E.back),rot:-3});
   if(cc[2]>.25&&rt>.88) g+=tag('CALCUTTA',cc[0]-20,cc[1]-56,48,'#fff3c4',INK,{k:seg(pu,1.7,1.95,E.back),rot:3});
   return FIN(g,t,{paper:.12}); }
-function sailAndLine(pu,t,dir){ const s=.8, HZ=720, wl=960, x0=dir>0?650:430, L=dayLight(.24), lineX=540+(x0-540)*(wl-HZ)/(1750-HZ);
-  const shipX=dir>0?lerp(40,640,seg(pu,0,2.5,E.lin)):lerp(920,640,seg(pu,0,1.05,E.lin));
+function sailAndLine(pu,t,dir){ const s=.95, HZ=720, wl=960, x0=dir>0?650:430, L=dayLight(.24), lineX=540+(x0-540)*(wl-HZ)/(1750-HZ);
+  const shipX=dir>0?lerp(170,620,seg(pu,0,2.5,E.lin)):lerp(900,640,seg(pu,0,1.05,E.lin));
   paint(ctx=>paintOpenSea(ctx,t,{x0,ph:.24,HZ}));
-  const sx=shipX+dir*130*s*1.6, sy=wl-112*s, jump=Math.sin(Math.PI*sat((pu-(dir>0?1.45:.28))/.5))*70*(dir>0?(pu>1.4&&pu<2?1:0):1);
+  const sx=shipX+dir*405*s, sy=wl-140*s, jump=Math.sin(Math.PI*sat((pu-(dir>0?1.45:.28))/.5))*60*(dir>0?(pu>1.4&&pu<2?1:0):1);
   const A=full({hF:[30,-120],hB:[-10,-114],expr:'happy',look:[3,-2],lean:2}), J=full({lean:-6,tilt:-10,hF:[52,-300],hB:[-34,-292],handF:'fist',handB:'fist',expr:'joy',fF:[18,-34],fB:[-16,-30]});
   const jk=dir>0?seg(pu,1.4,1.62,E.o)*(1-seg(pu,1.9,2.2,E.i)):seg(pu,.2,.34,E.o)*(1-seg(pu,.62,.9,E.i));
-  const fig=toon('sailor',sx,sy-jump,.8,dir,mix(A,J,jk),t,5)+`<ellipse cx="${N(sx)}" cy="${N(sy+2)}" rx="${N(60-jump*.3)}" ry="9" fill="#1a1020" opacity="${N(.3*(1-jump/90)*100)/100}"/>`;
-  let g=shipSide(shipX,wl,s,dir,{t})+lit(fig,L.c.fig,.8);
+  const fig=toon('sailor',sx,sy-jump,.58,dir,mix(A,J,jk),t,5)+`<ellipse cx="${N(sx)}" cy="${N(sy+2)}" rx="${N(40-jump*.3)}" ry="9" fill="#1a1020" opacity="${N(.3*(1-jump/90)*100)/100}"/>`;
+  let g=shipSide(shipX,wl,s,dir,{t,jib:0})+lit(fig,L.c.fig,.8);
   g+=`<g transform="translate(${N(dir>0?770:330)} 1000) rotate(${dir>0?-9:9})">`+ttl('EQUATOR',0,0,58,'#fffaf0',{rot:0})+`</g>`;
   if(dir<0){ const kk=seg(pu,.5,.9,E.lin); g+=`<g transform="translate(${N(shipX-40*s*-1)} ${N(wl-300*s)})">`+ttl('×2',0,0,86,'#fff8dc',{k:seg(pu,.45,.7,E.back),rot:-6})+`</g>`; }
   return FIN(g,t,{paper:.15}); }
@@ -44,16 +44,16 @@ function sh2_a(pu,u,t){ const c=DECKCAM(1.3,520), L=dayLight(.25), Y=DECK+24, s=
   const pose=tween(pu,1.5,F,W,.35);
   const g=iceBlock(bx,by,bw,bh,{melt:.05+.12*seg(pu,0,2.6),mist:.6,t,drip:1})+toon('sailor',X,Y,s,-1,pose,t,3)+sweat(X-40,Y-310*s,seg(pu,.2,.5),pu,1.1);
   return FIN(cam(c,lit(deckLines(L)+g,L.c.fig,.8)),t); }
-function sh2_b(pu,u,t){ const c={x:540,y:960,z:1}, hx=lerp(90,640,seg(pu,0,3.0,E.lin)), hs=.95, gy=1000, bl=hx-170*hs;
+function sh2_b(pu,u,t){ const c={x:540,y:960,z:1}, hx=lerp(330,600,seg(pu,0,3.0,E.lin)), hs=.95, gy=1000, bl=hx-100*hs-205*.85;
   paint(ctx=>paintPond(ctx,t,{c}));
   let g=`<path d="M0 ${gy-8}H${N(bl)}M0 ${gy+30}H${N(bl)}" stroke="#6e8fb0" stroke-width="7" stroke-linecap="round" opacity=".85"/><path d="M0 ${gy-4}H${N(bl)}M0 ${gy+34}H${N(bl)}" stroke="#fff" stroke-width="2.5" opacity=".7"/>`;
-  g+=cutterSled(hx-110*hs,gy+4,.82,1)+horse(hx,gy+6,hs,1,pu)+`<path d="M${N(hx-70*hs)} ${gy-170*hs}L${N(hx-110*hs)} ${gy-18}" stroke="${INK}" stroke-width="5"/>`;
+  g+=cutterSled(hx-100*hs,gy+4,.85,1,pu)+horse(hx,gy+6,hs,1,pu)+`<path d="M${N(hx+110*hs)} ${N(gy-190*hs)}L${N(hx-100*hs)} ${N(gy+4-60*.85)}" stroke="${INK}" stroke-width="6"/>`;
   [[880,'worker',TP.armsCross,-1],[985,'worker2',full({hF:[56,-170],hB:[30,-112],handF:'open',expr:'happy'}),-1]].forEach(([x,who,pz,d],i)=>{ const w=tween(pu,1.2+i*.3,full({}),full(pz),.4); g+=toon(who,x,gy+8,.9,d,{...w,tilt:(w.tilt||0)+Math.sin(pu*3+i)*2},t,7+i); });
   g+=[0,1,2].map(i=>{ const q=((pu*.8+i*.33)%1); return `<ellipse cx="${N(hx+215*hs+q*60)}" cy="${N(gy-300*hs-q*40)}" rx="${N(10+q*14)}" ry="${N(6+q*8)}" fill="#fff" opacity="${N((1-q)*.5*100)/100}"/>`; }).join('');
   return FIN(lit(g,'#ffe6d0',.4),t,{paper:.18}); }
-function sh2_c(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>{ PNT.sea(ctx,t,{horizon:200,bottom:2200,far:'#cfe4f0',mid:'#b4d4e6',near:'#9cc4dc',rip:.14,dk:.12,ripCol:'#ffffff',swell:0,speed:0,n:60,seed:7}); PNT.vignette(ctx,.3,'#10243a'); });
+function sh2_c(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>{ PNT.sea(ctx,t,{horizon:-60,bottom:2200,far:'#cfe4f0',mid:'#b4d4e6',near:'#9cc4dc',rip:.14,dk:.12,ripCol:'#ffffff',swell:0,speed:0,n:60,seed:7}); PNT.vignette(ctx,.3,'#10243a'); });
   let g='';
-  for(let r=0;r<4;r++) for(let q=0;q<5;q++){ const i=r*5+q, k=sat((pu-.12-i*.045)/.3), sc=lerp(.6,1,E.back(k)), cx=190+q*175, cy=420+r*158; if(k<=0) continue;
+  for(let r=0;r<4;r++) for(let q=0;q<5;q++){ const i=r*5+q, k=sat((pu+.2-i*.045)/.3), sc=lerp(.6,1,E.back(k)), cx=190+q*175, cy=420+r*158; if(k<=0) continue;
     g+=`<g transform="translate(${cx} ${cy}) scale(${N(sc*100)/100})" opacity="${N(sat(k*4)*100)/100}"><rect x="-76" y="-76" width="152" height="152" rx="12" fill="url(#gIceTop)" stroke="${INK}" stroke-width="6"/><rect x="-62" y="-62" width="124" height="22" rx="8" fill="#fff" opacity=".75"/><path d="M-50 54L-14 6" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".6"/></g>`; }
   const rk=seg(pu,.7,1.0,E.o), rx=lerp(1250,615,rk);
   g+=`<g transform="translate(${N(rx)} 612)">${rulerProp().svg.replace('scale','scale')}</g>`;
@@ -89,7 +89,7 @@ function sh3_a(pu,u,t){ const c=HOLDCAM(), L='#ffd9a0'; paint(ctx=>paintHold(ctx
   const pose=tween(pu,1.65,Pn,P2,.4);
   const g=holdSvg(t,{drop:pu})+lit(toon('worker',830,900,.62,-1,pose,t,4),L,.6);
   return FIN(cam(c,g,880),t,{vig:.7}); }
-function sh3_b(pu,u,t){ const c=HOLDCAM(540,735,lerp(1,1.12,seg(pu,0,1,E.io))); paint(ctx=>paintHold(ctx,t,{c,la:.8+.2*seg(pu,0,.6)}));
+function sh3_b(pu,u,t){ const c=HOLDCAM(540,790,lerp(1.55,1.4,seg(pu,0,1.1,E.io))); paint(ctx=>paintHold(ctx,t,{c,la:.8+.2*seg(pu,0,.6)}));
   const g=holdSvg(t,{drop:100,merge:seg(pu,.1,.55,E.io)});
   return FIN(cam(c,g,880),t,{vig:.7}); }
 function sh3_c(pu,u,t){ const c=DECKCAM(1.25,560), L=dayLight(.25), Y=DECK+24, s=.98, bx=770, bw=250, bh=290, by=Y-6, melt=seg(pu,.5,2.8,E.lin);
@@ -122,7 +122,7 @@ function sh4_c(pu,u,t){ const c=HOLDCAM(), L='#ffd9a0', k=seg(pu,0,1.1,E.io); pa
   const dig=Math.abs(Math.sin(pu*9)), A=full({lean:-4,hF:[30,-130],hB:[14,-118],handF:'hold',handB:'hold',expr:'determined',look:[3,3],holdF:shovelProp(dig>.5?1:0)});
   const g=holdSvg(t,{drop:100,floor:1,bark:k})+lit(toon('worker',276,910,.58,1,A,t,4),L,.6)+barkChips(300,880,(pu*2.4)%1);
   return FIN(cam(c,g,880)+tag('1 FT BARK',720,360,64,'#fff3c4',INK,{k:seg(pu,.1,.35,E.back),rot:2}),t,{vig:.7}); }
-function sh4_d(pu,u,t){ const z=lerp(1,1.9,seg(pu,1.25,1.8,E.io)), c={x:lerp(540,820,seg(pu,1.25,1.8,E.io)),y:lerp(720,640,seg(pu,1.25,1.8,E.io)),z,oy:880}, L='#ffd9a0'; paint(ctx=>paintHold(ctx,t,{c}));
+function sh4_d(pu,u,t){ const z=lerp(1.45,1.9,seg(pu,1.25,1.8,E.io)), c={x:lerp(470,820,seg(pu,1.25,1.8,E.io)),y:lerp(640,600,seg(pu,1.25,1.8,E.io)),z,oy:880}, L='#ffd9a0'; paint(ctx=>paintHold(ctx,t,{c}));
   const hayK=seg(pu,0,.8,E.lin), stomp=Math.abs(Math.sin(pu*12))*(pu>.8&&pu<1.3?1:0), plK=seg(pu,1.0,1.4,E.lin);
   const fork=full({lean:-3,hF:[30,-132],hB:[14,-120],handF:'hold',handB:'hold',expr:'determined',look:[3,2],holdF:forkProp(hayK<1?1:0),fF:[20,0],fB:[-14,-stomp*12]});
   const ham=Math.sin(sat((pu-1.5)/.18)*Math.PI), hamPose=full({lean:2,hF:[52,-190-ham*70],hB:[20,-120],handF:'hold',expr:'determined',look:[3,3],holdF:hammerProp()});
@@ -164,7 +164,7 @@ function sh5(t){ const u=t-S(5), P=part(5,u); return P.i===0?sh5_a(P.pu,u,t):P.i
 const crowdFig=(x,y,s,col,u,i)=>{ const w=Math.sin(u*5+i*1.7)*.5+.5; return `<g transform="translate(${N(x)} ${N(y)}) scale(${s})"><circle cy="-92" r="13" fill="#c08654" stroke="${INK}" stroke-width="4"/><path d="M0 -78V-30M0 -66L-16 -${N(40+w*40)}M0 -66L16 -${N(40+(1-w)*30)}M0 -30L-12 0M0 -30L12 0" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><path d="M0 -78V-30M0 -66L-16 -${N(40+w*40)}M0 -66L16 -${N(40+(1-w)*30)}M0 -30L-12 0M0 -30L12 0" stroke="${col}" stroke-width="6" stroke-linecap="round"/></g>`; };
 function sh6_a(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>paintRiver(ctx,t,{c}));
   const x=lerp(180,600,seg(pu,0,2.3,E.o)), wl=960, s=.74; let g='';
-  for(let i=0;i<9;i++) g+=crowdFig(70+i*118+(i%2)*30,880+((i*7)%3)*6,.5,['#efe7d2','#e6a23a','#c8372d','#2c5e8a'][i%4],pu,i);
+  for(let i=0;i<9;i++) g+=crowdFig(70+i*118+(i%2)*30,885+((i*7)%3)*6,.66,['#efe7d2','#e6a23a','#c8372d','#2c5e8a'][i%4],pu,i);
   [[200,1010],[880,990]].forEach(([bx,by],i)=>{ g+=`<g transform="translate(${bx+Math.sin(pu*1.4+i)*8} ${by})"><path d="M-70 -10Q0 24 70 -10L56 -22H-56Z" ${st('#7a4a2a',5)}/><path d="M0 -14V-110" stroke="${INK}" stroke-width="5"/></g>`; });
   g+=shipSide(x,wl,s,1,{t})+`<ellipse cx="${N(x+330*s)}" cy="${wl+14}" rx="${N(90+20*Math.sin(pu*3))}" ry="12" fill="#fff" opacity=".6"/>`;
   return FIN(lit(g,'#fff2d6',.4),t,{paper:.15}); }
@@ -212,18 +212,27 @@ function sh8_a(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>paintDocks(ctx,t,{
   const k2=sat((pu-1.8)/.45); if(k2>0&&k2<1) g+=coin(lerp(330,hx,k2),lerp(GY-170,hy,k2)-Math.sin(k2*Math.PI)*110);
   return FIN(lit(g,'#fff6dc',.5),t,{paper:.16}); }
 function sh8_b(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>paintIceHouse(ctx,t,{c}));
-  let g=`<path d="M230 1005V720H850V1005Z" ${st('#efe3c8',9)}/><path d="M200 720H880L850 690H230Z" ${st('#d8c9a8',9)}/><path d="M360 690Q540 430 720 690Z" ${st('#d8c9a8',9)}/><path d="M540 440V392M520 410H560" stroke="${INK}" stroke-width="8" stroke-linecap="round"/>`
-    +`<path d="M450 1005V850Q540 780 630 850V1005Z" fill="#2a1e16" stroke="${INK}" stroke-width="9"/><path d="M210 1005H870V1030H210Z" ${st('#bfb39a',7)}/>`
-    +[260,330,750,820].map(x=>`<rect x="${x-14}" y="730" width="28" height="275" ${st('#f6ecd4',6)}/>`).join('');
-  const wx=lerp(-60,520,seg(pu,0,1.15,E.io)), op=1-seg(pu,.75,1.05,E.io), A=walkPose(pu,2,1), H=full({hF:[50,-128],hB:[40,-126],handF:'hold',handB:'hold'});
+  /* an illustration, not a reconstruction (its look is not documented): a big windowless masonry block, thick walls, one deep door, no date */
+  const course=[];for(let y=470;y<1000;y+=44) course.push(`<path d="M172 ${y}H908" stroke="#b9a986" stroke-width="3" opacity=".6"/>`);
+  let g=`<path d="M160 1005V440H920V1005Z" ${st('#ece0c4',10)}/>`+course.join('')+`<path d="M760 442V1003H918V442Z" fill="#a9b8c8" opacity=".35"/>`
+    +`<path d="M130 440H950L920 396H160Z" ${st('#c9b994',10)}/><path d="M150 440H930V462H150Z" fill="#b9a986" opacity=".6"/>`
+    +[176,904].map(x=>`<rect x="${x-22}" y="462" width="44" height="543" ${st('#e2d4b2',7)}/>`).join('')
+    +`<path d="M440 1005V760Q540 670 640 760V1005Z" fill="#d8c9a8" stroke="${INK}" stroke-width="10"/><path d="M468 1005V772Q540 708 612 772V1005Z" fill="#1e2a36" stroke="${INK}" stroke-width="8"/>`
+    +`<path d="M482 1003V782Q540 730 598 782V1003Z" fill="#9fd0ee" opacity="${N((.18+.08*Math.sin(t*3))*100)/100}"/>`
+    +`<path d="M140 1005H940V1030H140Z" ${st('#bfb39a',7)}/><path d="M420 1030H660V1052H420Z" ${st('#cfc3a8',6)}/>`;
+  const wx=lerp(70,500,seg(pu,0,1.15,E.io)), op=1-seg(pu,.75,1.05,E.io), A=walkPose(pu,2,1), H=full({hF:[50,-128],hB:[40,-126],handF:'hold',handB:'hold'});
   g+=`<g opacity="${N(op*100)/100}">`+toon('porter',wx,GY,.85,1,{...A,hF:H.hF,hB:H.hB,handF:'hold',handB:'hold',expr:'determined'},t,26)+iceBlock(wx+98,GY-54,86,86,{drip:.5,t})+`</g>`;
   return FIN(lit(g,'#e6f0ff',.35),t,{paper:.14}); }
-function sh8_c(pu,u,t){ const z=2.1, c={x:540,y:900,z,oy:760}; paint(ctx=>paintStone(ctx,t,{c}));
-  const cl=seg(pu,.1,.85,E.io), lw=lerp(0,150,cl); let g='';
+function sh8_c(pu,u,t){ const slam=.75, j=pu>slam?Math.exp(-(pu-slam)*9)*Math.sin((pu-slam)*46)*7:0, z=2.1, c={x:540,y:900+j,z,oy:760}; paint(ctx=>paintStone(ctx,t,{c}));
+  const cl=seg(pu,.1,slam,E.i); let g='';
   g+=`<path d="M380 1000V700Q380 560 540 560Q700 560 700 700V1000Z" fill="#14100c" stroke="${INK}" stroke-width="9"/>`;
-  [[380,1],[700,-1]].forEach(([hx,d])=>{ const w=lerp(40,160,E.o(cl)); g+=`<g transform="translate(${hx} 0)"><path d="M0 1000V700Q0 ${d>0?620:620} ${d*w*.0} 600L${d*w} 600V1000Z" ${st('#7a4e2a',8)}/>`+[640,760,880].map(y=>`<path d="M0 ${y}H${d*w}" stroke="#2a2a30" stroke-width="12"/>`).join('')+`</g>`; });
-  g+=`<circle cx="540" cy="850" r="9" fill="#2a2a30" stroke="${INK}" stroke-width="3" opacity="${N(seg(pu,.8,.95)*100)/100}"/>`;
-  g+=[0,1,2,3].map(i=>{ const q=sat((pu-.9-i*.08)/.9); return q>0?`<ellipse cx="${N(540+q*40*(i%2?1:-1))}" cy="${N(850+q*60)}" rx="${N(10+q*34)}" ry="${N(7+q*22)}" fill="#e8f6ff" opacity="${N((1-q)*.8*100)/100}"/>`:''; }).join('');
+  g+=`<path d="M392 1000V704Q392 574 540 574Q688 574 688 704V1000Z" fill="#9fd0ee" opacity="${N(.35*(1-cl)*100)/100}"/>`;
+  [[380,1],[700,-1]].forEach(([hx,d])=>{ const w=lerp(40,160,cl); g+=`<g transform="translate(${hx} 0)"><path d="M0 1000V700Q0 620 0 600L${d*w} 600V1000Z" ${st('#7a4e2a',8)}/>`+[640,760,880].map(y=>`<path d="M0 ${y}H${d*w}" stroke="#2a2a30" stroke-width="12"/>`).join('')+`</g>`; });
+  g+=`<circle cx="540" cy="850" r="9" fill="#2a2a30" stroke="${INK}" stroke-width="3" opacity="${N(seg(pu,slam-.05,slam+.05)*100)/100}"/>`;
+  /* the cold puff: out of the keyhole and the door seam the moment it slams, curling outward and fading */
+  g+=[0,1,2,3,4,5,6,7].map(i=>{ const q=sat((pu-slam-.02-i*.035)/.9); if(q<=0||q>=1) return ''; const sd=i%2?1:-1, ang=(.25+.12*(i>>1))*sd, d=40+q*(120+i*14), r=16+q*(36+(i%3)*10);
+    return `<circle cx="${N(540+Math.sin(ang)*d)}" cy="${N(850+Math.cos(ang)*d*.6-q*30)}" r="${N(r)}" fill="#eef8ff" opacity="${N((1-q)*(1-q)*.75*100)/100}"/>`; }).join('');
+  g+=[0,1,2,3,4].map(i=>{ const q=sat((pu-slam-.1-i*.07)/.6); if(q<=0||q>=1) return ''; const x=540+(i-2)*46*q, y=850-60*q+(i%2)*30; return `<path d="M${N(x-9)} ${N(y)}H${N(x+9)}M${N(x)} ${N(y-9)}V${N(y+9)}" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="${N((1-q)*100)/100}"/>`; }).join('');
   return FIN(cam(c,g,760),t,{paper:.14,vig:.7}); }
 function sh8(t){ const u=t-S(8), P=part(8,u); return P.i===0?sh8_a(P.pu,u,t):P.i===1?sh8_b(P.pu,u,t):sh8_c(P.pu,u,t); }
 
