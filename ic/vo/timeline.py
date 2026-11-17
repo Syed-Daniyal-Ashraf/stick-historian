@@ -11,7 +11,7 @@ for i,l in enumerate(L):
 # Every shot starts on a beat of the score (BPM must match vo/sound.py), so the music never restarts at a cut.
 # MIN = shortest length per shot, LEAD = pause before the first word, TAIL = shortest pause after the last word (seconds).
 BPM=104; BEAT=60/BPM
-NSHOTS=8; MIN={1:6.0,2:3.0,3:6.0,4:4.0,5:6.0,6:4.0,7:4.0,8:4.0}; LEAD={s:.15 for s in range(1,9)}; TAIL={s:.2 for s in range(1,9)}; TAIL[8]=1.2; GAP=.2
+NSHOTS=8; MIN={1:6.0,2:3.0,3:6.0,4:4.0,5:3.0,6:4.0,7:4.0,8:4.0}; LEAD={s:.15 for s in range(1,9)}; TAIL={s:.2 for s in range(1,9)}; TAIL[8]=1.2; GAP=.2
 t=0; out={'shots':[]}; sr=24000
 for s in range(1,NSHOTS+1):
   lines=[(i,l) for i,l in enumerate(L) if l['shot']==s]; cur=LEAD.get(s,.2); sl=[]

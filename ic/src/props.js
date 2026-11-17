@@ -1,6 +1,7 @@
 /* ============================== Ice to Calcutta: episode costumes, painted sets and props */
 Object.assign(TC,{
-  sailor: {skin:'#e9b98e',hair:'#4a3020',top:'#f4efe2',topDk:'#d6cdb8',pants:'#34466a',shoe:'#2a1e16',cap:'flat',capC:'#2c3a5a',headS:1.16,build:.1,shoes:true},
+  /* Stage C rework (2026-11-17): sailors in a short dark-blue jacket, white trousers, black neckerchief and a low-crowned tarpaulin hat (round brim, no peak) */
+  sailor: {skin:'#e9b98e',hair:'#4a3020',top:'#27437c',topDk:'#1c3260',pants:'#f1ece0',shoe:'#2a1e16',cap:'tarp',capC:'#1f232d',band:'#d6cdb0',neck:'#15151a',hem:-14,headS:1.16,build:.1,shoes:true},
 });
 /* --- day cycle: ph 0 sunrise, .25 noon, .5 sunset, .75 midnight. Everything the light touches is keyed from this one phase. --- */
 const DAY={
@@ -56,13 +57,14 @@ function tally(x,y,n,k=1,col='#f4efe2'){ let g=''; for(let i=0;i<n;i++){ const g
 
 /* ============================== Stage C: costumes */
 Object.assign(TC,{
-  sailor2:{...TC.sailor,skin:'#d9a67a',hair:'#2a1e16',top:'#cfd8e6',topDk:'#aeb9cc',capC:'#7a2e3a',build:.4},
-  mate:{...TC.sailor,top:'#2c3a5a',topDk:'#202c46',pants:'#e8e1cf',capC:'#1e2a44',mus:'thick',headS:1.16,build:.5},
+  sailor2:{...TC.sailor,skin:'#d9a67a',hair:'#2a1e16',top:'#f2ede0',topDk:'#d6cdb8',stripe:'#2c4a8a',pants:'#e6dcc4',build:.4},   /* same hat as the first sailor: only the shirt differs */
+  mate:{...TC.sailor,top:'#2c3a5a',topDk:'#202c46',pants:'#e8e1cf',capC:'#161c2c',band:'#c9a23a',crown:1.3,neck:null,hem:-58,mus:'thick',headS:1.16,build:.5},   /* long navy coat, taller brimmed hat */
   worker:{skin:'#e9b98e',hair:'#3a2a1e',top:'#6a4a38',topDk:'#523a2c',pants:'#3a3a40',shoe:'#2a1e16',cap:'flat',capC:'#3a3a40',headS:1.14,build:.3,shoes:true},
   worker2:{skin:'#d9a67a',hair:'#1e1610',top:'#4a5a6e',topDk:'#38465a',pants:'#4a3a30',shoe:'#2a1e16',cap:'flat',capC:'#5a4a3a',mus:'thin',headS:1.12,build:.15,shoes:true},
   tanner:{skin:'#d6a274',hair:'#2a2420',top:'#cbb690',topDk:'#a9946c',vest:'#6a4a2e',pants:'#5a4a3a',shoe:'#3a2a1e',mus:'thick',headS:1.14,build:.6,shoes:true},
   buyer:{skin:'#f0c4a0',hair:'#cfc9bf',suit:true,top:'#f4efe2',topDk:'#d6cdb8',shirt:'#fffaf0',tie:'#8a2a2a',pants:'#f4efe2',shoe:'#1e1610',mus:'thick',headS:1.16,build:.55},
   buyer2:{skin:'#efc6a0',hair:'#7a5a3a',suit:true,top:'#d9d2c0',topDk:'#bdb6a2',shirt:'#fffaf0',tie:'#2c5e8a',pants:'#d9d2c0',shoe:'#1e1610',headS:1.14,build:.2},
+  buyer3:{skin:'#e8bc98',hair:'#8a8a86',suit:true,top:'#c9bd9f',topDk:'#a89c80',shirt:'#fffaf0',tie:'#4a6a3a',pants:'#c9bd9f',shoe:'#1e1610',beard:true,glasses:true,headS:1.14,build:.3},
   porter:{skin:'#a8723f',hair:'#1a120c',top:'#efe7d2',topDk:'#cfc5ab',pants:'#efe7d2',shoe:'#4a2e1a',cap:'pagri',capC:'#e6a23a',dhoti:true,headS:1.14,build:.2},
 });
 const walkPose=(u,v=2.4,amp=1)=>{ const s=Math.sin(u*v*Math.PI*2), c=Math.cos(u*v*Math.PI*2);
@@ -118,7 +120,10 @@ function slate(x,y,w,h,lines,k=1,rot=0,size=64){ if(k<=0) return ''; const n=lin
   lines.forEach((l,i)=>{ g+=ttl(l,0,-h/2+h*(i+.5)/n+size*.34,size,'#f4efe2',{stroke:'none',shadow:false,sw:0}); });
   return g+`</g></g>`; }
 /* hat held out upside down, optionally with coins in it */
-const hatProp=(coins=0)=>({svg:`<g><path d="M-34 -4Q-34 -26 0 -26Q34 -26 34 -4Z" ${st('#3a3a44',5)}/><ellipse cx="0" cy="-4" rx="46" ry="9" ${st('#2a2a32',5)}/>${coins>0?`<ellipse cx="0" cy="-12" rx="${N(10+coins*2)}" ry="5" fill="#ffd25a" stroke="${INK}" stroke-width="2.5"/>`:''}</g>`});
+const hatProp=(coins=0,mode='bowl',col='#1f232d')=>{ const rim=`<ellipse cx="6" cy="-28" rx="64" ry="13" ${st(col,5)}/>`;
+  if(mode==='fan') return {svg:`<g transform="translate(-50 30) rotate(-18 6 -28)"><path d="M-28 -30Q-34 -74 6 -76Q46 -74 42 -30Z" ${st(col,5)}/><path d="M-30 -38Q6 -30 41 -38" fill="none" stroke="#d6cdb0" stroke-width="9"/><path d="M-12 -66Q4 -72 20 -66" fill="none" stroke="#fff" stroke-width="3.5" opacity=".35"/>${rim}</g>`};
+  const dome=`<path d="M-56 -26Q-40 14 6 16Q52 14 68 -26Z" ${st(col,5)}/>`, fill=coins>0?`<ellipse cx="6" cy="-28" rx="${N(14+coins*9)}" ry="${N(4+coins*1.5)}" fill="#ffd25a" stroke="${INK}" stroke-width="3"/>`:'';
+  return {svg:`<g transform="translate(0 28)">${dome}<ellipse cx="6" cy="-28" rx="64" ry="13" fill="${shade(col,.55)}" stroke="${INK}" stroke-width="5"/>${fill}</g>`}; };
 const shovelProp=(load=0)=>({svg:`<g><path d="M0 40L-6 -90" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><path d="M0 40L-6 -90" stroke="#9a6a3c" stroke-width="6" stroke-linecap="round"/><path d="M-22 -82L22 -84L18 -126Q0 -140 -18 -126Z" ${st('#8a8f9a',5)}/>${load>0?`<ellipse cx="0" cy="-130" rx="18" ry="9" fill="#6b4a2c" stroke="${INK}" stroke-width="3"/>`:''}</g>`,rot:0});
 const forkProp=(load=0)=>({svg:`<g><path d="M0 40L0 -100" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><path d="M0 40L0 -100" stroke="#9a6a3c" stroke-width="6" stroke-linecap="round"/><path d="M-24 -96V-146M0 -96V-150M24 -96V-146M-24 -100H24" stroke="#8a8f9a" stroke-width="7" stroke-linecap="round"/>${load>0?`<path d="M-44 -150Q-30 -190 0 -178Q36 -196 48 -150Z" fill="#e8c860" stroke="${INK}" stroke-width="4"/>`:''}</g>`});
 const hammerProp=()=>({svg:`<g><path d="M0 30L0 -60" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><path d="M0 30L0 -60" stroke="#9a6a3c" stroke-width="6" stroke-linecap="round"/><rect x="-26" y="-92" width="52" height="34" rx="5" ${st('#6a6f7a',5)}/></g>`});
@@ -197,37 +202,77 @@ function paintTannery(ctx,t,{c}){ ctx.save(); camCtx(ctx,camPar(c,.3));
   PNT.wood(ctx,[-500,1010,2100,900],{tone:'#7a6446',sc:1.2,k:.5});
   [[210,0],[560,1],[880,0]].forEach(([vx,k])=>{ const v=new Path2D(); v.rect(vx-120,840,240,200); PNT.wood(ctx,v,{tone:'#7a4e2c',sc:.5,rot:90,light:[vx-120,0,vx+120,0,.5]}); ctx.fillStyle=k?'#5a3a1c':'#3a2a1a'; ctx.beginPath(); ctx.ellipse(vx,842,120,26,0,0,7); ctx.fill(); });
   PNT.shadow(ctx,540,1060,700,60,.35); ctx.restore(); }
-/* Hooghly at morning: golden haze, layered banks fading with depth, river */
+/* ---- Calcutta waterfront painters. The delta is flat: a low bank, palms, low houses, country boats. No hills. ---- */
+function palmP(ctx,x,y,h,seed,col){ const r=rng(seed); ctx.save(); ctx.lineCap='round'; ctx.strokeStyle='#4a3a28'; ctx.lineWidth=Math.max(3,h*.07); const lean=(r()-.5)*h*.3;
+  ctx.beginPath(); ctx.moveTo(x,y); ctx.quadraticCurveTo(x+lean*.4,y-h*.5,x+lean,y-h); ctx.stroke(); ctx.strokeStyle=col; ctx.lineWidth=Math.max(2,h*.05);
+  for(let i=0;i<7;i++){ const a=-Math.PI*(.08+i*.14), L=h*(.36+r()*.12), dx=Math.cos(a)*L, dy=Math.sin(a)*L; ctx.beginPath(); ctx.moveTo(x+lean,y-h); ctx.quadraticCurveTo(x+lean+dx*.5,y-h+dy*.5-L*.25,x+lean+dx,y-h+dy+L*.28); ctx.stroke(); } ctx.restore(); }
+function farBank(ctx,base,{col='#6d8458',house='#c9b99a',seed=1,ph=1,haze='#ffe4b8',hz=.45}={}){ const r=rng(seed);
+  ctx.fillStyle=col; ctx.fillRect(-400,base-10,1900,28);
+  for(let x=-300;x<1400;x+=60+r()*90){ const w=40+r()*50, h=16+r()*22; ctx.fillStyle=pMix(house,haze,.3+r()*.2); ctx.fillRect(x,base-10-h,w,h+4); ctx.fillStyle=pMix('#8a6a4a',haze,.4); ctx.fillRect(x-3,base-14-h,w+6,5); }
+  for(let x=-300;x<1400;x+=40+r()*70) palmP(ctx,x,base-6,(60+r()*60)*ph,(seed*100+x)|0,pMix('#3a5230',haze,hz*.5));
+  PNT.haze(ctx,base-130,base+20,haze,hz); }
+/* far banks are baked once per argument set (the key is the full input) and then drawn as an image: palms are many strokes */
+const FBC={};
+function farBankC(ctx,base,o={}){ const k=JSON.stringify(o); let cv=FBC[k]; if(!cv){ cv=document.createElement('canvas'); cv.width=1900; cv.height=260; const x=cv.getContext('2d'); x.translate(400,0); farBank(x,200,o); FBC[k]=cv; } ctx.drawImage(cv,-400,base-200); }
+/* a country boat (side view, bamboo-mat roof), painted; x,y = waterline centre */
+function boatP(ctx,x,y,s,dir=1){ ctx.save(); ctx.translate(x,y); ctx.scale(s*dir,s);
+  ctx.fillStyle='#5a3a22'; ctx.beginPath(); ctx.moveTo(-120,-34); ctx.quadraticCurveTo(-90,2,0,6); ctx.quadraticCurveTo(90,2,125,-40); ctx.lineTo(112,-30); ctx.quadraticCurveTo(80,-6,0,-8); ctx.quadraticCurveTo(-80,-6,-108,-28); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#b99a62'; ctx.beginPath(); ctx.moveTo(-60,-12); ctx.quadraticCurveTo(-60,-52,-10,-52); ctx.quadraticCurveTo(50,-52,56,-12); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='rgba(60,40,20,.5)'; ctx.lineWidth=2; for(let i=-3;i<=3;i++){ ctx.beginPath(); ctx.moveTo(i*16,-12); ctx.lineTo(i*13,-50); ctx.stroke(); }
+  ctx.fillStyle='rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(0,8,130,6,0,0,7); ctx.fill(); ctx.restore(); }
+/* Hooghly at morning (6a): golden haze, flat banks fading with depth, river */
 function paintRiver(ctx,t,{c}){ ctx.save(); camCtx(ctx,camPar(c,.2));
   PNT.sky(ctx,{top:'#8fb4d6',mid:'#f2d3a0',bot:'#ffe9c2',y0:100,y1:840,midAt:.62,to:860}); PNT.sun(ctx,720,640,50,'#fff0c0',.9);
   PNT.clouds(ctx,t,{alt:430,h:240,drift:6,alpha:.5,sc:2,col:'#fff0d8',seed:12}); ctx.restore();
-  const bank=(base,col,hh,seed,pk)=>{ const r=rng(seed); ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(-200,base+60); for(let x=-200;x<=1300;x+=26){ const h=hh*(.35+.65*Math.abs(Math.sin(x*.013+seed)))*(r()>.86?1.6:1); ctx.lineTo(x,base-h); } ctx.lineTo(1300,base+60); ctx.closePath(); ctx.fill(); };
-  ctx.save(); camCtx(ctx,camPar(c,.35)); bank(840,'#b8bca0',60,3); PNT.haze(ctx,760,860,'#ffe4b8',.55); ctx.restore();
-  ctx.save(); camCtx(ctx,camPar(c,.5)); bank(860,'#8a9a6e',80,7); PNT.haze(ctx,780,880,'#ffe4b8',.4); ctx.restore();
+  ctx.save(); camCtx(ctx,camPar(c,.35)); farBankC(ctx,846,{col:'#b4b898',seed:3,ph:.7,hz:.62}); ctx.restore();
+  ctx.save(); camCtx(ctx,camPar(c,.5)); farBankC(ctx,862,{col:'#8d9c70',seed:7,ph:.9,hz:.45}); ctx.restore();
   ctx.save(); camCtx(ctx,camPar(c,.75));
   PNT.sea(ctx,t,{horizon:880,far:'#d8c8a0',mid:'#c0a878',near:'#8a7a52',rip:.3,dk:.2,ripCol:'#fff0c8',glint:[720,260,'#fff0c0',.7],swell:3,speed:5,n:60,seed:2});
-  bank(880,'#4f6a3e',110,11); ctx.restore();
+  boatP(ctx,230,935,.8,1); boatP(ctx,860,925,.6,-1);
+  farBankC(ctx,884,{col:'#56703f',seed:11,ph:1.25,hz:.2,house:'#d8c8a4'}); ctx.restore();
   ctx.save(); camCtx(ctx,c); PNT.haze(ctx,880,1100,'#ffe4b8',.18); ctx.restore(); }
-/* docks at midday: bleached sky, river, a warehouse wall and pier planks. wall=0 hides the wall */
-function paintDocks(ctx,t,{c,wall=1,ph=.26}={}){ const L=dayLight(ph); ctx.save(); camCtx(ctx,camPar(c,.25));
-  PNT.sky(ctx,{top:'#74b8e8',mid:'#e6f2f2',bot:'#fff2d4',y0:100,y1:760,midAt:.62,to:790}); PNT.sun(ctx,820,360,44,'#fffbe8',.9); ctx.restore();
+/* Calcutta docks, five framings of one place. v: a crane + ship, b hull, c ghat, d godown wall, e quay for the huddle.
+   Behind: sky, flat far bank with palms, the river with country boats. In front: quay earth and stone kerb; the ghat steps or the godown wall. */
+const DOCK_BOATS={a:[[250,850,.8,1],[560,830,.5,-1]],b:[[900,850,.7,1]],c:[[720,850,1,1],[110,825,.7,1]],d:[[240,840,.9,-1],[120,805,.55,1]],e:[[860,850,.9,1],[190,820,.65,-1]]};
+function paintDocks(ctx,t,{c,v='a'}={}){
+  ctx.save(); camCtx(ctx,camPar(c,.25)); PNT.sky(ctx,{top:'#7ab6e0',mid:'#eaf0e6',bot:'#fff0cc',y0:100,y1:770,midAt:.62,to:790}); PNT.sun(ctx,v==='d'?300:820,380,44,'#fffbe8',.9); ctx.restore();
+  ctx.save(); camCtx(ctx,camPar(c,.4)); farBankC(ctx,782,{col:'#aab08e',seed:5,ph:.75,hz:.55}); ctx.restore();
   ctx.save(); camCtx(ctx,camPar(c,.6));
-  PNT.sea(ctx,t,{horizon:760,far:'#d8d0a8',mid:'#b8a878',near:'#8a7a52',rip:.3,dk:.18,ripCol:'#fff6d0',glint:[820,260,'#fffbe8',.7],swell:3,speed:5,n:50,seed:6,to:960});
-  PNT.band(ctx,760,50,'#fff2d4',.6); ctx.restore();
+  PNT.sea(ctx,t,{horizon:790,far:'#d8d0a8',mid:'#b8a878',near:'#8a7a52',rip:.3,dk:.18,ripCol:'#fff6d0',glint:[820,260,'#fffbe8',.7],swell:3,speed:5,n:50,seed:6,to:1000});
+  ctx.fillStyle='#8a7a52'; ctx.fillRect(-600,980,2400,900);   /* river bed colour below the sea strips: no gap between the planes when the camera zooms */
+  DOCK_BOATS[v].forEach(([bx,by,bs,bd])=>boatP(ctx,bx,by,bs,bd)); PNT.band(ctx,790,50,'#fff2d4',.55); ctx.restore();
   ctx.save(); camCtx(ctx,c);
-  if(wall){ PNT.wood(ctx,[-500,300,2100,700],{tone:'#cdb58a',sc:.35,k:.55,light:[0,300,0,1000,.3]}); PNT.haze(ctx,880,1000,'#2a1a10',.3); }
-  PNT.wood(ctx,[-500,1000,2100,1000],{tone:'#a8885a',sc:1,rot:0,ox:30,oy:1000,light:[0,1000,0,1600,.35]});
-  PNT.haze(ctx,1000,1030,'#1a1020',.35); ctx.restore();
-  PNT.band(ctx,980,60,'#fff4dc',.22); }
+  if(v==='a'||v==='c'){ const ghat=(x0,w0,n)=>{ for(let i=0;i<n;i++){ const y=1000-i*26, w=w0-i*46, x=x0+i*23; ctx.fillStyle=pMix('#bda98a','#6e6a60',i/n*.5); ctx.fillRect(x,y-26,w,26); ctx.fillStyle='rgba(255,255,255,.28)'; ctx.fillRect(x,y-26,w,5); ctx.fillStyle='rgba(30,20,10,.3)'; ctx.fillRect(x,y-6,w,6); } };
+    if(v==='a') ghat(20,430,5); else { ghat(60,520,5); ghat(900,420,4); } }
+  if(v==='d'){ PNT.wood(ctx,[560,560,1000,445],{tone:'#cdb58a',sc:.35,k:.55,light:[560,560,560,1000,.3]});
+    ctx.fillStyle='#6e4a2c'; ctx.fillRect(540,540,1040,34); ctx.fillStyle='rgba(255,240,200,.25)'; ctx.fillRect(540,540,1040,6); ctx.fillStyle='rgba(20,12,6,.28)'; ctx.fillRect(560,574,1000,16);
+    const r=rng(9); ctx.fillStyle='rgba(110,80,50,.22)'; for(let i=0;i<14;i++){ ctx.beginPath(); ctx.ellipse(600+r()*900,640+r()*300,18+r()*40,8+r()*18,0,0,7); ctx.fill(); }
+    PNT.haze(ctx,900,1000,'#2a1a10',.3); }
+  PNT.wood(ctx,[-500,1000,2100,1000],{tone:'#b39563',sc:1.1,ox:30,oy:1000,light:[0,1000,0,1600,.35]});
+  ctx.fillStyle='#8b7a62'; ctx.fillRect(-500,992,2100,14); ctx.fillStyle='rgba(255,255,255,.25)'; ctx.fillRect(-500,992,2100,3);
+  PNT.haze(ctx,1006,1034,'#1a1020',.3); ctx.restore();
+  PNT.band(ctx,980,60,'#fff4dc',.18); }
 /* the ice house: pale sky, grass, cool shade pooled around the walls */
 function paintIceHouse(ctx,t,{c}){ ctx.save(); camCtx(ctx,camPar(c,.3));
   PNT.sky(ctx,{top:'#8ec0e4',mid:'#dcecf0',bot:'#fbf2dc',y0:100,y1:820,midAt:.6,to:860}); PNT.clouds(ctx,t,{alt:420,h:220,drift:6,alpha:.55,sc:2,col:'#ffffff',seed:14}); ctx.restore();
   ctx.save(); camCtx(ctx,c);
-  const r=rng(8); ctx.fillStyle='#4f7a3e'; for(let i=0;i<9;i++){ const x=-60+i*150+r()*40, h=140+r()*120; ctx.beginPath(); ctx.ellipse(x,860-h*.2,70,h*.6,0,0,7); ctx.fill(); }
+  const r=rng(8); ctx.fillStyle='#5f7f4a'; for(let i=0;i<9;i++){ const x=-60+i*150+r()*40, h=140+r()*120; ctx.beginPath(); ctx.ellipse(x,860-h*.2,70,h*.6,0,0,7); ctx.fill(); }
   PNT.haze(ctx,760,880,'#e6f0e0',.4);
-  PNT.wood(ctx,[-500,860,2100,1100],{tone:'#8a9a5e',sc:1.2,k:.4,light:[0,860,0,1500,.3]});
+  const g=ctx.createLinearGradient(0,860,0,1400); g.addColorStop(0,'#b8a47e'); g.addColorStop(1,'#8f7c58'); ctx.fillStyle=g; ctx.fillRect(-500,860,2100,1100);   /* packed earth */
+  const r2=rng(21); for(let i=0;i<240;i++){ ctx.fillStyle=`rgba(${r2()<.5?'80,64,40':'230,210,170'},${N(.07+r2()*.09)})`; ctx.beginPath(); ctx.ellipse(-400+r2()*1900,880+r2()*600,3+r2()*9,1.5+r2()*3,0,0,7); ctx.fill(); }
   PNT.shadow(ctx,540,1000,520,70,.45,'#18304a'); ctx.restore(); }
 /* stone wall for the door close-up */
-function paintStone(ctx,t,{c}){ ctx.save(); camCtx(ctx,c); PNT.wood(ctx,[-500,-300,2100,2400],{tone:'#9d9078',sc:.5,k:.7,light:[0,200,0,1200,.4]});
+function paintStone(ctx,t,{c}){ ctx.save(); camCtx(ctx,c); PNT.wood(ctx,[-500,-300,2100,2400],{tone:ICE_WALL,sc:.5,k:.7,light:[0,200,0,1200,.4]});
   const r=rng(5); ctx.strokeStyle='rgba(30,22,14,.4)'; ctx.lineWidth=5; for(let y=300;y<1500;y+=120){ ctx.beginPath(); ctx.moveTo(-300,y); ctx.lineTo(1400,y); ctx.stroke(); for(let x=-300+(y/120%2)*90;x<1400;x+=180){ ctx.beginPath(); ctx.moveTo(x+r()*20,y); ctx.lineTo(x+r()*20,y+120); ctx.stroke(); } }
   PNT.haze(ctx,300,700,'#0a1420',.35); ctx.restore(); }
+
+/* the ice house: one wall colour and one door in the wide shot and the close-up. Arched opening, stone surround, double timber leaves with iron straps.
+   cl: 0 leaves swung open, 1 shut. */
+const ICE_WALL='#c4b08a';
+function iceDoor(cx,base,w,h,cl=0,glow=0){ const x0=cx-w/2, x1=cx+w/2, ar=w/2, top=base-h, sw=Math.max(5,w*.03), id='idr'+Math.round(w), arch=`M${N(x0)} ${base}V${N(top+ar)}Q${N(x0)} ${N(top)} ${N(cx)} ${N(top)}Q${N(x1)} ${N(top)} ${N(x1)} ${N(top+ar)}V${base}Z`;
+  let g=`<path d="M${N(x0-w*.1)} ${base}V${N(top+ar)}Q${N(x0-w*.1)} ${N(top-w*.1)} ${N(cx)} ${N(top-w*.1)}Q${N(x1+w*.1)} ${N(top-w*.1)} ${N(x1+w*.1)} ${N(top+ar)}V${base}Z" ${st('#e0d2b0',sw)}/>`;
+  g+=`<path d="${arch}" fill="#14100c" stroke="${INK}" stroke-width="${N(sw)}"/>`;
+  if(glow>0) g+=`<path d="${arch}" fill="#9fd0ee" opacity="${N(glow*100)/100}"/>`;
+  g+=`<clipPath id="${id}"><path d="${arch}"/></clipPath><g clip-path="url(#${id})">`;
+  [[x0,1],[x1,-1]].forEach(([hx,d])=>{ const lw=lerp(w*.12,w/2+1,cl); g+=`<path d="M${N(hx)} ${base}V${N(top-5)}H${N(hx+d*lw)}V${base}Z" ${st('#7a4e2a',sw*.8)}/>`+[.3,.55,.8].map(f=>`<path d="M${N(hx)} ${N(top+h*f)}H${N(hx+d*lw)}" stroke="#2a2a30" stroke-width="${N(w*.035)}"/>`).join(''); });
+  return g+`</g>`; }

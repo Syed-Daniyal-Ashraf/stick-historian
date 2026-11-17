@@ -103,6 +103,7 @@ function toonHead(c,p,t,seed,uid){ const R=44;
   if(c.bun) g+=`<circle cx="-36" cy="-14" r="20" fill="${c.hair}" stroke="${INK}" stroke-width="5"/>`;
   if(p.veil) g+=`<path d="M-56 46Q-64 -54 0 -58Q44 -58 50 -24L30 -36Q-24 -40 -36 14L-30 70Z" fill="${p.veil}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
   g+=`<path d="M-6 30 L-2 62 L22 62 L24 30Z" fill="${c.skin}" stroke="${INK}" stroke-width="5"/>`;          // neck
+  if(c.neck) g+=`<path d="M-11 46Q8 58 29 46L26 64Q8 74 -8 65Z" fill="${c.neck}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/><path d="M24 56L40 52L34 70Z" fill="${c.neck}" stroke="${INK}" stroke-width="3.5" stroke-linejoin="round"/>`;   /* neckerchief */
   g+=`<circle r="${R}" fill="${c.skin}" stroke="${INK}" stroke-width="5.5"/>`;
   g+=`<clipPath id="hc${uid}"><circle r="${R-2.5}"/></clipPath><g clip-path="url(#hc${uid})"><circle cx="13" cy="-11" r="48" fill="none" stroke="${shade(c.skin,.83)}" stroke-width="26"/></g>`;
   // hair
@@ -127,6 +128,7 @@ function toonHead(c,p,t,seed,uid){ const R=44;
   if(c.cap==='fedora') g+=`<ellipse cx="4" cy="-30" rx="66" ry="14" fill="${c.capC}" stroke="${INK}" stroke-width="4.5"/><path d="M-38 -32Q-40 -78 4 -80Q46 -78 44 -32Z" fill="${c.capC}" stroke="${INK}" stroke-width="4.5"/><path d="M-38 -42Q4 -50 44 -42" stroke="#1e1610" stroke-width="9" fill="none"/><path d="M-4 -78Q4 -66 12 -78" fill="none" stroke="${shade(c.capC,.7)}" stroke-width="3"/>`;
   if(c.cap==='pillbox') g+=`<path d="M-32 -38L-28 -70Q4 -78 36 -68L40 -36Q4 -26 -32 -38Z" fill="${c.capC}" stroke="${INK}" stroke-width="4.5" stroke-linejoin="round"/><ellipse cx="4" cy="-71" rx="32" ry="8" fill="${shade(c.capC,1.25)}" stroke="${INK}" stroke-width="4"/><path d="M-31 -42Q4 -32 39 -40" fill="none" stroke="${c.band||'#e8c34a'}" stroke-width="8" stroke-linecap="round"/><circle cx="4" cy="-74" r="4.5" fill="${c.band||'#e8c34a'}" stroke="${INK}" stroke-width="2.5"/>`;
   if(c.cap==='flat') g+=`<path d="M-42 -22Q-44 -58 4 -60Q40 -58 46 -30Q66 -26 70 -18Q40 -14 -42 -22Z" fill="${c.capC}" stroke="${INK}" stroke-width="4.5" stroke-linejoin="round"/><path d="M-30 -44Q6 -52 36 -38" fill="none" stroke="${shade(c.capC,.75)}" stroke-width="3"/>`;
+  if(c.cap==='tarp') g+=`<path d="M-30 -30Q-32 -${N(30+30*(c.crown||1))} 6 -${N(30+30*(c.crown||1))}Q42 -${N(30+30*(c.crown||1))} 42 -30Z" fill="${c.capC}" stroke="${INK}" stroke-width="4.5" stroke-linejoin="round"/><path d="M-31 -34Q6 -28 41 -34" fill="none" stroke="${c.band||shade(c.capC,1.7)}" stroke-width="7"/><ellipse cx="6" cy="-28" rx="64" ry="13" fill="${c.capC}" stroke="${INK}" stroke-width="4.5"/><path d="M-40 -26Q6 -16 52 -26" fill="none" stroke="${shade(c.capC,1.5)}" stroke-width="3" opacity=".6"/>`;   /* tarpaulin hat: low round crown, brim all the way round, no peak */
   if(c.cap==='pagri') g+=`<path d="M-44 -14Q-50 -58 0 -62Q44 -60 46 -22Q20 -30 -10 -24Q-30 -20 -44 -14Z" fill="${c.capC}" stroke="${INK}" stroke-width="4.5"/><path d="M-36 -30Q0 -48 40 -32M-38 -44Q0 -58 34 -46" fill="none" stroke="${shade(c.capC,.75)}" stroke-width="4"/>`;
   if(p.headExtra) g+=p.headExtra;
   return g; }
@@ -180,8 +182,9 @@ function toon(who,x,y,s,dir,p,t,seed=0){ const c={...TC[who],...(p.cos||{})}, ui
     g+=`<path d="M${P(-hem+12,-52)}L${P(-hem+12,56)}" stroke="${c.border}" stroke-width="12"/><path d="M${P(104,-20)}Q${P(70,0)} ${P(20,36)}L${P(-hem*.9,52)}" fill="none" stroke="${c.border}" stroke-width="10"/>`;
     g+=`<path d="M${P(100,-14)}Q${P(90,-2)} ${P(64,12)}L${P(54,-24)}Q${P(80,-30)} ${P(100,-14)}Z" fill="${c.blouse}" stroke="${INK}" stroke-width="4"/>`;
   } else {
-    const w0=26+belly*6, w1=34+belly*26, wh=38+belly*16, hemF=c.khaki?-6:c.suit?-30:-58;
+    const w0=26+belly*6, w1=34+belly*26, wh=38+belly*16, hemF=c.hem!=null?c.hem:c.khaki?-6:c.suit?-30:-58;
     g+=`<path d="M${P(110,-w0+8)}Q${P(116,0)} ${P(110,w0-6)}Q${P(102,w0+6)} ${P(92,w0+4)}Q${P(52,w1+4)} ${P(10,w1)}L${P(hemF,wh)}Q${P(hemF-4,0)} ${P(hemF,-wh+2)}L${P(20,-w1+6)}Q${P(70,-w0-8)} ${P(110,-w0+8)}Z" fill="${c.top}" stroke="${INK}" stroke-width="5.5" stroke-linejoin="round"/>`;
+    if(c.stripe){ g+=`<clipPath id="ts${uid}"><path d="M${P(110,-w0+8)}Q${P(116,0)} ${P(110,w0-6)}Q${P(102,w0+6)} ${P(92,w0+4)}Q${P(52,w1+4)} ${P(10,w1)}L${P(hemF,wh)}Q${P(hemF-4,0)} ${P(hemF,-wh+2)}L${P(20,-w1+6)}Q${P(70,-w0-8)} ${P(110,-w0+8)}Z"/></clipPath><g clip-path="url(#ts${uid})">`; for(let a=hemF;a<118;a+=17) g+=`<path d="M${P(a,-wh-12)}L${P(a,wh+12)}" stroke="${c.stripe}" stroke-width="7"/>`; g+=`</g>`; }   /* breton stripes, clipped to the torso */
     g+=`<path d="M${P(96,-w0)}Q${P(60,-w0-6)} ${P(20,-w1+8)}L${P(hemF+4,-wh+4)}L${P(hemF+4,-wh+20)}L${P(24,-w1+22)}Q${P(66,-w0+10)} ${P(98,-w0+12)}Z" fill="${c.topDk}"/>`;
     if(c.vest) g+=`<path d="M${P(104,-w0+6)}L${P(104,w0-8)}Q${P(70,w1)} ${P(18,w1-2)}L${P(18,-w1+8)}Q${P(70,-w0)} ${P(104,-w0+6)}Z" fill="${c.vest}" stroke="${INK}" stroke-width="4.5" stroke-linejoin="round"/><path d="M${P(106,8)}L${P(70,18)}L${P(104,22)}" fill="${c.top}" stroke="${INK}" stroke-width="3"/>`;
     if(c.khaki){ g+=`<path d="M${P(-2,-wh)}L${P(-2,wh)}" stroke="${c.belt}" stroke-width="12"/><rect x="${N(at(-2,wh-14)[0]-7)}" y="${N(at(-2,wh-14)[1]-8)}" width="14" height="16" fill="#e8c34a" stroke="${INK}" stroke-width="2.5"/><path d="M${P(100,12)}L${P(40,14)}" stroke="${shade(c.top,.8)}" stroke-width="3"/>`; }

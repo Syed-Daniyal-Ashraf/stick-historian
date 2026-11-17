@@ -67,6 +67,8 @@ It also does not judge whether a cut changes the picture: put frames 0.1 s befor
   Colour: `pMix(a,b,k)`, `pA(hex,alpha)`, `pCycle(phase,[[phase,'#hex'],...])` (wraps; used for the day cycle).
 - Textures `TEX` (512 px, tiling): `grain`, `cloud`, `water` / `waterDk` / `spark` (+ smaller copies for far strips), `wood`. `grain` and `wood` are black
   with alpha, so a plain draw equals a multiply.
+- Rig costume options (opt-in, added for `ic`): `cap:'tarp'` (low round sailor hat; `crown` scales the crown, `band` is the band colour), `neck:'#hex'` (neckerchief), `hem:n` (coat hem length, overrides the default), `stripe:'#hex'` (clipped torso stripes).
+- A cache keyed by the full argument JSON is fine for static far-plane art (`farBankC` in `ic/src/props.js` bakes a 1900x260 canvas once).
 - Painters (namespace `PNT`, not `P`: shots use `const P=part(n,u)`):
   `PNT.sky(ctx,{top,mid,bot,y0,y1,midAt,to,sun})`, `PNT.sun(ctx,x,y,r,col,halo,disc)`, `PNT.glow(ctx,x,y,r,col,a)`, `PNT.stars(ctx,t,{n,a,seed,y0,y1})`,
   `PNT.clouds(ctx,t,{alt,h,drift,alpha,sc,col,seed,flat})`, `PNT.sea(ctx,t,{horizon,bottom,far,mid,near,rip,dk,ripCol,glint:[x,halfWidth,col,a],swell,speed,n,to})`

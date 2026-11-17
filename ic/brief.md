@@ -415,3 +415,27 @@ Times are in the section 13 cut. Section 13's "not acted on: same dock wall acro
 
 ### Gates for the rebuilt film
 `verify.js ic` PASS, `SAFE=1` sheets one per second plus 0.1 s either side of every cut, contact sheet per rebuilt shot, loudness per section, and a fresh independent facts pass on the two changed lines. Then Stage D again (Opus 5.5, medium).
+
+
+## 15. Stage C rework build (2026-11-17, Sonnet 5.5, medium)
+
+**Built (section 14 parts A and B).** New hook order ("A Boston ship carried 180 tons of ice to India. In 1833."), shot 5 as one cut with a DAY 1-10 counter, new ending line ("Its new customers reportedly raised the money in three days."), sailor costume (tarp hat, neckerchief, stripes, hem), mate and buyer3 costumes, hat prop (fan/bowl), rebuilt Calcutta dock set (palms, far bank, boats, river bed), rebuilt 7a-7d, huddle 8a-8d with the hat going round, ice house with the porter walking in, door slam. Score and foley re-timed in `vo/sound.py` (cut block, tense section, tally ticks, coins, steps, slam). Kit changes (opt-in only): `cap:'tarp'` with `crown`/`band`, `neck`, `hem`, `stripe` in `engine/toon/20_rig.js`.
+
+**Gates.** `verify.js ic`: PASS. Paint median 24 ms, p95 31-41 ms, none over budget. Reach worst 5.3 units, no misses. Determinism 60/60. Subtitles 0 outside the safe area. Cadence: longest gap 4.04 s (shot 5, 27.69-31.73) allowed by `CUT_HOLD_EP=[5,8]`; the cap is 3.4 s otherwise. Caption warns on chunks under 0.25 s ("cut", "it.", "days"). Draft export 540 px / 15 fps: 762 frames, 50.8 s, video only (sound comes from `mix.sh`). Sound re-timed; section levels from bed.py: bright -1, soft -5, pizz -3, tense -4, roll -2, pizz -4, hush -7 dB targets (measured gains applied).
+
+**Not done / not checked.**
+- Fiebig 1851 ice house photo could not be opened (caption only). The ice house stays an unlabelled masonry illustration: no label, no year.
+- Part C items 8-14 not built (Farrukh has not asked for them in this chat).
+- Total length 50.77 s, not ~49 s: shot 1 length is unchanged.
+- Audio not heard. Listen to: "Calcutta", "equator", "two-foot", "tannery", "reportedly", the score re-time at 27.7 s and 35.8 s, the slam at 49.6 s.
+- Contact sheets at 38.5 s ("4 MONTHS / -55") and 41.5 s ("DAY ... ≈ -3") show chalkboard text clipped at the board edge. Not investigated; check on a full-size frame in Stage D. Stage D fix list otherwise: none (no shot hit the two-strike rule).
+- 2a hat-fan motion is small (hat at belly height). 5a counter reads DAY 2 at 29.0 s (linear from "tropics" to "ten").
+
+**Pinned comment gains:** "The three-day subscription is from Susan Bean's 1991 article." Caption otherwise unchanged.
+
+### Stage D handoff (Opus 5.5, medium)
+1. Fresh independent facts pass (new agent, frames + script, no conclusions) on the two changed lines: "180 tons ... In 1833" and "reportedly raised the money in three days".
+2. SAFE=1 text-collision pass, including the two chalkboards above and the 8d door close-up.
+3. `node engine/tools/export.js ic && bash engine/tools/mix.sh ic`, then `node engine/tools/cover.js ic`; ebur128 per section.
+4. Tell Farrukh the listening checks above. Judgment calls to confirm: the 4.04 s shot 5 hold, the 2a hat fan.
+5. Do not publish or post.

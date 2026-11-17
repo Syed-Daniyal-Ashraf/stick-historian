@@ -80,10 +80,10 @@ PROG_MIN=[(45,'min'),(45,'min'),(41,'maj'),(41,'maj'),(48,'maj'),(48,'maj'),(40,
 BED=np.zeros((n,2),np.float32); bed=lambda x,t0,g=1,pan=0: put(BED,x,t0,g,pan)
 # ---- cut times (must match CUT_EP in src/shots.js)
 cut=lambda sh,w,off: W(sh,w)+off
-C1=[cut(1,'carried',-.05),cut(1,'india',-.1),cut(1,'twice',-.15)]; C2=[cut(2,'step',-.1),cut(2,'two',-.1)]; C3=[cut(3,'one',-.3),cut(3,'less',-.1)]
-C4=[cut(4,'foot',-.3),cut(4,'on',-.05),cut(4,'hay',-.6)]; C5=[cut(5,'ten',-.15),S[5]+4.7]; C6=[cut(6,'with',-.07)]
-C7=[cut(7,'four',-.1),cut(7,'days',-.1),cut(7,'almost',-.07)]; C8=[cut(8,'the',-.1),cut(8,'house',-.1)]
-SLAM=C8[1]+.75                                     # the ice-house door shuts (sh8_c: slam=.75)
+C1=[cut(1,'tons',-.1),cut(1,'four',-.1),cut(1,'twice',-.15)]; C2=[cut(2,'step',-.1),cut(2,'two',-.1)]; C3=[cut(3,'one',-.3),cut(3,'less',-.1)]
+C4=[cut(4,'foot',-.3),cut(4,'on',-.05),cut(4,'hay',-.6)]; C6=[cut(6,'with',-.07)]
+C7=[cut(7,'four',-.1),cut(7,'days',-.1),cut(7,'almost',-.07)]; C8=[cut(8,'raised',-.1),cut(8,'ice',-.25),cut(8,'house',0)]
+SLAM=C8[2]+.75                                     # the ice-house door shuts (sh8_d: slam=.75)
 # (start, mode, level dB)
 SECT=[(0,'bright',-1),(S[2],'soft',-5),(C2[0],'pizz',-3),(S[5],'tense',-4),(S[6],'roll',-2),(S[7],'pizz',-4),(S[8],'hush',-7),(SLAM,'out',-99)]
 SECT=[(beat(t)*Q if m!='out' else t,m,l) for t,m,l in SECT]
@@ -161,7 +161,7 @@ def whoosh(t0,dur=.25,g=.18): x=noise(dur,300,3000,0)*np.hanning(int(dur*SR)).as
 sea(0,C1[0],.05); fx(creak(0),.3,.25); crackle(.2,1.1,.22); drip(1.6,.18); fx(creak(1),1.9,.2)
 room(C1[0],C1[1],.03,200,2000)
 sea(C1[1],S[2],.09); fx(creak(2),C1[1]+.6,.2)
-fx(cloth(0),C1[1]+1.45,.35); thunk(C1[1]+1.95,.45,-8)
+fx(cloth(0),C1[1]+1.25,.35); thunk(C1[1]+1.72,.45,-8)
 fx(cloth(1),C1[2]+.28,.35); thunk(C1[2]+.78,.45,-8); fx(slide(2),C1[2]+.5,.25)               # x2 scratched on the mast
 # 2 deck: hat fanning, a drip; the pond: cutter scrape, horse steps, chips; the grid of blocks
 sea(S[2],C2[0],.05)
@@ -184,11 +184,11 @@ for i in range(int((C4[2]-C4[1])/.35)): fx(chop,C4[1]+.1+i*.35,.28); rustle(C4[1
 rustle(C4[2],.8,.16)
 for i in range(4): fx(step(i+3),C4[2]+.85+i*.13,.35)
 fx(k('RPG sounds (50 sounds)/metalClick.ogg'),C4[2]+1.64,.6); fx(shift(TIMP[2],-2)[:int(.3*SR)],C4[2]+1.64,.35)
-# 5 tropics: hot deck creaks, cold hold; the tally ticks; the scarf off and back on
-sea(S[5],C5[0],.04); fx(creak(1),S[5]+.3,.22)
+# 5 tropics (one cut): hot deck creaks, cold hold; a tick for each DAY n between 'tropics' and 'ten' (src/shots.js sh5_a)
+sea(S[5],S[6],.04); fx(creak(1),S[5]+.3,.22)
 for i in range(3): whoosh(S[5]+.2+i*.63,.2,.1)
-for j in range(1,11): fx(shift(CLAVE,4),C5[0]+j*2.31/10.4,.16)
-fx(cloth(1),C5[1]+.3,.35); fx(cloth(2),C5[1]+1.1,.3)
+d0,d1=W(5,'tropics'),W(5,'ten')
+for j in range(1,11): fx(shift(CLAVE,4),d0+j*(d1-d0)/10,.16)
 # 6 the Hooghly: water and creaks; the hatch opens
 sea(S[6],C6[0],.07); fx(creak(0),S[6]+.5,.22); fx(creak(2),C6[0],.45); fx(k('RPG sounds (50 sounds)/doorOpen_1.ogg'),C6[0]+.02,.35)
 # 7 the docks: rope creak and heavy drips; chalk on the slate; the buyer's steps and drips
@@ -197,10 +197,15 @@ fx(creak(1),S[7]+.2,.3); [drip(S[7]+.25+i*.28,.22,i*80) for i in range(6)]
 for i in range(6): scrape(C7[0]+.25+i*.22,.12,.12)
 for i in range(7): fx(step(i),C7[1]+.1+i*.25,.3); drip(C7[1]+.2+i*.25,.12,i*60)
 fx(slide(6),C7[2]+.1,.3)
-# 8 coins into the hat; the porter's steps; the slam and the cold puff
-for kk in (.95,1.55,2.25): fx(coins(int(kk*10)),C8[0]-(C8[0]-S[8])+kk,.45)
-for i in range(4): fx(step(i+1),C8[0]+.05+i*.28,.25)
-fx(k('RPG sounds (50 sounds)/creak3.ogg'),C8[1]+.15,.3)
+# 8 the huddle (8a wide, 8b the hat goes round, DAY 1-3), the ice house (8c: door opens, porter walks in), the slam and the cold puff
+fx(coins(1),S[8]+.9,.4)
+for kk in (.9,1.05,1.2,1.35): fx(clink(int(kk*10)),C8[0]+kk+.35,.4)
+for kk in (.35,.62,1.05): fx(coins(int(kk*10)),C8[0]+kk+.3,.3)
+fx(cloth(2),C8[0]+.55,.3); fx(cloth(3),C8[0]+1.5,.3)
+for kk in (.05,.7,1.35): fx(shift(CLAVE,4),C8[0]+kk,.16)
+fx(k('RPG sounds (50 sounds)/doorOpen_1.ogg'),C8[1]+.1,.3)
+for i in range(4): fx(step(i+1),C8[1]+.25+i*.28,.25)
+fx(k('RPG sounds (50 sounds)/creak3.ogg'),C8[2]+.15,.3)
 fx(k('RPG sounds (50 sounds)/doorClose_4.ogg'),SLAM-.02,1.0); fx(shift(TIMP[0],-4)[:int(.6*SR)],SLAM,.55); hiss(SLAM+.04,1.0,.18); crackle(SLAM+.15,.7,.12,30)
 # ------------------------------------------------------------------ write
 from numpy.fft import rfft, irfft
@@ -210,4 +215,4 @@ for c in range(2): MUS[:,c]=MUS[:,c]*.88+conv(MUS[:,c],ir)*.22
 MUS=MUS[:int(TOTAL*SR)]; FX=FX[:int(TOTAL*SR)]
 MUS/=np.abs(MUS).max()*1.05; FX/=np.abs(FX).max()*1.4
 sf.write('vo/music_raw.wav',MUS,SR); os.makedirs('out',exist_ok=True); sf.write("out/fx_real.wav",FX,SR)
-print('cuts',[round(x,2) for x in C1+C2+C3+C4+C5+C6+C7+C8],'slam',round(SLAM,2)); print('ok total',TOTAL)
+print('cuts',[round(x,2) for x in C1+C2+C3+C4+C6+C7+C8],'slam',round(SLAM,2)); print('ok total',TOTAL)

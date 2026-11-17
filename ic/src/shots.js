@@ -17,18 +17,18 @@ function sh1_a(pu,u,t){ const c=DECKCAM(lerp(1,1.07,seg(pu,0,2.5,E.lin)),560), L
   const pose=tween(pu,.25,A,H,.4);
   let g=iceBlock(bx,by,bw,bh,{frost:seg(pu,.2,1.3),mist:.9,t,melt:.03,drip:.6})+toon('sailor',X,Y,s,-1,pose,t,3)+sweat(X-60,Y-300*s,seg(pu,.5,.8),pu,1);
   return FIN(cam(c,lit(deckLines(L)+g,L.c.fig,.8)).replace(/$/,'')+tag('1833',200,340,64,'#fff3c4',INK,{k:seg(pu,0,.01),rot:-3}),t); }
-function sh1_b(pu,u,t){ const k=seg(pu,0,2.07,E.io), cl=lerp(-48,36,k), rt=seg(pu,.15,1.9,E.io);
+function sh1_b(pu,u,t){ const k=seg(pu,0,2.45,E.io), cl=lerp(-48,36,k), rt=seg(pu,.15,2.25,E.io);
   paint(ctx=>paintGlobe(ctx,t,{cl,route:rt}));
   const b=gproj(-71,42,cl), cc=gproj(88,21.5,cl); let g='';
   if(b[2]>.2) g+=tag('BOSTON',b[0]-70,b[1]-50,48,'#fff3c4',INK,{k:seg(pu,0,.15,E.back),rot:-3});
-  if(cc[2]>.25&&rt>.88) g+=tag('CALCUTTA',cc[0]-20,cc[1]-56,48,'#fff3c4',INK,{k:seg(pu,1.7,1.95,E.back),rot:3});
+  if(cc[2]>.25&&rt>.88) g+=tag('CALCUTTA',cc[0]-20,cc[1]-56,48,'#fff3c4',INK,{k:seg(pu,2.0,2.25,E.back),rot:3});
   return FIN(g,t,{paper:.12}); }
 function sailAndLine(pu,t,dir){ const s=.95, HZ=720, wl=960, x0=dir>0?650:430, L=dayLight(.24), lineX=540+(x0-540)*(wl-HZ)/(1750-HZ);
-  const shipX=dir>0?lerp(170,620,seg(pu,0,2.5,E.lin)):lerp(900,640,seg(pu,0,1.05,E.lin));
+  const shipX=dir>0?lerp(170,620,seg(pu,0,2.1,E.lin)):lerp(900,640,seg(pu,0,1.05,E.lin));
   paint(ctx=>paintOpenSea(ctx,t,{x0,ph:.24,HZ}));
-  const sx=shipX+dir*405*s, sy=wl-140*s, jump=Math.sin(Math.PI*sat((pu-(dir>0?1.45:.28))/.5))*60*(dir>0?(pu>1.4&&pu<2?1:0):1);
+  const sx=shipX+dir*405*s, sy=wl-140*s, jump=Math.sin(Math.PI*sat((pu-(dir>0?1.25:.28))/.5))*60*(dir>0?(pu>1.2&&pu<1.8?1:0):1);
   const A=full({hF:[30,-120],hB:[-10,-114],expr:'happy',look:[3,-2],lean:2}), J=full({lean:-6,tilt:-10,hF:[52,-300],hB:[-34,-292],handF:'fist',handB:'fist',expr:'joy',fF:[18,-34],fB:[-16,-30]});
-  const jk=dir>0?seg(pu,1.4,1.62,E.o)*(1-seg(pu,1.9,2.2,E.i)):seg(pu,.2,.34,E.o)*(1-seg(pu,.62,.9,E.i));
+  const jk=dir>0?seg(pu,1.2,1.42,E.o)*(1-seg(pu,1.7,2.0,E.i)):seg(pu,.2,.34,E.o)*(1-seg(pu,.62,.9,E.i));
   const fig=toon('sailor',sx,sy-jump,.58,dir,mix(A,J,jk),t,5)+`<ellipse cx="${N(sx)}" cy="${N(sy+2)}" rx="${N(40-jump*.3)}" ry="9" fill="#1a1020" opacity="${N(.3*(1-jump/90)*100)/100}"/>`;
   let g=shipSide(shipX,wl,s,dir,{t,jib:0})+lit(fig,L.c.fig,.8);
   g+=`<g transform="translate(${N(dir>0?770:330)} 1000) rotate(${dir>0?-9:9})">`+ttl('EQUATOR',0,0,58,'#fffaf0',{rot:0})+`</g>`;
@@ -38,9 +38,9 @@ const sh1_c=(pu,u,t)=>sailAndLine(pu,t,1), sh1_d=(pu,u,t)=>sailAndLine(pu,t,-1);
 function sh1(t){ const u=t-S(1), P=part(1,u); return P.i===0?sh1_a(P.pu,u,t):P.i===1?sh1_b(P.pu,u,t):P.i===2?sh1_c(P.pu,u,t):sh1_d(P.pu,u,t); }
 
 /* ---------- 2 HOW DID IT SURVIVE: the question, the ice machine, the two-foot block ---------- */
-function sh2_a(pu,u,t){ const c=DECKCAM(1.3,520), L=dayLight(.25), Y=DECK+24, s=1.12, bx=420, bw=270, bh=310, by=Y-6, X=690, fan=Math.sin(pu*11);
+function sh2_a(pu,u,t){ const c=DECKCAM(1.3,520), L=dayLight(.25), Y=DECK+24, s=1.12, bx=420, bw=270, bh=310, by=Y-6, X=655, fan=Math.sin(pu*11);
   paint(ctx=>paintDeck(ctx,t,L,c,[[bx+20,Y+4,bw*.62,22,.45],[X-60,Y+10,150,24,.4]]));
-  const hat=hatProp(), F=full({lean:-4,tilt:6,hF:W2L(X,Y,s,-1,[bx+bw/2+50+fan*22,by-bh*.82-Math.abs(fan)*12]),hB:[24,-120],handF:'hold',expr:'wince',look:[-6,-2],holdF:hat}), W=full({...F,tilt:0,hF:[56,-176],expr:'plead',look:[0,0],holdF:hat});
+  const hat=hatProp(0,'fan'), F=full({cos:{cap:null},lean:-4,tilt:6,hF:W2L(X,Y,s,-1,[bx+bw/2+78+fan*26,by-bh*.5-Math.abs(fan)*14]),hB:[24,-120],handF:'hold',expr:'wince',look:[-6,-2],holdF:hat}), W=full({...F,tilt:0,hF:[56,-176],expr:'plead',look:[0,0],holdF:hat});
   const pose=tween(pu,1.5,F,W,.35);
   const g=iceBlock(bx,by,bw,bh,{melt:.05+.12*seg(pu,0,2.6),mist:.6,t,drip:1})+toon('sailor',X,Y,s,-1,pose,t,3)+sweat(X-40,Y-310*s,seg(pu,.2,.5),pu,1.1);
   return FIN(cam(c,lit(deckLines(L)+g,L.c.fig,.8)),t); }
@@ -96,9 +96,9 @@ function sh3_c(pu,u,t){ const c=DECKCAM(1.25,560), L=dayLight(.25), Y=DECK+24, s
   paint(ctx=>paintDeck(ctx,t,L,c,[[330,Y+8,100,18,.4],[bx+10,Y+6,bw*.65,20,.45]]));
   const hold=full({lean:-3,tilt:4,hF:[60,-176],hB:[-12,-114],handF:'hold',expr:'happy',look:[3,3],holdF:cubeProp(melt)}), sad=full({...hold,hF:[60,-150],expr:'shock',look:[1,6]});
   const A=tween(pu,1.6,hold,sad,.4);
-  const sitA=full({...TP.sit,lean:2,hF:[50,-176],hB:[56,-168],handF:'fist',handB:'fist',expr:'smug',look:[-2,0],fF:[56,-26],fB:[36,-20]});
-  const pud={x:300,y:Y+2};
-  let g=iceBlock(bx,by,bw,bh,{melt:.1*seg(pu,.5,2.8)+.02,mist:.5,t,drip:.4})+toon('sailor2',bx+70,Y-bh+34,.9,-1,{...sitA,hy:0},t,9).replace(/$/,'');
+  const sitA=full({...TP.sit,lean:2,hF:[50,-176],hB:[56,-168],handF:'fist',handB:'fist',expr:'smug',look:[-2,0],fF:[56,-26],fB:[36,-20],noShadow:true});
+  const pud={x:300,y:Y+2}, mm=.1*seg(pu,.5,2.8)+.02, topY=by-bh*(1-.55*mm), sitS=.9, sitY=topY+(122-52)*sitS+10;   /* hips (122-hy) above the feet: the seat lands on the block top */
+  let g=iceBlock(bx,by,bw,bh,{melt:.1*seg(pu,.5,2.8)+.02,mist:.5,t,drip:.4})+toon('sailor2',bx+50,sitY,sitS,-1,sitA,t,9);
   g+=`<ellipse cx="${pud.x+40}" cy="${Y+2}" rx="${N(14+60*melt)}" ry="${N(5+10*melt)}" fill="#a8dcf0" stroke="${INK}" stroke-width="3" opacity="${N(melt*100)/100}"/>`;
   g+=toon('sailor',330,Y,1.08,1,A,t,3);
   return FIN(cam(c,lit(deckLines(L)+g,L.c.fig,.8)),t); }
@@ -144,27 +144,16 @@ function sh5_a(pu,u,t){ const L=dayLight(.25), cT={x:600,y:DECK,z:1.1,oy:660}, c
   const gB=holdSvg(t,{drop:100,floor:1,bark:1,hay:1,planks:1,lampK:0})+lantern(300,470,'#9fc8ff',1)+lit(toon('sailor',830,925,.9,-1,cold,t,5),'#c8d8ff',.7)+breath(765,735,pu,-1);
   let g=`<clipPath id="c5t"><rect width="1080" height="${SPL}"/></clipPath><clipPath id="c5b"><rect y="${SPL}" width="1080" height="1300"/></clipPath>`
     +`<g clip-path="url(#c5t)">${cam(cT,gT,652)}</g><g clip-path="url(#c5b)">${cam(cB,gB,880)}</g><path d="M0 ${SPL}H1080" stroke="${INK}" stroke-width="14"/>`;
-  return FIN(g,t,{vig:.4}); }
-function sh5_b(pu,u,t){ const ph=.06+pu/1.0, L=dayLight(ph), c=DECKCAM(1.1,480), X=650, Y=DECK+24, s=1.3, crate=[X-120,Y-97*s,196,97*s], n=Math.min(10,Math.floor(pu/2.31*10.4)), kT=sat((pu/2.31*10.4)%1);
-  paint(ctx=>paintDoldrums(ctx,t,L,c,{crate,fig:[X,Y]}));
-  const fan=Math.sin(pu*9), hot=full({...TP.sit,lean:-6,tilt:10+fan*2,hF:[58+fan*16,-214+Math.abs(fan)*8],hB:[40,-96],handF:'flat',expr:'tired',look:[3,-2]}), sleep=full({...TP.sit,lean:-16,tilt:-22,hF:[62,-104],hB:[40,-96],handF:'open',expr:'bored',look:[0,4]});
-  const pose=mix(hot,sleep,L.night);
-  const figs=`<rect x="${N(crate[0])}" y="${N(crate[1])}" width="${crate[2]}" height="${N(crate[3])}" fill="none" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/><path d="M${N(crate[0])} ${N(crate[1]+30)}h${crate[2]}M${N(crate[0])} ${N(crate[1]+62)}h${crate[2]}" stroke="${INK}" stroke-width="3.5" opacity=".7"/>`+toon('sailor',X,Y,s,1,pose,t,3);
-  const ship=`<path d="M150 -400V${DECK+52}M234 -400V${DECK+52}" stroke="${INK}" stroke-width="6"/><path d="M-600 ${RAIL}H1700M-600 ${RAIL+24}H1700" stroke="${INK}" stroke-width="5"/><path d="M-600 ${DECK}H1700" stroke="${INK}" stroke-width="5" opacity=".8"/><path d="M234 250L900 ${RAIL}M150 330L-200 ${RAIL}" stroke="${INK}" stroke-width="4" opacity=".75" fill="none"/>`+tally(192,560,n,kT);
-  return FIN(cam(c,lit(ship,L.c.fig,.55)+lit(figs,L.c.fig,.8)),t); }
-function sh5_c(pu,u,t){ const c=HOLDCAM(480,760,1.35), L='#c8d8ff'; paint(ctx=>paintHold(ctx,t,{c,lamp:[300,560],lc:'#7fb2ff',la:.9,cold:.55,r:520}));
-  const shv=Math.sin(pu*38)*2.4*(1-seg(pu,.1,.4)), off=seg(pu,.25,.6,E.io)*(1-seg(pu,1.05,1.3,E.io)*.0), A=full({lean:2+shv,tilt:-3,hF:[44,-150],hB:[40,-146],handF:'fist',handB:'fist',expr:'wince',look:[2,3]}), B=full({lean:-2,tilt:-6,hF:[50,-250],hB:[20,-200],handF:'open',handB:'open',expr:'joy',look:[3,-3]}), pose=mix(A,B,off);
-  const scarf=sat(1-seg(pu,.3,.6)+seg(pu,1.1,1.3));
-  let g=holdSvg(t,{drop:100,floor:1,bark:1,hay:1,planks:1,lampK:0})+lantern(300,470,'#9fc8ff',1)+lit(toon('sailor',480,910,1.12,1,pose,t,5),L,.45);
-  g+=`<g transform="translate(494 ${N(910-250*1.12)})" opacity="${N(scarf*100)/100}"><path d="M-44 0Q0 30 44 4L40 28Q0 52 -40 24Z" fill="#c8372d" stroke="${INK}" stroke-width="5"/></g>`+`<g opacity="${N(scarf*100)/100}">${breath(526,700,pu,1)}</g>`;
-  return FIN(cam(c,g,880)+tag('DAY 10',830,350,70,'#fff3c4',INK,{k:seg(pu,.05,.3,E.back),rot:3}),t,{vig:.7}); }
-function sh5(t){ const u=t-S(5), P=part(5,u); return P.i===0?sh5_a(P.pu,u,t):P.i===1?sh5_b(P.pu,u,t):sh5_c(P.pu,u,t); }
+  const d0=cu(5,'tropics'), d1=cu(5,'ten'), n=Math.min(10,1+Math.floor(10*seg(u,d0,d1+.02))), tk=seg(u,d0-.1,d0+.15,E.back);
+  return FIN(g+tag('DAY '+n,240,790,70,'#fff3c4',INK,{k:tk,rot:-3}),t,{vig:.4}); }
+const sh5=t=>sh5_a(t-S(5),t-S(5),t);
 
 /* ---------- 6 CALCUTTA: the Hooghly at morning, the hatch opens ---------- */
-const crowdFig=(x,y,s,col,u,i)=>{ const w=Math.sin(u*5+i*1.7)*.5+.5; return `<g transform="translate(${N(x)} ${N(y)}) scale(${s})"><circle cy="-92" r="13" fill="#c08654" stroke="${INK}" stroke-width="4"/><path d="M0 -78V-30M0 -66L-16 -${N(40+w*40)}M0 -66L16 -${N(40+(1-w)*30)}M0 -30L-12 0M0 -30L12 0" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><path d="M0 -78V-30M0 -66L-16 -${N(40+w*40)}M0 -66L16 -${N(40+(1-w)*30)}M0 -30L-12 0M0 -30L12 0" stroke="${col}" stroke-width="6" stroke-linecap="round"/></g>`; };
+const crowdToon=(x,y,s,who,u,i)=>{ const w=Math.sin(u*4+i*1.3), A=full({hF:[22+w*10,-112],hB:[-12,-114],lean:2,expr:'happy',look:[3,-1]}), Wv=full({hF:[44,-232-Math.abs(w)*30],hB:[-12,-114],handF:'open',expr:'joy',look:[3,-3]});
+  return lit(toon(who,x,y,s,1,i%3===0?Wv:A,u,30+i),'#3a2c28',.8); };
 function sh6_a(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>paintRiver(ctx,t,{c}));
   const x=lerp(180,600,seg(pu,0,2.3,E.o)), wl=960, s=.74; let g='';
-  for(let i=0;i<9;i++) g+=crowdFig(70+i*118+(i%2)*30,885+((i*7)%3)*6,.66,['#efe7d2','#e6a23a','#c8372d','#2c5e8a'][i%4],pu,i);
+  for(let i=0;i<9;i++) g+=crowdToon(70+i*118+(i%2)*30,894+((i*7)%3)*4,.36,['porter','worker','worker2','buyer','porter','tanner'][i%6],pu,i);
   [[200,1010],[880,990]].forEach(([bx,by],i)=>{ g+=`<g transform="translate(${bx+Math.sin(pu*1.4+i)*8} ${by})"><path d="M-70 -10Q0 24 70 -10L56 -22H-56Z" ${st('#7a4a2a',5)}/><path d="M0 -14V-110" stroke="${INK}" stroke-width="5"/></g>`; });
   g+=shipSide(x,wl,s,1,{t})+`<ellipse cx="${N(x+330*s)}" cy="${wl+14}" rx="${N(90+20*Math.sin(pu*3))}" ry="12" fill="#fff" opacity=".6"/>`;
   return FIN(lit(g,'#fff2d6',.4),t,{paper:.15}); }
@@ -180,65 +169,83 @@ function sh6(t){ const u=t-S(6), P=part(6,u); return P.i===0?sh6_a(P.pu,u,t):sh6
 function derrick(x,top,u,mel){ const sw=Math.sin(u*2.2)*34, rx=640+sw, ry=top+230;
   return `<path d="M${x} 1010V${top}L${x+60} 1010M${x-60} 1010L${x} ${top}" stroke="${INK}" stroke-width="12" fill="none" stroke-linejoin="round"/><path d="M${x} ${top}L${x+60} 1010M${x-60} 1010L${x} ${top}" stroke="#8a5a32" stroke-width="5" fill="none"/><path d="M${x} ${top+10}L${x+560} ${top-30}" stroke="${INK}" stroke-width="16" stroke-linecap="round"/><path d="M${x} ${top+10}L${x+560} ${top-30}" stroke="#9a6a3c" stroke-width="8" stroke-linecap="round"/>`
     +`<path d="M${x+540} ${top-26}L${N(rx)} ${N(ry)}" stroke="${INK}" stroke-width="5"/>`; }
-function sh7_a(pu,u,t){ const c={x:540,y:960,z:1}, sw=Math.sin(pu*2.2)*34; paint(ctx=>paintDocks(ctx,t,{c,wall:1}));
-  let g=derrick(120,430,pu)+iceBlock(640+sw,690,250,200,{melt:.35,drip:1,t,mist:.2,wob:sw*.1});
+const DC={x:540,y:960,z:1};
+function sh7_a(pu,u,t){ const c=DC, sw=Math.sin(pu*2.2)*34; paint(ctx=>paintDocks(ctx,t,{c,v:'a'}));
+  let g=shipSide(940,985,.56,-1,{t,jib:0})+derrick(120,430,pu)+iceBlock(640+sw,690,250,200,{melt:.35,drip:1,t,mist:.2,wob:sw*.1});
   [[330,'porter',1],[860,'mate',-1]].forEach(([x,w,d],i)=>{ const A=full({hF:[60,-180],hB:[34,-170],handF:'fist',handB:'fist',expr:'determined',look:[4,-4],lean:-4,fF:[16,0],fB:[-14,0]}); g+=toon(w,x,GY,.95,d,{...A,lean:A.lean+sw*.05},t,12+i); });
   g+=`<g opacity=".8">`+[0,1,2,3,4].map(i=>`<ellipse cx="${N(520+i*45+sw)}" cy="${GY+6}" rx="${N(18+i*3)}" ry="6" fill="#a8dcf0" stroke="${INK}" stroke-width="2.5" opacity="${N(.25+.12*i)}"/>`).join('')+`</g>`;
   return FIN(lit(g,'#fff6dc',.5),t,{paper:.16}); }
-function sh7_b(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>paintDocks(ctx,t,{c,wall:1}));
+function sh7_b(pu,u,t){ const c=DC; paint(ctx=>paintDocks(ctx,t,{c,v:'b'}));
   const w=seg(pu,.2,1.6,E.io), A=full({lean:3,tilt:-2,hF:[56,-224],hB:[-12,-114],handF:'hold',expr:'smug',look:[4,-2],holdF:chalkProp(),fF:[22,0],fB:[-14,0]}), B=full({...A,hF:[84+Math.sin(pu*14)*10,-244+Math.cos(pu*11)*8]});
-  let g=toon('mate',250,GY,1.3,1,mix(A,B,seg(pu,.1,.3)),t,15)+slate(715,640,560,300,['4 MONTHS','−55 T'],w,-2,100);
+  let g=`<clipPath id="k7"><rect x="-300" y="0" width="1700" height="1003"/></clipPath><g clip-path="url(#k7)">${shipSide(540,975,1.45,1,{t,jib:0})}</g>`
+    +toon('mate',250,GY,1.3,1,mix(A,B,seg(pu,.1,.3)),t,15)+slate(740,640,520,300,['4 MONTHS','−55 T'],w,-2,100);
   return FIN(lit(g,'#fff6dc',.5),t,{paper:.16}); }
-function sh7_c(pu,u,t){ const wx=lerp(180,700,seg(pu,0,1.8,E.lin)), c={x:lerp(540,wx+120,.9),y:960,z:1}, melt=seg(pu,.2,1.8,E.lin); paint(ctx=>paintDocks(ctx,t,{c,wall:1}));
-  const s=1.12, H=full({lean:3,hF:[56,-128],hB:[34,-130],handF:'open',handB:'open',expr:'smug',look:[4,-1]}), wk=walkPose(pu,2.3,1), pose={...wk,hF:H.hF,hB:H.hB,handF:'open',handB:'open',expr:melt<.6?'smug':'confused',lean:3,hy:wk.hy};
-  const bH=lerp(150,34,melt), bW=lerp(130,36,melt);
+function sh7_c(pu,u,t){ const wx=lerp(180,640,seg(pu,0,1.75,E.lin)), c={x:lerp(540,wx+120,.9),y:960,z:1}, melt=seg(pu,.15,1.7,E.lin); paint(ctx=>paintDocks(ctx,t,{c,v:'c'}));
+  const s=1.75, r=s/1.12, H=full({lean:3,hF:[56,-128],hB:[34,-130],handF:'open',handB:'open',expr:'smug',look:[4,-1]}), wk=walkPose(pu,1.9,1), pose={...wk,hF:H.hF,hB:H.hB,handF:'open',handB:'open',expr:melt<.6?'smug':'confused',lean:3,hy:wk.hy};
+  const bH=lerp(150,34,melt)*r, bW=lerp(130,36,melt)*r;
   let g=toon('buyer',wx,GY,s,1,pose,t,16)+iceBlock(wx+84*s,GY-82*s+bH*.5,bW,bH,{melt:0,drip:.8,t})+`<ellipse cx="${N(wx+60)}" cy="${GY+6}" rx="${N(30+40*(1-melt))}" ry="7" fill="#a8dcf0" opacity=".5"/>`;
   for(let i=0;i<4;i++){ const q=(i*.27+pu*.5)%1; g+=`<ellipse cx="${N(wx-40-q*260)}" cy="${GY+8}" rx="${N(6+q*8)}" ry="4" fill="#a8dcf0" stroke="${INK}" stroke-width="2" opacity="${N((1-q)*.7*100)/100}"/>`; }
   return FIN(cam(c,lit(g,'#fff6dc',.5)),t,{paper:.16}); }
-function sh7_d(pu,u,t){ const c={x:700,y:900,z:1.35,oy:1010}; paint(ctx=>paintDocks(ctx,t,{c,wall:1}));
+function sh7_d(pu,u,t){ const c={x:700,y:1005,z:1.3,oy:1030}; paint(ctx=>paintDocks(ctx,t,{c,v:'d'}));   /* ground at screen y 1030: his feet clear the caption letters (y 1050-1175) */
   const look=seg(pu,.5,.9,E.io), A=full({lean:2,hF:[56,-166],hB:[-8,-116],handF:'hold',expr:'confused',look:[4,2],holdF:cubeProp(.35)}), B=full({lean:5,tilt:6,hF:[52,-150],hB:[-8,-116],handF:'hold',expr:'sad',look:[4,6],holdF:cubeProp(.35)});
-  let g=toon('buyer',470,GY,1.15,1,mix(A,B,look),t,16)+slate(850,640,370,230,['DAYS','≈ −30 T'],seg(pu,.1,.7,E.lin),2,70);
-  return FIN(cam(c,lit(g,'#fff6dc',.5),1010),t,{paper:.16}); }
+  let g=toon('buyer',470,GY,1.15,1,mix(A,B,look),t,16)+slate(870,690,370,230,['DAYS','≈ −30 T'],seg(pu,.1,.7,E.lin),2,70);
+  return FIN(cam(c,lit(g,'#fff6dc',.5),1030),t,{paper:.16}); }
 function sh7(t){ const u=t-S(7), P=part(7,u); return P.i===0?sh7_a(P.pu,u,t):P.i===1?sh7_b(P.pu,u,t):P.i===2?sh7_c(P.pu,u,t):sh7_d(P.pu,u,t); }
 
 /* ---------- 8 THE ICE HOUSE ---------- */
 const coin=(x,y)=>`<circle cx="${N(x)}" cy="${N(y)}" r="11" fill="#ffd25a" stroke="${INK}" stroke-width="3.5"/>`;
-function sh8_a(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>paintDocks(ctx,t,{c,wall:1}));
-  const mk=(who,x,d,i)=>{ const A=full({hF:[30,-124],hB:[-12,-114],expr:'neutral'}), B=full({lean:-4,hF:[60,-170],hB:[-12,-114],handF:'open',expr:'happy',look:[4,-2]}); return toon(who,x,GY,.9,d,tween(pu,.3+i*.6,A,B,.3),t,20+i); };
-  const bear=full({lean:2,hF:[60,-150],hB:[-12,-114],handF:'hold',expr:'smug',look:[0,2],holdF:hatProp(Math.min(5,Math.floor(pu*1.9)))});
-  let g=mk('buyer',200,1,0)+mk('buyer2',880,-1,1)+toon('porter',540,GY,.9,1,bear,t,24);
-  const hx=618, hy=GY-150*.9-30;
-  [[0,230],[1,850]].forEach(([i,x0])=>{ const k=sat((pu-(.5+i*.6))/.45), px=lerp(x0,hx,k), py=lerp(GY-190,hy,k)-Math.sin(k*Math.PI)*120; if(k>0&&k<1) g+=coin(px,py); });
-  const k2=sat((pu-1.8)/.45); if(k2>0&&k2<1) g+=coin(lerp(330,hx,k2),lerp(GY-170,hy,k2)-Math.sin(k2*Math.PI)*110);
-  return FIN(lit(g,'#fff6dc',.5),t,{paper:.16}); }
-function sh8_b(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>paintIceHouse(ctx,t,{c}));
-  /* an illustration, not a reconstruction (its look is not documented): a big windowless masonry block, thick walls, one deep door, no date */
-  const course=[];for(let y=470;y<1000;y+=44) course.push(`<path d="M172 ${y}H908" stroke="#b9a986" stroke-width="3" opacity=".6"/>`);
-  let g=`<path d="M160 1005V440H920V1005Z" ${st('#ece0c4',10)}/>`+course.join('')+`<path d="M760 442V1003H918V442Z" fill="#a9b8c8" opacity=".35"/>`
-    +`<path d="M130 440H950L920 396H160Z" ${st('#c9b994',10)}/><path d="M150 440H930V462H150Z" fill="#b9a986" opacity=".6"/>`
-    +[176,904].map(x=>`<rect x="${x-22}" y="462" width="44" height="543" ${st('#e2d4b2',7)}/>`).join('')
-    +`<path d="M440 1005V760Q540 670 640 760V1005Z" fill="#d8c9a8" stroke="${INK}" stroke-width="10"/><path d="M468 1005V772Q540 708 612 772V1005Z" fill="#1e2a36" stroke="${INK}" stroke-width="8"/>`
-    +`<path d="M482 1003V782Q540 730 598 782V1003Z" fill="#9fd0ee" opacity="${N((.18+.08*Math.sin(t*3))*100)/100}"/>`
-    +`<path d="M140 1005H940V1030H140Z" ${st('#bfb39a',7)}/><path d="M420 1030H660V1052H420Z" ${st('#cfc3a8',6)}/>`;
-  const wx=lerp(70,500,seg(pu,0,1.15,E.io)), op=1-seg(pu,.75,1.05,E.io), A=walkPose(pu,2,1), H=full({hF:[50,-128],hB:[40,-126],handF:'hold',handB:'hold'});
-  g+=`<g opacity="${N(op*100)/100}">`+toon('porter',wx,GY,.85,1,{...A,hF:H.hF,hB:H.hB,handF:'hold',handB:'hold',expr:'determined'},t,26)+iceBlock(wx+98,GY-54,86,86,{drip:.5,t})+`</g>`;
+/* The huddle: A (left, faces right), B (middle, faces left), C (behind B, faces left). The hat goes A -> B (forward hands), takes coins, then B swings his back arm and C takes it.
+   wide: 8a, the three talking, hat in A's hand. tight: 8b, the pass, the coins, DAY 1-3. */
+const HUD={A:{x:320,who:'buyer',d:1},B:{x:540,who:'buyer2',d:-1},C:{x:662,who:'buyer3',d:-1}}, HY=GY-170;
+function huddle(pu,t,tight){ const hs=1.0, T=tight?pu:0, lerpV=(a,b,k)=>[lerp(a[0],b[0],k),lerp(a[1],b[1],k)];
+  const pA=[376,HY], pM=[432,HY-22], pB=[484,HY], pBk=[606,HY+12];
+  let hat=pA; if(T>.35) hat=lerpV(pA,pM,E.io(seg(T,.35,.6))); if(T>.6) hat=lerpV(pM,pB,E.io(seg(T,.6,.88))); if(T>1.35) hat=lerpV(pB,pBk,E.io(seg(T,1.35,1.78)));
+  hat=[hat[0],hat[1]-(tight?0:Math.abs(Math.sin(pu*5))*4)];
+  const nC=tight?Math.min(6,Math.floor(Math.max(0,(T-.95)/.2))):0;
+  const sway=(i)=>Math.sin(pu*3.4+i*1.9), gest=(i)=>full({lean:sway(i)*3,tilt:sway(i+1)*4,hy:Math.abs(sway(i+1))*3,hB:[-12+sway(i)*20,-132-Math.abs(sway(i+2))*46],handB:'open',expr:'happy',look:[3,-1]});
+  const lim=(r,h,m)=>{ const dx=h[0]-r[0], dy=h[1]-r[1], d=Math.hypot(dx,dy)||1, k=Math.min(1,m/d); return [r[0]+dx*k,r[1]+dy*k]; };   /* a hand never goes further than m from its rest point (reach) */
+  /* A */ const aRest=W2L(HUD.A.x,GY,hs,1,[pA[0],pA[1]]), aReach=W2L(HUD.A.x,GY,hs,1,lim(pA,hat,42));
+  const A=full({...gest(0),hF:T>.3&&T<1.0?aReach:aRest,handF:'flat',expr:T>.85?'happy':'smug'});
+  /* B */ const bFwd=W2L(HUD.B.x,GY,hs,-1,T<1.3?lim(pB,hat,42):pB), bBack=W2L(HUD.B.x,GY,hs,-1,[606,HY+12]);
+  const bBackK=seg(T,1.3,1.75,E.io), Bp=full({...gest(1),hF:T>.3?bFwd:W2L(HUD.B.x,GY,hs,-1,pB),handF:'flat',hB:mix(gest(1).hB,bBack,bBackK),handB:'flat',expr:T>1.6?'smug':'happy'});
+  /* C */ const cRest=[-12+sway(2)*10,-118], cReach=W2L(HUD.C.x,GY,hs,-1,lim(pBk,hat,42)), cK=seg(T,1.45,1.8,E.io);
+  const C=full({...gest(2),hF:mix(cRest,cReach,cK),handF:'flat',hB:[-12,-114],expr:'happy'});
+  let g=toon(HUD.A.who,HUD.A.x,GY,hs,1,A,t,20)+toon(HUD.B.who,HUD.B.x,GY,hs,-1,Bp,t,21)+toon(HUD.C.who,HUD.C.x,GY,hs,-1,C,t,22);
+  g+=`<g transform="translate(${N(hat[0])} ${N(hat[1])}) scale(.8)">${hatProp(nC).svg}</g>`;
+  if(tight) [[.9,[250,HY-150],0],[1.05,[780,HY-170],1],[1.2,[330,HY-170],0],[1.35,[760,HY-150],1]].forEach(([t0,from,sd])=>{ const k=sat((T-t0)/.4); if(k>0&&k<1) g+=coin(lerp(from[0],hat[0]+4,k),lerp(from[1],hat[1]-10,k)-Math.sin(k*Math.PI)*90); });
+  if(!tight){ const k=sat((pu-.9)/.5); if(k>0&&k<1) g+=coin(lerp(250,hat[0]+4,k),lerp(HY-150,hat[1]-10,k)-Math.sin(k*Math.PI)*80); }
+  return g; }
+function sh8_a(pu,u,t){ const c={x:520,y:1005,z:1.1,oy:1035}; paint(ctx=>paintDocks(ctx,t,{c,v:'e'}));
+  let g=huddle(pu,t,false)+toon('porter',850,GY,.8,-1,full({hF:[30,-124],hB:[30,-130],handF:'fist',handB:'fist',expr:'happy',look:[-3,0],lean:1}),t,24);
+  return FIN(cam(c,lit(g,'#fff6dc',.5),1035),t,{paper:.16}); }
+function sh8_b(pu,u,t){ const c={x:560,y:860,z:1.6,oy:760}; paint(ctx=>paintDocks(ctx,t,{c,v:'e'}));
+  const n=1+Math.min(2,Math.floor(Math.max(0,pu-.05)/.65)), loc=((pu-.05)%.65);
+  const g=huddle(pu,t,true);
+  return FIN(cam(c,lit(g,'#fff6dc',.5),760)+tag('DAY '+n,540,370,70,'#fff3c4',INK,{k:seg(loc,0,.15,E.back),rot:-2}),t,{paper:.16}); }
+/* 8c: the ice house, wide. 8d: the same door, close. */
+function sh8_c(pu,u,t){ const c={x:540,y:960,z:1}; paint(ctx=>paintIceHouse(ctx,t,{c}));
+  const course=[];for(let y=470;y<1000;y+=44) course.push(`<path d="M172 ${y}H908" stroke="#a89670" stroke-width="3" opacity=".6"/>`);
+  let g=`<path d="M160 1005V440H920V1005Z" ${st(ICE_WALL,10)}/>`+course.join('')+`<path d="M760 442V1003H918V442Z" fill="#a9b8c8" opacity=".3"/>`
+    +`<path d="M130 440H950L920 396H160Z" ${st('#a8946c',10)}/><path d="M150 440H930V462H150Z" fill="#a89670" opacity=".6"/>`
+    +[176,904].map(x=>`<rect x="${x-22}" y="462" width="44" height="543" ${st('#d2c09a',7)}/>`).join('')
+    +`<path d="M140 1005H940V1030H140Z" ${st('#bfb39a',7)}/>`;
+  const cl=1-seg(pu,.05,.5,E.io); g+=iceDoor(540,1005,150,215,cl,.12);
+  const k=seg(pu,.2,1.2,E.io), sc=lerp(.85,.5,k), wx=lerp(130,545,k), wy=lerp(GY,GY-6,k), A=walkPose(pu,2.4,1), H=full({hF:[50,-128],hB:[40,-126],handF:'hold',handB:'hold'});
+  g+=toon('porter',wx,wy,sc,1,{...A,hF:H.hF,hB:H.hB,handF:'hold',handB:'hold',expr:'determined'},t,26)+iceBlock(wx+98*sc,wy-54*sc,86*sc,86*sc,{drip:.5,t});
   return FIN(lit(g,'#e6f0ff',.35),t,{paper:.14}); }
-function sh8_c(pu,u,t){ const slam=.75, j=pu>slam?Math.exp(-(pu-slam)*9)*Math.sin((pu-slam)*46)*7:0, z=2.1, c={x:540,y:900+j,z,oy:760}; paint(ctx=>paintStone(ctx,t,{c}));
-  const cl=seg(pu,.1,slam,E.i); let g='';
-  g+=`<path d="M380 1000V700Q380 560 540 560Q700 560 700 700V1000Z" fill="#14100c" stroke="${INK}" stroke-width="9"/>`;
-  g+=`<path d="M392 1000V704Q392 574 540 574Q688 574 688 704V1000Z" fill="#9fd0ee" opacity="${N(.35*(1-cl)*100)/100}"/>`;
-  [[380,1],[700,-1]].forEach(([hx,d])=>{ const w=lerp(40,160,cl); g+=`<g transform="translate(${hx} 0)"><path d="M0 1000V700Q0 620 0 600L${d*w} 600V1000Z" ${st('#7a4e2a',8)}/>`+[640,760,880].map(y=>`<path d="M0 ${y}H${d*w}" stroke="#2a2a30" stroke-width="12"/>`).join('')+`</g>`; });
+function sh8_d(pu,u,t){ const slam=.75, j=pu>slam?Math.exp(-(pu-slam)*9)*Math.sin((pu-slam)*46)*7:0, z=2.1, c={x:540,y:900+j,z,oy:760}; paint(ctx=>paintStone(ctx,t,{c}));
+  const cl=seg(pu,.1,slam,E.i); let g=iceDoor(540,1000,320,440,cl,.35*(1-cl));
   g+=`<circle cx="540" cy="850" r="9" fill="#2a2a30" stroke="${INK}" stroke-width="3" opacity="${N(seg(pu,slam-.05,slam+.05)*100)/100}"/>`;
   /* the cold puff: out of the keyhole and the door seam the moment it slams, curling outward and fading */
   g+=[0,1,2,3,4,5,6,7].map(i=>{ const q=sat((pu-slam-.02-i*.035)/.9); if(q<=0||q>=1) return ''; const sd=i%2?1:-1, ang=(.25+.12*(i>>1))*sd, d=40+q*(120+i*14), r=16+q*(36+(i%3)*10);
     return `<circle cx="${N(540+Math.sin(ang)*d)}" cy="${N(850+Math.cos(ang)*d*.6-q*30)}" r="${N(r)}" fill="#eef8ff" opacity="${N((1-q)*(1-q)*.75*100)/100}"/>`; }).join('');
   g+=[0,1,2,3,4].map(i=>{ const q=sat((pu-slam-.1-i*.07)/.6); if(q<=0||q>=1) return ''; const x=540+(i-2)*46*q, y=850-60*q+(i%2)*30; return `<path d="M${N(x-9)} ${N(y)}H${N(x+9)}M${N(x)} ${N(y-9)}V${N(y+9)}" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity="${N((1-q)*100)/100}"/>`; }).join('');
   return FIN(cam(c,g,760),t,{paper:.14,vig:.7}); }
-function sh8(t){ const u=t-S(8), P=part(8,u); return P.i===0?sh8_a(P.pu,u,t):P.i===1?sh8_b(P.pu,u,t):sh8_c(P.pu,u,t); }
+function sh8(t){ const u=t-S(8), P=part(8,u); return [sh8_a,sh8_b,sh8_c,sh8_d][P.i](P.pu,u,t); }
 
-const CUT_EP={1:[['carried',-.05],['india',-.1],['twice',-.15]], 2:[['step',-.1],['two',-.1]], 3:[['one',-.3],['less',-.1]], 4:[['foot',-.3],['on',-.05],['hay',-.6]],
-  5:[['ten',-.15],4.7], 6:[['with',-.07]], 7:[['four',-.1],['days',-.1],['almost',-.07]], 8:[['the',-.1],['house',-.1]]};
-const CUT_HOLD_EP=[8];
+const CUT_EP={1:[['tons',-.1],['four',-.1],['twice',-.15]], 2:[['step',-.1],['two',-.1]], 3:[['one',-.3],['less',-.1]], 4:[['foot',-.3],['on',-.05],['hay',-.6]],
+  6:[['with',-.07]], 7:[['four',-.1],['days',-.1],['almost',-.07]], 8:[['raised',-.1],['ice',-.25],['house',0]]};
+const CUT_HOLD_EP=[5,8];   /* 5 is one cut of ~4 s (the line plus a beat); 8 holds on the door */
 const SEQ=[1,2,3,4,5,6,7,8].map(n=>({from:n,r:[sh1,sh2,sh3,sh4,sh5,sh6,sh7,sh8][n-1],out:'cut'}));
 SEQ.forEach((q,i)=>{ q.start=S(q.from); q.end=i+1<SEQ.length?S(SEQ[i+1].from):TOTAL; });
 function overlays(t){ return mySubs(t); }

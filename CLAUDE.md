@@ -33,7 +33,7 @@ yo/   Pedro Flores and the word "yo-yo" (2026-11) - FINISHED (Stage D): final MP
 tn/   The Day of Two Noons (1883) - FORMAT TEST ep. 1, FINISHED (Stage D 2026-11-13): final MP4 + cover + caption, waiting on Farrukh's listening check (tn/brief.md section 13)
 ic/   Ice to Calcutta (1833) - FORMAT TEST ep. 2, rich painted look. Stage A done 2026-11-13; Stage B part 2 (painted layer) done 2026-11-15 (ic/brief.md section 11).
       Stage D export 2026-11-16 (ic/brief.md section 13). First full painted film: 0.37 s/frame/worker.
-      REWORK (2026-11-17): Farrukh reviewed the export and approved four changes; back to Stage C with the fix list in ic/brief.md section 14. Not finished.
+      REWORK Stage C built 2026-11-17 (ic/brief.md section 15): verify PASS, draft exported; waiting on Stage D (facts pass, final export, cover, listening).
 px/ r2/ rc/               older stick-rig episodes with their own tool copies. Leave as they are.
 ```
 An episode folder holds only what is its own: `episode.json` (title, `out` html name, `file` mp4 name), `src/meta.js`
