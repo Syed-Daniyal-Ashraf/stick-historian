@@ -360,3 +360,54 @@ Loudness per section in the final MP4 (LUFS): bright -14.0, soft -13.5, pizz -14
 > Notes: Most retellings say sawdust; the 1834 account of this voyage says a foot of tanners' bark under and around the ice and a foot of hay on top. Packing the blocks tight was meant to make one solid mass, but the same account says the ice still melted between the blocks, not only from the outside. 180 tons were loaded; about 100 reached the ice store. Arrival dates differ (6, 10 or 13 September), so the video says September. "Almost thirty more" = 6-8 tons lost on the river + about 20 in unloading (the agent's estimate). Calcutta's residents raised money for an ice house; the first cargo was kept in a lower room of a house at Brightman's Ghaut, and the building in the video is an illustration. The voyage was organised with Samuel Austin and William C. Rogers; Rogers sold the ice in Calcutta.
 
 **For the 72 h / 7-day review:** `tn` vs `ic` is look + story at once (two data points, not a verdict); record both against the results log in `CLAUDE.md`.
+
+## 14. Second review of the final MP4 and rework list (2026-11-17, Fable 5.2; Stage D calls for Opus)
+Reviewed `Ice-To-Calcutta-1833.mp4` (the section 13 export) at 2 fps for the whole film, every caption at 6 fps, suspect moments at full size.
+Audio measured only (-14.1 LUFS, TP -2.9, no dropouts), not heard. Facts re-checked against the 1834 account: all narrated numbers hold.
+**Farrukh approved all four decisions below on 2026-11-17. The film is NOT finished: it goes back to Stage C with this list.**
+Times are in the section 13 cut. Section 13's "not acted on: same dock wall across 7a-8a" is overruled by decision 4.
+
+### Narration changes (LOCKED; everything else in section 3 stays word for word)
+```python
+ (5,'N',"Even in the tropics, the hold took more than *ten days* to heat up.",1.02,.0),   # was "...just to warm up." + 2 s of silence
+ (8,'N',"Its new customers reportedly raised the money in *three days.*",.98,.0),          # was "So its new customers paid for something obvious."
+ (8,'N',"The ice got its own *house.*",.94,.25),                                            # unchanged
+```
+- Shot 5 becomes ONE cut of about 3.3 s (5a, the split screen) with the `DAY 10` tag moved into it. Delete 5b and 5c and the silence after the line.
+  Expected total about 49 s; "Then the real melting started" moves from 38.1 s to about 35 s. Re-run `gen.py`, `timeline.py`, then re-time `sound.py` (the `tense` section shrinks to one bar or two; keep the one beat grid).
+- "three days" source: Bean 1991 ("within three days" British residents raised the money for an icehouse). One secondary source, hence "reportedly".
+  The approved wording said "Calcutta reportedly raised"; the subject is kept as "its new customers" because the subscribers were British residents, not the city. Add to the pinned comment: "The three-day subscription is from Susan Bean's 1991 article."
+- No other line changes. The hook line ("In eighteen thirty-three, ...") is NOT approved for change (part C).
+
+### A. Approved rework
+1. **Sailor costumes (1a, 1c, 1d, 2a, 3c, 5a; 0-10.6, 18-21.3, 27.7-30 s).** The white knee-length coat + peaked baseball cap reads as a modern lab coat. New episode costume in `ic/src/props.js` (do not touch shared `TC`):
+   short dark-blue jacket or striped shirt, white trousers, black neckerchief, low-crowned brimmed tarpaulin hat (round brim all the way round, never a front peak). The second sailor in 3c differs by shirt, not by cap colour.
+   The mate (7a, 7b) keeps the long navy coat but loses the baseball-cap silhouette too. Same silhouette for the same man in every shot (continuity gate).
+   In 2a he fans the block with his own hat, so his head is bare while fanning (today he wears a cap and holds a second black disc that reads as a plate).
+2. **Shot 5 cut** as above (27.7-34.0 s today).
+3. **Ending (8a-8c; 46.15-51.9 s today).**
+   - 8a: three figures a body-width apart, almost still, against the wall. Rebuild as a huddle of the two buyers plus one or two more, a hat passed hand to hand, coins piling in (use `hatProp(coins)`), three quick day ticks. The porter does not hold the hat.
+   - 8b/8c must be the same building: today the wide is a cream block with one blue arched door, the close-up is brown double doors in a grey stone wall. One wall colour, one door.
+   - 8b: the porter fades to transparent through a closed door at ~49.8 s. The door opens, he walks in, it shuts. No opacity fade on a character.
+   - Reference: an 1851 photograph "Ice House, Calcutta" by Frederick Fiebig is in the British Library (reproduced at puronokolkata.com/2014/06/14/ice-house-calcutta-c1833/). Section 13 called the look undocumented; that is no longer true. Look at the photo first and draw its silhouette; it was not viewed in this review. If it cannot be opened, keep the masonry block and say so here. Still no label, no year.
+   - Ground in 8b is green with floor-plank lines. Plain grass or packed earth.
+4. **Calcutta dock set (7a-7d, 8a; 38.1-48.9 s today).** 10.8 s, including the twist and the best gag, play against one blank tan wall. Rebuild `paintDocks`: the Hooghly behind (reuse the `paintRiver` water and haze), the moored TUSCANY hull and masts, ghat steps down to the water, two or three country boats, a low godown wall on one side only, flat far bank with palms.
+   Each cut gets its own framing of that set: 7a crane and dripping block with the ship behind; 7b the mate and slate against the hull; 7c the buyer's walk staged larger (figure at least 1.5x today's height) along the ghat; 7d slate on the godown wall; 8a the huddle.
+   - 7d: "ALMOST / THIRTY / MORE." sits over the buyer's legs and shoes (44.3-46 s). Not a gate failure (the gate is faces), but raise him or reframe so the feet clear y 1050-1175.
+
+### B. Defects included on Fable's judgement (Farrukh has seen them in the review, did not rule on them separately)
+5. **6a (34.0-36.3 s):** green hills behind Calcutta. It is a flat delta: flat bank, palms, low buildings. The crowd is drawn as thin coloured stick figures, a different style from the toon rig: small dark toon silhouettes or none.
+6. **3c (18.0-21.3 s):** the smug sailor hovers above the big block (gap and shadow visible under him). Seat him on the block.
+
+### C. Open: do NOT build unless Farrukh says yes
+7. Hook line order: "A Boston ship carried 180 tons of ice to India. In 1833." (the first 1.5 s are a date today).
+8. 2b (10.8-13.8 s): horse stiff, the two workers overlap (no-clumps rule), pale rectangles on the ice read as render errors.
+9. Hold shots 3a, 4a, 4c, 4d, 6b: figures about 120 px tall, faces unreadable on a phone; in 4d the hay on the fork covers the worker's face (~26 s).
+10. 4b tannery: flat grey silhouettes, the weakest painted set.
+11. 1c/1d: the sailor is half the ship's height and hangs over open water during the jump.
+12. 1b: BOSTON label and the route start sit on empty ocean; rotate the globe so the American coast shows at the start.
+13. Narration runs about 185 words a minute with two real pauses. No change proposed until Farrukh has listened.
+14. Export bitrate 3.9 Mbps; painted gradients may band after Instagram recompresses. Try 8-12 Mbps in `mix.sh` and compare a sky frame.
+
+### Gates for the rebuilt film
+`verify.js ic` PASS, `SAFE=1` sheets one per second plus 0.1 s either side of every cut, contact sheet per rebuilt shot, loudness per section, and a fresh independent facts pass on the two changed lines. Then Stage D again (Opus 5.5, medium).
