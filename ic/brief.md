@@ -439,3 +439,46 @@ Times are in the section 13 cut. Section 13's "not acted on: same dock wall acro
 3. `node engine/tools/export.js ic && bash engine/tools/mix.sh ic`, then `node engine/tools/cover.js ic`; ebur128 per section.
 4. Tell Farrukh the listening checks above. Judgment calls to confirm: the 4.04 s shot 5 hold, the 2a hat fan.
 5. Do not publish or post.
+
+## 16. Stage D results: check and finish (2026-11-17, Opus 5.5, medium)
+Branch `painted-layer`. Narration, voice and timing unchanged from section 15 (50.77 s). Not published.
+
+**Delivered (project root, gitignored):** `Ice-To-Calcutta-1833.mp4` (1080x1920, 30 fps, 50.77 s, H.264 + AAC, -14.0 LUFS integrated, true peak -2.8 dBFS, LRA 2.3), `Ice-To-Calcutta-1833-Cover-4K.png` (frame at `COVER_T` .9 s). Render: 1523 frames, 323 s wall with 2 browsers.
+
+**Independent facts pass** (fresh agent, SAFE=1 sheets + narration only; opened the 1834 Asiatic Society account via the Mechanics' Magazine reprint, Bean 1991, Down To Earth, puronokolkata; could not open Weightman or Tudor's diary). No claim wrong. Caveats:
+- 180 tons = loaded (Asiatic Society; Tudor's diary per Bean); about 100 reached the store; Littlefield's log says 100 on arrival. Narration locked; the comment says it.
+- "two-foot blocks": the 1834 account says two feet square, one foot to eighteen inches thick. Narration locked; added to the comment.
+- "three days": Bean 1991 only ("British residents ... within three days"); no primary source found, no amount. "Reportedly" is right. "Its new customers" kept (section 14 reasoning; the subscribers were also the buyers).
+- The ice house: commissioned, built later; the first cargo went to a lower room at Brightman's Ghaut. The ending compresses time; already in the comment.
+- "Across the equator. Twice." follows from the Cape route; no source states it. Physics line ("less surface") is the film's explanation, not a source claim.
+
+**Fixed**
+1. Chalkboards (38.5 s, 41.5 s): not clipped at the board edge; `slate()` revealed text with one growing clip rect and no chalk at its edge, so mid-wipe frames showed sliced letters ("4 MON'"). `slate()` now takes `ks` (one pop per line, `ttl` k): `4 MONTHS` on "four", `−55 T` on "fifty-five"; the 7d board is there on the cut and `≈ −30 T` pops on "thirty". 7b text 100 -> 92 px.
+2. 7d board read `DAYS / ≈ −30 T` (reviewer: cryptic) and ran past the right safe edge. Now `RIVER + DOCKS / ≈ −30 T`, board x 870 -> 815, 440 wide, inside x 1015.
+3. Shot 5 split (judgment call): the 4.04 s single cut was a static split frame with the counter parked on DAY 10 for 1.7 s. New cut on "ten" (`CUT_EP 5:[['ten',-.1]]`, 30.08 s): 5a split screen 2.39 s, counter DAY 1-9; 5b `sh5_b` 1.6x close-up of the cold sailor in the hold (1.78x the 5a hold framing), DAY 10 pops on the cut, on "heat up" he stops shivering, unclenches and grins (`tween`). `CUT_HOLD_EP` is now `[8]`. Longest gap in the film 3.33 s (3c).
+4. 2a hat fan: wider arc (x ±50, y ±40, raised 40 px) and the hat tilts ±28° with the swing (`holdF.rot`). Quick fix only; the hand still cannot reach over the block.
+5. 8b DAY tags touched the middle buyer's hair: y 370 -> 335, 62 px.
+- Last 60 px: floor, wall, water, ice or space in every shot (sheets each second). The reviewer's "hold breaks at 27.6 s" is the 4d pan with the SAFE overlay on the floor beam; the frame is filled.
+- Fiebig 1851 photo: not opened in this stage either. Ice house stays an unlabelled masonry illustration.
+
+**Not acted on (reviewer, noted for Farrukh):** captions near the safe side edges ("REFRIGERATION.", "IN SEPTEMBER,"; verify passes); EQUATOR / ×2 / 2 FT labels sitting on hull, sail, grid; ship cropped at frame edges in 1c/1d/6a/7a; the tannery back-wall line through the figures at 23-24 s (part C 10); the hay over the worker's face at 26 s (part C 9); 6a crowd as dark silhouettes (section 14 asked for that; could read badly, Farrukh's call); the tarp hat reading as a bowler and the 3c striped shirt (both from the approved section 14 costume brief); the hat passed round reading as alms rather than a subscription; weak ending payoff. All part C territory or earlier decisions.
+
+**Gates:** `verify.js ic` PASS (determinism, reach worst 5.3, subtitles 0 outside, cadence no fails, 26 cuts). SAFE=1 sheets one per second 0-50 s plus 0.1 s either side of the new cut and of 7b, 7d, 8b; full-size checks of 2a, 5b, 7b, 7d, 8b. Spot frames from the final MP4 match.
+**Sound:** `sound.py` re-timed: shot 5 ticks DAY 1-9, a heavier clave + creak and hold room tone on the 30.08 s cut; 7b chalk taps on "four" and "fifty-five" (was a 1.3 s scrape run). Section gains (target / measured / applied dB): bright -1/-1.0/0, soft -5/5.3/-10.3, pizz -3/-0.4/-2.6, tense -4/2.0/-6.0, roll -2/-5.9/+3.9, pizz -4/-1.3/-2.7, hush -7/1.5/-8.5.
+Loudness in the final MP4 (LUFS): bright -14.2, soft -13.6, pizz -14.3, tense -13.8, roll -13.5, pizz -13.3, hush -14.2, slam/out -16.5.
+**Not heard. Farrukh to listen for:** "Calcutta", "equator", "two-foot", "tannery", "reportedly"; the new DAY 10 hit at 30.1 s; the chalk taps at 37.6 and 39.5 s; the slam at 49.6 s.
+
+**Caption**
+> 180 tons of ice. Boston to Calcutta. 1833. No refrigeration. 🧊🚢
+> The ship was the Tuscany; the ice was Frederic Tudor's.
+> Would you have trusted bark and hay?
+>
+> #history #india #kolkata #boston #animation
+
+**Pinned comment**
+> Sources:
+> - "The Ice Trade between America and India", Journal of the Asiatic Society of Bengal (Sept 1834), from J. J. Dixwell, agent for the shippers; reprinted in Mechanics' Magazine, 9 Apr 1836 (transcript: todayinsci.com/T/Tudor_Frederic/IceTradeAmericaToIndia.htm)
+> - Susan S. Bean, "Cold Mine", American Heritage (1991), from Frederic Tudor's diaries (Baker Library, Harvard) and Capt. Littlefield's notes: americanheritage.com/cold-mine
+> - Gavin Weightman, The Frozen Water Trade (2003)
+>
+> Notes: Most retellings say sawdust; the 1834 account of this voyage says a foot of tanners' bark under and around the ice and a foot of hay on top. The blocks were two feet square and a foot to eighteen inches thick. Packing them tight was meant to make one solid mass, but the same account says the ice still melted between the blocks, not only from the outside. 180 tons were loaded; about 100 reached the ice store. Arrival dates differ (6, 10 or 13 September), so the video says September. "Almost thirty more" = 6-8 tons lost on the river + about 20 in unloading (the agent's estimate). The three-day subscription is from Susan Bean's 1991 article. Calcutta's British residents raised the money for an ice house, which was built later; the first cargo was kept in a lower room of a house at Brightman's Ghaut, and the building in the video is an illustration. The voyage was organised with Samuel Austin and William C. Rogers; Rogers sold the ice in Calcutta.

@@ -184,17 +184,19 @@ for i in range(int((C4[2]-C4[1])/.35)): fx(chop,C4[1]+.1+i*.35,.28); rustle(C4[1
 rustle(C4[2],.8,.16)
 for i in range(4): fx(step(i+3),C4[2]+.85+i*.13,.35)
 fx(k('RPG sounds (50 sounds)/metalClick.ogg'),C4[2]+1.64,.6); fx(shift(TIMP[2],-2)[:int(.3*SR)],C4[2]+1.64,.35)
-# 5 tropics (one cut): hot deck creaks, cold hold; a tick for each DAY n between 'tropics' and 'ten' (src/shots.js sh5_a)
-sea(S[5],S[6],.04); fx(creak(1),S[5]+.3,.22)
+# 5 tropics: 5a split (hot deck / cold hold), a tick for each DAY 1-9 between 'tropics' and 'ten'; 5b cut on 'ten' (Stage D) to the cold sailor, DAY 10 lands harder (src/shots.js sh5_a/sh5_b)
+C5=[cut(5,'ten',-.1)]
+sea(S[5],C5[0],.04); fx(creak(1),S[5]+.3,.22)
 for i in range(3): whoosh(S[5]+.2+i*.63,.2,.1)
-d0,d1=W(5,'tropics'),W(5,'ten')
-for j in range(1,11): fx(shift(CLAVE,4),d0+j*(d1-d0)/10,.16)
+d0,d1=W(5,'tropics'),W(5,'ten')-.15
+for j in range(9): fx(shift(CLAVE,4),d0+j*(d1-d0)/9,.16)
+fx(shift(CLAVE,2),C5[0],.32); fx(creak(2),C5[0]+.05,.2); room(C5[0],S[6],.03,150,1500)
 # 6 the Hooghly: water and creaks; the hatch opens
 sea(S[6],C6[0],.07); fx(creak(0),S[6]+.5,.22); fx(creak(2),C6[0],.45); fx(k('RPG sounds (50 sounds)/doorOpen_1.ogg'),C6[0]+.02,.35)
 # 7 the docks: rope creak and heavy drips; chalk on the slate; the buyer's steps and drips
 room(S[7],S[8],.03,150,2000)
 fx(creak(1),S[7]+.2,.3); [drip(S[7]+.25+i*.28,.22,i*80) for i in range(6)]
-for i in range(6): scrape(C7[0]+.25+i*.22,.12,.12)
+for w_ in ('four','fifty'): [scrape(W(7,w_)-.05+i*.09,.07,.12) for i in range(3)]   # Stage D: the slate lines pop on their words (no wipe)
 for i in range(7): fx(step(i),C7[1]+.1+i*.25,.3); drip(C7[1]+.2+i*.25,.12,i*60)
 fx(slide(6),C7[2]+.1,.3)
 # 8 the huddle (8a wide, 8b the hat goes round, DAY 1-3), the ice house (8c: door opens, porter walks in), the slam and the cold puff
@@ -215,4 +217,4 @@ for c in range(2): MUS[:,c]=MUS[:,c]*.88+conv(MUS[:,c],ir)*.22
 MUS=MUS[:int(TOTAL*SR)]; FX=FX[:int(TOTAL*SR)]
 MUS/=np.abs(MUS).max()*1.05; FX/=np.abs(FX).max()*1.4
 sf.write('vo/music_raw.wav',MUS,SR); os.makedirs('out',exist_ok=True); sf.write("out/fx_real.wav",FX,SR)
-print('cuts',[round(x,2) for x in C1+C2+C3+C4+C6+C7+C8],'slam',round(SLAM,2)); print('ok total',TOTAL)
+print('cuts',[round(x,2) for x in C1+C2+C3+C4+C5+C6+C7+C8],'slam',round(SLAM,2)); print('ok total',TOTAL)

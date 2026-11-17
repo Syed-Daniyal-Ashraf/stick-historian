@@ -114,8 +114,10 @@ function cutterSled(x,y,s,dir,u=0){ const ch=[0,1,2,3,4].map(i=>{ const q=(u*1.7
   return `<g transform="translate(${N(x)} ${N(y)}) scale(${N(s*dir*1000)/1000} ${s})"><path d="M0 -60L-150 -52" stroke="${INK}" stroke-width="12" stroke-linecap="round"/><path d="M0 -60L-150 -52" stroke="#c9a06a" stroke-width="5" stroke-linecap="round"/>`
     +blade(-150)+blade(-205)+`<path d="M-140 -70H-330V-40H-140Z" fill="#8a5a32" stroke="${INK}" stroke-width="7" stroke-linejoin="round"/>`
     +`<path d="M-300 -70L-370 -200M-326 -66L-396 -196" stroke="${INK}" stroke-width="14" stroke-linecap="round"/><path d="M-300 -70L-370 -200M-326 -66L-396 -196" stroke="#a9784a" stroke-width="6" stroke-linecap="round"/>`+ch+`</g>`; }
-function slate(x,y,w,h,lines,k=1,rot=0,size=64){ if(k<=0) return ''; const n=lines.length, id='sl'+Math.round(x+y);
+/* slate: k = board in (0-1). ks (optional, one per line) pops each line in on its own cue instead of a wipe: a wipe with no chalk at its edge read as clipped text in stills (Stage D). */
+function slate(x,y,w,h,lines,k=1,rot=0,size=64,ks=null){ if(k<=0) return ''; const n=lines.length, id='sl'+Math.round(x+y);
   let g=`<g transform="translate(${N(x)} ${N(y)}) rotate(${rot})"><rect x="${-w/2-14}" y="${-h/2-14}" width="${w+28}" height="${h+28}" rx="10" ${st('#8a5a32',8)}/><rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="4" fill="#2f4a42" stroke="${INK}" stroke-width="5"/>`;
+  if(ks){ lines.forEach((l,i)=>{ g+=ttl(l,0,-h/2+h*(i+.5)/n+size*.34,size,'#f4efe2',{stroke:'none',shadow:false,sw:0,k:ks[i]}); }); return g+`</g>`; }
   g+=`<clipPath id="${id}"><rect x="${-w/2+4}" y="${-h/2}" width="${N((w-8)*sat(k))}" height="${h}"/></clipPath><g clip-path="url(#${id})">`;
   lines.forEach((l,i)=>{ g+=ttl(l,0,-h/2+h*(i+.5)/n+size*.34,size,'#f4efe2',{stroke:'none',shadow:false,sw:0}); });
   return g+`</g></g>`; }
