@@ -16,6 +16,7 @@ The owner is Farrukh. Be direct and concise. Do the work instead of asking quest
 ## Layout
 ```
 ENGINE.md                 one-page reference: rig, camera, subtitles, audio and every command. Read it first.
+docs/skills/              backup copy of the stick-historian-reel-production skill (creative craft). The live skill is in Farrukh's Claude account; when one changes, update the other.
 engine/template.html      player + renderer (camera, SEQ cuts, WebAudio preview)
 engine/build_episode.py   fills the template from <ep>/episode.json + <ep>/src/*
 engine/make.sh <ep>       joins engine/toon/*.js + <ep>/src/props.js + <ep>/src/shots.js, then builds ../<out>.html
