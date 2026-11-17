@@ -369,6 +369,8 @@ Times are in the section 13 cut. Section 13's "not acted on: same dock wall acro
 
 ### Narration changes (LOCKED; everything else in section 3 stays word for word)
 ```python
+ (1,'N',"A Boston ship carried *one hundred eighty tons* of ice to *India.*",1.0,.0),      # was "In eighteen thirty-three, a Boston ship carried ..."
+ (1,'N',"In *eighteen thirty-three.*",1.0,.05),                                             # new second line; "Four months at sea. ..." follows unchanged
  (5,'N',"Even in the tropics, the hold took more than *ten days* to heat up.",1.02,.0),   # was "...just to warm up." + 2 s of silence
  (8,'N',"Its new customers reportedly raised the money in *three days.*",.98,.0),          # was "So its new customers paid for something obvious."
  (8,'N',"The ice got its own *house.*",.94,.25),                                            # unchanged
@@ -377,7 +379,9 @@ Times are in the section 13 cut. Section 13's "not acted on: same dock wall acro
   Expected total about 49 s; "Then the real melting started" moves from 38.1 s to about 35 s. Re-run `gen.py`, `timeline.py`, then re-time `sound.py` (the `tense` section shrinks to one bar or two; keep the one beat grid).
 - "three days" source: Bean 1991 ("within three days" British residents raised the money for an icehouse). One secondary source, hence "reportedly".
   The approved wording said "Calcutta reportedly raised"; the subject is kept as "its new customers" because the subscribers were British residents, not the city. Add to the pinned comment: "The three-day subscription is from Susan Bean's 1991 article."
-- No other line changes. The hook line ("In eighteen thirty-three, ...") is NOT approved for change (part C).
+- Hook order (approved by Farrukh 2026-11-17, was part C item 7): the number comes first, the year second. `MERGE_EP` still turns "eighteen thirty-three" into 1833; the `1833` tag stays in the first frame.
+  Shot 1 cuts must be re-picked: "carried" now falls under 1 s in, too early to leave the hook frame. Hold 1a (deck, ice, sailor) until about "tons" (2 s or more), run the globe over "of ice to India. In 1833.", cut to the sea on "four". Check the first 3 s on a 0.1 s strip.
+- No other line changes.
 
 ### A. Approved rework
 1. **Sailor costumes (1a, 1c, 1d, 2a, 3c, 5a; 0-10.6, 18-21.3, 27.7-30 s).** The white knee-length coat + peaked baseball cap reads as a modern lab coat. New episode costume in `ic/src/props.js` (do not touch shared `TC`):
@@ -400,7 +404,7 @@ Times are in the section 13 cut. Section 13's "not acted on: same dock wall acro
 6. **3c (18.0-21.3 s):** the smug sailor hovers above the big block (gap and shadow visible under him). Seat him on the block.
 
 ### C. Open: do NOT build unless Farrukh says yes
-7. Hook line order: "A Boston ship carried 180 tons of ice to India. In 1833." (the first 1.5 s are a date today).
+7. (Approved and moved to the locked narration changes above.)
 8. 2b (10.8-13.8 s): horse stiff, the two workers overlap (no-clumps rule), pale rectangles on the ice read as render errors.
 9. Hold shots 3a, 4a, 4c, 4d, 6b: figures about 120 px tall, faces unreadable on a phone; in 4d the hay on the fork covers the worker's face (~26 s).
 10. 4b tannery: flat grey silhouettes, the weakest painted set.
