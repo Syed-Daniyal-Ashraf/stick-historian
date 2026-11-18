@@ -1,7 +1,8 @@
+import os
 # voice + music bed with sidechain ducking (music dips under speech), 48 kHz stereo
 import numpy as np, soundfile as sf, subprocess, re
 SR=48000
-subprocess.run(['ffmpeg','-y','-v','error','-i','vo/voice.wav','-ar','48000','vo/voice48.wav'],check=True)
+subprocess.run(['ffmpeg','-y','-v','error','-i','vo/voice.wav' if os.path.exists('vo/voice.wav') else 'vo/voice.mp3','-ar','48000','vo/voice48.wav'],check=True)   # voice.wav is gitignored; voice.mp3 is the committed copy
 v,_=sf.read('vo/voice48.wav'); m,_=sf.read('vo/music_raw.wav')
 n=min(len(v),len(m)); v=v[:n]; m=m[:n]
 def lufs(f):

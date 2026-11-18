@@ -136,7 +136,7 @@ For either change, rebuild `mo` and `lb`, run `node engine/compare.js old.html n
 Suggested `episode.json`: title "He Gave America the Yo-Yo. Duncan Owned the Word.", out `yoyo-flores`,
 file `YoYo-Pedro-Flores`.
 
-## 8. Caption and pinned comment (final, Stage D)
+## 8. Caption and pinned comment (final; notes updated in section 13 after the second facts pass)
 Caption:
 > He got America hooked on the yo-yo. Then an American company owned the word. 🪀
 > Would you let a company own a word?
@@ -151,7 +151,7 @@ Pinned comment (sources):
 > - "Duncan Toys Company", International Directory of Company Histories (encyclopedia.com)
 > - SFSU Asian Pacific Islander American biography of Pedro Flores (dates: 1896-Jan 3, 1964)
 >
-> Notes: Flores didn't invent the yo-yo (the toy is ancient); he popularised it in the US with his slip-string design. Where the word comes from is debated (Ilocano and Tagalog are both suggested); the 1965 court called it a Philippine word. Sources give very different prices for the sale to Duncan, so the video shows none. Most sources date Flores's death to January 1964; one gives December 1963.
+> Notes: Flores didn't invent the yo-yo (the toy is ancient); he popularised it in the US with his slip-string design, usually credited to Filipino practice. Where the word comes from is debated (Ilocano and Tagalog are both suggested); the 1965 court held "yo-yo" was a descriptive word nobody could own, relying on evidence that it was a Philippine word. The trademarks were held by the companies (Flores Yo-Yo Corporation; Donald F. Duncan, Inc.), and Duncan's side won at trial before losing on appeal in 1965. Duncan began buying into Flores's business in 1929 and took the trademark by 1932. Sources give very different prices for the sale, so the video shows none. After the sale Flores demonstrated Duncan yo-yos; whether he was formally employed is unclear. Most sources date Flores's death to January 3, 1964; one gives December 1963 and another June 1964.
 
 ## 9. Risks and fallbacks
 - **Duncan appears late (~17-20 s) apart from the hook.** The hook already shows him in second 3. If the rough cut feels slow in
@@ -216,3 +216,27 @@ Frame-by-frame review of the Stage D MP4 (2 fps sheets of the encoded file + 0.1
 **Not changed / still open:** word timings are estimates; shot 4 is still 6.7 s on one set; shot 7 is width-limited (board + judge + window), so its figures stay small.
 **Not checked:** listening (music, foley, pronunciation), motion at full speed.
 
+
+## 13. Rebuild to the ic standard (2026-11-18, Opus 5.5; Farrukh's choice: "Full ic standard", narration locked)
+Farrukh uploaded the section 11 export and asked for it to be brought up to the current repo standard. He chose the full `ic` treatment and kept the
+narration word for word, so `vo/gen.py`, `vo/voice.mp3` and `vo/timing.json` do not change (52.22 s, 108 BPM).
+**What changes:** big 1-2 word captions (`CAP_MODE_EP='big'`, baseline 1166); a cut every 1.3-3.4 s (`CUT_EP`, 21 cuts); every set painted on the
+canvas layer (`PAINT_EP=1`); ground line at screen y 1005 so feet and faces clear the caption band (y 1050-1175); period check of costumes
+(Duncan's light dome fedora read as a pith helmet: now a dark pinched fedora via a new opt-in rig flag `pinch`; the 1965 rival loses the flat cap).
+**Cut plan** (shot seconds; `CUT_EP` words): 1 hook: split premise 0-2.15 | "America hooked" crowd of kids 2.15-3.44 | Duncan + giant word, (R) on "word" 3.44-6.67.
+2: lobby + suitcases 0-2.71 | Philippine yard 2.71-4.67 | axle loop + nightcap 4.67-7.22. 3: workshop + 1928 sign 0-2.31 | three factories.
+4: counter + REGISTERED 0-2.24 | Duncan slides his form 2.24-5.32 | examiner close-up, REJECTED 5.32-6.67. 5: money bag 0-1.55 | sign repaint 1.55-2.82 |
+street corner 2.82-5.03 | close-up: DUNCAN card, grin tightens 5.03-7.78. 6: calendar 0-1.3 | court, Duncan points 1.3-2.86 | (R) cracks, Duncan slumps.
+7: judge + exhibit 0-2.67 | letters fly out of the window to the kids. 8: filing slides in 0-1.48 | close-up quote + Duncan inset. 9: dusk lobby 0-2.46 |
+portrait + yo-yo, returns on "before" (`CUT_HOLD_EP=[9]`, 4.2 s).
+**Gates:** verify PASS, SAFE=1 sheets each second + 0.1 s around every cut, fresh facts/visual agent, sound re-timed, final export, cover, loudness per section.
+
+### Section 13 results (2026-11-18)
+**Delivered (project root, gitignored):** `YoYo-Pedro-Flores.mp4` (1080x1920, 30 fps, 52.22 s, H.264 5.9 Mbps + AAC, -14.1 LUFS, true peak -2.7 dBFS, LRA 2.5) and `YoYo-Pedro-Flores-Cover-4K.png` (COVER_T 1.0, the split premise). Render 1567 frames in 379 s.
+**Built:** 9 shots split into 24 cuts (longest gap 4.2 s on the ending hold, `CUT_HOLD_EP=[9]`; 3c-style gaps over 3 s only at 1c 3.23 and 4b 3.08). All sets painted (`paintRoom`, `paintOut`, `paintBrick`, `paintTiles`, `paintPanel`): paint median 23.6 ms, p95 28.9. Big captions. Ground line at screen y 1005.
+**Costumes (period check):** Duncan's light dome fedora -> dark pinched fedora (new opt-in rig flag `pinch`); rival loses the flat cap; the California kids lose the long tunics (read as kurtas: the default untucked top is lb's) for short tucked shirts, closed shoes, two flat caps; the Philippine yard gets its own three kids (`phA-C`) in cream collarless shirts and rolled trousers, so the same children no longer appear in both countries.
+**Facts pass (fresh agent; opened 343 F.2d 655 on law.resource.org and law.justia.com, Smithsonian, UH Engines #2796, Wikipedia, Positively Filipino, Find a Grave, toytales; not opened: the SFSU PDF, the full opinion text):** no claim wrong. Caveats, all moved to the pinned comment because the narration is locked: Duncan won at trial and lost on appeal; the plaintiff and the trademark holders were companies; the buy-in began in 1929; "stayed on" may overstate employment; death date Jan 3, 1964 (most likely) vs Dec 1963 / Jun 1964.
+**Visual fixes from the pass:** 1931 header kept inside the paper and out of the top band, inset moved under the quote (was touching the caption); 7b letters start inside the frame and fade in; 4c and 5d reframed (Duncan and Pedro were cut at the frame edges); 1928 line, REGISTERED stamp and ROYAL box enlarged; Duncan's form drawn over his hand; 8a no longer opens on an empty desk.
+**Not acted on:** caption size varies when a chunk is long (engine fit rule); the factory gag overstates a small 1928 shop (kept as a gag); the 2 s sign close-up (5b) has no figure; the last ~2.5 s after "before" is a slow push with no caption (ending; check on a loop).
+**Loudness per section (final MP4, LUFS):** rag -13.8, soft -13.6, pizz -14.8, rag -13.8, pizz -13.7, roll -13.5, sad -15.4, tense -14.3, roll -13.7, hush -14.4.
+**Not heard. Farrukh to listen for:** "Flores", "Philippine", the music under the sad sash beat (27.8-32.2 s, quietest section), and that word-anchored foley still lands on the new cuts.

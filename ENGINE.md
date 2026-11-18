@@ -67,6 +67,7 @@ It also does not judge whether a cut changes the picture: put frames 0.1 s befor
   Colour: `pMix(a,b,k)`, `pA(hex,alpha)`, `pCycle(phase,[[phase,'#hex'],...])` (wraps; used for the day cycle).
 - Textures `TEX` (512 px, tiling): `grain`, `cloud`, `water` / `waterDk` / `spark` (+ smaller copies for far strips), `wood`. `grain` and `wood` are black
   with alpha, so a plain draw equals a multiply.
+- Rig costume option (opt-in, added for `yo` section 13): `pinch:1` with `cap:'fedora'` draws a pinched crown (the plain dome read as a pith helmet).
 - Rig costume options (opt-in, added for `ic`): `cap:'tarp'` (low round sailor hat; `crown` scales the crown, `band` is the band colour), `neck:'#hex'` (neckerchief), `hem:n` (coat hem length, overrides the default), `stripe:'#hex'` (clipped torso stripes).
 - A cache keyed by the full argument JSON is fine for static far-plane art (`farBankC` in `ic/src/props.js` bakes a 1900x260 canvas once).
 - Painters (namespace `PNT`, not `P`: shots use `const P=part(n,u)`):
@@ -98,7 +99,7 @@ It also does not judge whether a cut changes the picture: put frames 0.1 s befor
 `strut(u,x0,x1,u0,u1,s,step,swing)` walk, `burst`, `dust`, `web`, and the Indian village / office / police sets from Lal Bihari.
 `courtroom(u,t,slam)` and `TC.judge` (shared by mo/ and yo/).
 
-**yo/src/props.js** (copy, don't import, if another episode needs them): `yoyo(hx,hy,u,mode,o)` string prop, modes `drop sleep return bob walk`;
+**yo/src/props.js** (copy, don't import, if another episode needs them): painted-set helpers `paintRoom(ctx,t,c,{wall,stripes,wain,floor,tiles,lights,shafts,sh,dim})`, `paintOut(ctx,t,c,{sky,ground,far,sh})`, `paintBrick`, `paintTiles`, `farHills`, `farRoofs`, `paintPanel` (paints inside a `panelBox`); `yoyo(hx,hy,u,mode,o)` string prop, modes `drop sleep return bob walk`;
 `handPt(x,y,s,dir,pose)` converts a world point to an `hF` local; `bigWord(x,y,size,{reg,crack,...})` 3D word with a crackable (R).
 
 `engine/tools/shots.js` also takes `CLIP=x,y,w,h` to crop dense strips (e.g. `CLIP=200,300,600,600`).

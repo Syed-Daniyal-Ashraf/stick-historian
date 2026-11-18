@@ -5,13 +5,18 @@ Object.assign(TC,{
   pedroBell:{skin:'#c58a5a',hair:'#150f0b',suit:true,top:'#7a1f2a',topDk:'#5a1620',shirt:'#f4efe2',tie:'#e8c34a',pants:'#2a1a1a',shoe:'#120c08',cap:'pillbox',capC:'#7a1f2a',band:'#e8c34a',headS:1.17,build:.1,young:true},
   pedroSuit:{skin:'#c58a5a',hair:'#150f0b',suit:true,top:'#b89a6a',topDk:'#9a7e52',shirt:'#f4efe2',tie:'#8a2a2a',pants:'#a58a5e',shoe:'#2a1a10',headS:1.17,build:.1,young:true},
   pedroSash:{skin:'#c58a5a',hair:'#150f0b',suit:true,top:'#b89a6a',topDk:'#9a7e52',shirt:'#f4efe2',tie:'#8a2a2a',pants:'#a58a5e',shoe:'#2a1a10',headS:1.17,build:.1,young:true,sash:true},
-  duncan:{skin:'#efc4a0',hair:'#8a8378',grey:.1,suit:true,top:'#3f6a4a',topDk:'#2f5238',shirt:'#f4efe2',tie:'#e8c34a',pants:'#3f6a4a',shoe:'#1e1610',cap:'fedora',capC:'#a89060',glasses:true,headS:1.2,build:.95},
+  duncan:{skin:'#efc4a0',hair:'#8a8378',grey:.1,suit:true,top:'#3f6a4a',topDk:'#2f5238',shirt:'#f4efe2',tie:'#e8c34a',pants:'#3f6a4a',shoe:'#1e1610',cap:'fedora',capC:'#4e4236',pinch:1,glasses:true,headS:1.2,build:.95},   /* section 13: dark pinched fedora (the light dome read as a pith helmet) */
   examiner:{skin:'#e2b48c',hair:'#2a2420',top:'#efe8d4',topDk:'#cfc6ad',vest:'#3a5a4a',pants:'#4a4640',shoe:'#2a1e16',glasses:true,bald:true,pen:true,headS:1.1,build:.4},
-  rival:{skin:'#d9a37a',hair:'#2a1e16',suit:true,top:'#8a4a2a',topDk:'#6a3a20',shirt:'#e8e0cc',tie:'#2a2a2a',pants:'#4a3a2a',shoe:'#1e1610',cap:'flat',capC:'#4a4a52',mus:'thick',headS:1.14,build:.5},
-  kidA:{skin:'#c98e5e',hair:'#1a120c',top:'#e8a33a',topDk:'#c08228',pants:'#5a5550',shoe:'#4a2e1a',young:true,headS:1.32,build:0},
-  kidB:{skin:'#d3a070',hair:'#2a1e16',top:'#7fa7c9',topDk:'#5f87a9',pants:'#6a5a46',shoe:'#4a2e1a',young:true,headS:1.32,build:0},
-  kidC:{skin:'#c58a5a',hair:'#150f0b',top:'#9fbf6a',topDk:'#7f9f4a',pants:'#efe9da',shoe:'#4a2e1a',young:true,headS:1.32,build:0},
-  kidD:{skin:'#e0b088',hair:'#6a4428',top:'#c8572e',topDk:'#a8401f',pants:'#4a4e5a',shoe:'#2a1e16',young:true,headS:1.32,build:0},
+  rival:{skin:'#d9a37a',hair:'#2a1e16',suit:true,top:'#8a4a2a',topDk:'#6a3a20',shirt:'#e8e0cc',tie:'#2a2a2a',pants:'#4a3a2a',shoe:'#1e1610',mus:'thick',headS:1.14,build:.5},   /* section 13: no flat cap on a 1960s company man */
+  /* section 13: the default untucked top is a long tunic (built for lb's Indian village) and read as a kurta. 1920s-30s California kids: short tucked shirts, knickers, two flat caps. */
+  kidA:{skin:'#c98e5e',hair:'#1a120c',top:'#e8a33a',topDk:'#c08228',pants:'#5a5550',shoe:'#4a2e1a',young:true,headS:1.32,build:0,hem:-6,shoes:true},
+  kidB:{skin:'#efc4a0',hair:'#8a5a2a',top:'#7fa7c9',topDk:'#5f87a9',pants:'#6a5a46',shoe:'#4a2e1a',young:true,headS:1.32,build:0,hem:-6,shoes:true,cap:'flat',capC:'#6a6258'},
+  kidC:{skin:'#c58a5a',hair:'#150f0b',top:'#f1ead6',topDk:'#d6ccb2',pants:'#3f5a7a',shoe:'#4a2e1a',young:true,headS:1.32,build:0,hem:-6,shoes:true},
+  kidD:{skin:'#e0b088',hair:'#6a4428',top:'#c8572e',topDk:'#a8401f',pants:'#4a4e5a',shoe:'#2a1e16',young:true,headS:1.32,build:0,hem:-6,shoes:true,cap:'flat',capC:'#4a4a52'},
+  /* the Philippine yard (shot 2b): collarless cream camisa-style shirts, loose rolled trousers, barefoot-sandals; different kids from the California ones */
+  phA:{skin:'#b97a4a',hair:'#120c08',top:'#f1ead6',topDk:'#d6ccb2',pants:'#8a7a5a',shoe:'#6a4a2e',young:true,headS:1.32,build:0,hem:-22},
+  phB:{skin:'#c58a5a',hair:'#120c08',top:'#e8dcc0',topDk:'#cbbd9c',pants:'#5a6a7a',shoe:'#6a4a2e',young:true,headS:1.32,build:0,hem:-22},
+  phC:{skin:'#a8703f',hair:'#150f0b',top:'#f4efe2',topDk:'#d9d0ba',pants:'#7a5a3a',shoe:'#6a4a2e',young:true,headS:1.32,build:0,hem:-22},
 });
 /* ---- yoyo(hx,hy,u,mode,o): the toy and its string. (hx,hy) = hand point in WORLD space: handPt() gives it from a pose.
    modes: 'drop' (o.k 0..1 falls), 'sleep' (hangs and spins), 'return' (o.k 0..1 climbs back), 'bob' (endless up-down, o.per seconds),
@@ -105,7 +110,7 @@ function patentCounter(u,t){ let g=WALLBG('#5e7a5a'); for(let i=0;i<12;i++) g+=`
   g+=`<g transform="translate(160 640)"><rect x="-90" y="-210" width="180" height="420" ${st('#e8dcc0',6)}/><circle cy="-60" r="62" fill="#e8c34a" stroke="${INK}" stroke-width="5"/><path d="M0 -60V-100M0 -60L28 -48" stroke="${INK}" stroke-width="6" stroke-linecap="round"/></g>`;
   return g; }
 function counterFront(){ return `<rect x="-300" y="1380" width="1680" height="54" ${st('#8a5630',7)}/><rect x="-300" y="1434" width="1680" height="300" fill="#6a3e1e"/><path d="M-300 1434H1380" stroke="${INK}" stroke-width="6"/>`+[0,1,2,3,4,5,6].map(i=>`<rect x="${-240+i*240}" y="1470" width="200" height="230" rx="8" fill="none" stroke="#4a2a14" stroke-width="5"/>`).join(''); }
-function certificate(x,y,s,rot,{stamp=0,txt='FLORES YO-YO',u=0}={}){ return `<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><rect x="-190" y="-130" width="380" height="260" rx="4" ${st('#f4ecd4',5)}/><rect x="-170" y="-110" width="340" height="220" fill="none" stroke="#a89a6a" stroke-width="3"/><text y="-46" text-anchor="middle" font-family="Rozha, ${BAL}" font-size="30" fill="#5a5040">TRADE-MARK</text><text y="34" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="62" fill="${INK}">${txt}</text>${stamp>0?stampMark(0,70,['REGISTERED','1930'],CRIM,stamp,-8,40):''}</g>`; }
+function certificate(x,y,s,rot,{stamp=0,txt='FLORES YO-YO',u=0,ss=40}={}){ return `<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><rect x="-190" y="-130" width="380" height="260" rx="4" ${st('#f4ecd4',5)}/><rect x="-170" y="-110" width="340" height="220" fill="none" stroke="#a89a6a" stroke-width="3"/><text y="-46" text-anchor="middle" font-family="Rozha, ${BAL}" font-size="30" fill="#5a5040">TRADE-MARK</text><text y="34" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="62" fill="${INK}">${txt}</text>${stamp>0?stampMark(0,70,['REGISTERED','1930'],CRIM,stamp,-8,ss):''}</g>`; }
 function formYoYo(x,y,s,rot,{rej=0}={}){ return `<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><rect x="-170" y="-120" width="340" height="240" rx="4" ${st('#f1ead6',5)}/><text y="-50" text-anchor="middle" font-family="Rozha, ${BAL}" font-size="26" fill="#5a5040">TRADE-MARK APPLICATION</text><text y="30" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="76" fill="${INK}">YO-YO</text>${rej>0?stampMark(0,6,['REJECTED'],CRIM,rej,-14,46):''}</g>`; }
 function duncanOffice(u,t){ let g=WALLBG('#6a4a2e'); for(let i=0;i<9;i++) g+=`<rect x="${-120+i*160}" y="160" width="140" height="1080" rx="6" fill="#74523a" stroke="#4a3220" stroke-width="5"/>`;
   g+=`<rect x="-600" y="1300" width="2280" height="2400" fill="#3a2a1e"/>`+boards(1300,'#2a1e14')+`<path d="M-600 1300H1680" stroke="${INK}" stroke-width="6"/>`;
@@ -120,3 +125,56 @@ function courtBg(){ let g=`<rect x="-300" y="-300" width="1680" height="2600" fi
   return g+`<rect x="-600" y="1380" width="2280" height="2400" fill="#5a3a22"/>`+boards(1380,'#452a16')+`<path d="M-600 1380H1680" stroke="${INK}" stroke-width="7"/>`; }
 function courtBench(){ return `<rect x="375" y="1040" width="420" height="36" rx="6" ${st('#8a5630',6)}/><rect x="395" y="1076" width="380" height="330" ${st('#6a3e1e',6)}/><rect x="435" y="1116" width="300" height="200" rx="6" fill="none" stroke="#4a2a14" stroke-width="5"/>`; }
 const royalBox=(x,y,rot,s)=>`<g transform="translate(${N(x)} ${N(y)}) rotate(${N(rot)}) scale(${s})"><rect x="-150" y="-100" width="300" height="200" rx="8" ${st('#2c5e8a',6)}/><rect x="-130" y="-80" width="260" height="160" rx="4" fill="none" stroke="#fff" stroke-width="4"/><text y="22" text-anchor="middle" font-family="${BAL}" font-weight="800" font-size="62" fill="#fff">ROYAL</text></g>`;
+
+/* ============================== section 13: painted sets (canvas under the SVG). Pass each painter the SAME camera object as cam(). */
+function pGrain(ctx,x,y,w,h,a=.5){ ctx.save(); ctx.globalAlpha=a; ctx.fillStyle=pPat(ctx,'grain'); ctx.fillRect(x,y,w,h); ctx.restore(); }
+function paintWall(ctx,x,y,w,h,col,{stripes=0,sw=62,sp=130,sc=null,grad=.16}={}){ const g=ctx.createLinearGradient(0,y,0,y+h); g.addColorStop(0,shade(col,1-grad)); g.addColorStop(.7,col); g.addColorStop(1,shade(col,1-grad*.6)); ctx.fillStyle=g; ctx.fillRect(x,y,w,h);
+  if(stripes>0){ ctx.fillStyle=pA(sc||shade(col,.9),stripes); for(let X=Math.floor((x+200)/sp)*sp-200; X<x+w; X+=sp) ctx.fillRect(X,y,sw,h); }
+  pGrain(ctx,x,y,w,h,.6); }
+/* the hotel lobby's checked floor, in perspective from floor line y0 */
+function paintTiles(ctx,y0,{a='#e8dcc0',b='#7a4a3a'}={}){ const g=ctx.createLinearGradient(0,y0,0,y0+900); g.addColorStop(0,shade(a,.86)); g.addColorStop(1,a); ctx.fillStyle=g; ctx.fillRect(-900,y0,2900,2600);
+  ctx.fillStyle=pA(b,.55); for(let r=0;r<13;r++) for(let c=-6;c<18;c++) if((r+c)%2===0){ const x=-300+c*150-r*14, y=y0+r*r*10+r*40, h=40+r*10; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+150,y); ctx.lineTo(x+136-r*2,y+h); ctx.lineTo(x-14-r*2,y+h); ctx.closePath(); ctx.fill(); }
+  pGrain(ctx,-900,y0,2900,2600,.45); }
+/* an interior: wall (+ stripes), optional wainscot, wood or tiled floor, lights, shadows, dusk */
+function paintRoom(ctx,t,c,{wall,stripes=0,stripeCol=null,wain=null,wainY=1160,floor='#5a3a22',floorY=1400,tiles=null,planks=90,lights=[],shafts=null,sh=[],dim=0,dimCol='#0e1630'}={}){
+  ctx.save(); camCtx(ctx,c);
+  paintWall(ctx,-900,-900,2900,floorY+900,wall,{stripes,sc:stripeCol});
+  if(wain) PNT.wood(ctx,[-900,wainY,2900,floorY-wainY],{tone:wain,sc:.8,rot:planks,light:[0,wainY,0,floorY,.35]});
+  if(tiles) paintTiles(ctx,floorY,tiles); else PNT.wood(ctx,[-900,floorY,2900,2600],{tone:floor,sc:1.1,rot:0,light:[0,floorY,0,floorY+700,.4]});
+  PNT.band(ctx,floorY,26,'#000000',.18);
+  lights.forEach(([x,y,r,col,a])=>PNT.glow(ctx,x,y,r,col,a));
+  if(shafts) PNT.shafts(ctx,t,shafts);
+  sh.forEach(([x,y,rx,ry,a])=>PNT.shadow(ctx,x,y,rx,ry,a==null?.35:a));
+  if(dim>0){ ctx.fillStyle=pA(dimCol,dim); ctx.fillRect(-900,-900,2900,3600); }
+  ctx.restore(); }
+/* outdoors: painted sky (far plane, parallax), sun, clouds, an optional far layer, ground with haze at the horizon */
+function paintOut(ctx,t,c,{top='#5fa6d8',mid='#bfe3f2',bot='#fff1d0',sun=[820,520,58],ground='#8cbf5a',groundY=1500,far=null,clouds=1,haze='#fff4dc',sh=[],seed=3}={}){
+  ctx.save(); camCtx(ctx,camPar(c,.35)); PNT.sky(ctx,{top,mid,bot,y0:-400,y1:groundY+100,midAt:.6}); if(sun) PNT.sun(ctx,sun[0],sun[1],sun[2],'#fff6d8',.8,1);
+  if(clouds>0) PNT.clouds(ctx,t,{alt:180,h:380,alpha:.7*clouds,sc:2.2,seed,drift:10}); ctx.restore();
+  ctx.save(); camCtx(ctx,c); if(far) far(ctx);
+  const g=ctx.createLinearGradient(0,groundY,0,groundY+1000); g.addColorStop(0,shade(ground,1.06)); g.addColorStop(1,shade(ground,.74)); ctx.fillStyle=g; ctx.fillRect(-900,groundY,2900,2600);
+  pGrain(ctx,-900,groundY,2900,2600,.5); PNT.haze(ctx,groundY-260,groundY+6,haze,.4);
+  sh.forEach(([x,y,rx,ry,a])=>PNT.shadow(ctx,x,y,rx,ry,a==null?.3:a)); ctx.restore(); }
+/* far hills / roofs as flat painted silhouettes (world space) */
+function farHills(ctx,y,col,amp=60,seed=2){ const r=rng(seed*131); ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(-900,y+400); let x=-900, h=y; ctx.lineTo(x,h); while(x<2000){ const nx=x+120+r()*160, ny=y-amp*.3-r()*amp; ctx.quadraticCurveTo(x+(nx-x)/2,ny-amp*.4,nx,ny); x=nx; } ctx.lineTo(2000,y+400); ctx.closePath(); ctx.fill(); }
+function farRoofs(ctx,y,col,seed=5){ const r=rng(seed*71); ctx.fillStyle=col; let x=-900; while(x<2000){ const w=110+r()*150, h=90+r()*170; ctx.fillRect(x,y-h,w-8,h+400); if(r()<.4){ ctx.beginPath(); ctx.moveTo(x,y-h); ctx.lineTo(x+(w-8)/2,y-h-50); ctx.lineTo(x+w-8,y-h); ctx.fill(); } if(r()<.3) ctx.fillRect(x+w*.6,y-h-60,22,60); x+=w; } }
+function paintBrick(ctx,x0,y0,x1,y1,{tone='#7a5a52',seed=4,bw=140,bh=62}={}){ ctx.fillStyle='#4a3632'; ctx.fillRect(x0,y0,x1-x0,y1-y0); const r=rng(seed*997);
+  for(let y=y0,row=0;y<y1;y+=bh+8,row++) for(let x=x0-(row%2)*75;x<x1;x+=bw+8){ ctx.fillStyle=shade(tone,.82+r()*.32); ctx.fillRect(x,y,bw,bh); }
+  pGrain(ctx,x0,y0,x1-x0,y1-y0,.7); }
+/* paint inside a panelBox (same transform as panelBox in shots.js, k = 1) */
+function paintPanel(ctx,B,rot,fn){   /* fn paints in the panel's inner frame; it applies its own camera (paintOut/paintRoom do) */
+  ctx.save(); ctx.translate(B.x+B.w/2,B.y+B.h/2); ctx.rotate(rad(rot)); ctx.beginPath(); ctx.roundRect?ctx.roundRect(-B.w/2,-B.h/2,B.w,B.h,16):ctx.rect(-B.w/2,-B.h/2,B.w,B.h); ctx.clip();
+  const s=B.w/1080; ctx.scale(s,s); ctx.translate(-540,-960); fn(ctx); ctx.restore(); }
+/* backgrounds without the old flat fills (the canvas paints wall, floor and light) */
+function lobbySvg(u){ let g=`<path d="M-600 1160H1680M-600 1400H1680" stroke="${INK}" stroke-width="6"/>`;
+  const a=u*1.1; g+=`<rect x="40" y="560" width="300" height="840" rx="14" ${st('#c8a23a',8)}/><rect x="70" y="590" width="240" height="780" rx="10" fill="#bfe0e8" stroke="${INK}" stroke-width="5"/><circle cx="190" cy="980" r="118" fill="#eaf6f8" stroke="${INK}" stroke-width="5" opacity=".7"/>`;
+  for(let i=0;i<4;i++){ const th=a+i*Math.PI/2; g+=`<path d="M190 980L${N(190+Math.cos(th)*118)} ${N(980+Math.sin(th)*118)}" stroke="#8a6a2a" stroke-width="9"/>`; }
+  g+=`<rect x="640" y="640" width="440" height="460" rx="8" ${st('#5a3a22',7)}/>`; for(let r=0;r<4;r++) for(let c=0;c<5;c++) g+=`<rect x="${668+c*80}" y="${668+r*104}" width="64" height="90" rx="4" fill="#3a2418" stroke="${INK}" stroke-width="3"/><circle cx="${700+c*80}" cy="${724+r*104}" r="6" fill="#e8c34a"/>`;
+  g+=`<rect x="600" y="1230" width="540" height="40" rx="8" ${st('#8a5630',6)}/><rect x="620" y="1270" width="500" height="320" ${st('#6a3e1e',6)}/><rect x="660" y="1310" width="180" height="230" rx="6" fill="none" stroke="#4a2a14" stroke-width="5"/><rect x="900" y="1310" width="180" height="230" rx="6" fill="none" stroke="#4a2a14" stroke-width="5"/>`;
+  g+=`<g transform="translate(700 1228)"><ellipse cy="-6" rx="34" ry="8" ${st('#c8a23a',4)}/><path d="M-26 -8Q-24 -44 0 -48Q24 -44 26 -8Z" ${st('#e8c34a',4)}/><circle cy="-52" r="6" fill="#e8c34a" stroke="${INK}" stroke-width="3"/></g>`;
+  g+=palm(1220,1560,.8,u)+`<ellipse cx="1220" cy="1566" rx="64" ry="14" fill="#7a3a2a" stroke="${INK}" stroke-width="5"/>`;
+  return g; }
+const paintLobby=(ctx,t,c,{dusk=0,sh=[]}={})=>paintRoom(ctx,t,c,{wall:'#e9d6a8',stripes:.5,stripeCol:'#d6bd84',wain:'#7a1f2a',wainY:1160,floorY:1400,tiles:{},planks:0,lights:[[190,700,520,'#fff4d8',.45*(1-dusk)],[860,520,600,'#ffd88a',.25+.3*dusk]],sh,dim:dusk*.5});
+function yardSvg(u){ let g=`<path d="M-300 1440Q540 1400 1380 1450" fill="none" stroke="#6a9a3a" stroke-width="10" opacity=".6"/><path d="M-600 1380H1680" stroke="${INK}" stroke-width="6" opacity=".5"/>`+palm(110,1560,1.1,u)+palm(1010,1520,1,u);
+  g+=`<g transform="translate(700 1520)"><path d="M-130 0V-110M-60 0V-110M60 0V-110M130 0V-110" stroke="${INK}" stroke-width="18" stroke-linecap="round"/><path d="M-130 0V-110M-60 0V-110M60 0V-110M130 0V-110" stroke="#8a6238" stroke-width="9" stroke-linecap="round"/><rect x="-170" y="-130" width="340" height="26" ${st('#a8743a',5)}/><rect x="-140" y="-290" width="280" height="160" ${st('#d9b878',6)}/><path d="M-140 -250H140M-140 -210H140M-140 -170H140" stroke="#b8985a" stroke-width="4"/><rect x="-34" y="-250" width="68" height="120" rx="6" ${st('#5a3a22',5)}/><path d="M-200 -276L0 -420L200 -276Z" ${st('#c9a24a',6)}/><path d="M-170 -286L0 -402L170 -286" fill="none" stroke="#9a7a2a" stroke-width="5" stroke-dasharray="14 10"/><path d="M-120 -104L-170 40M-100 -104L-150 40" stroke="${INK}" stroke-width="7"/></g>`;
+  return g; }

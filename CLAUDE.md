@@ -29,7 +29,7 @@ build/fonts.css           embedded fonts (Anton, Fell, Fraktur, Baloo 2, Kalam, 
 assets/                   fonts (OFL), tts model, CC0 sample libraries (created by scripts/setup.sh)
 mo/   Monopoly / Lizzie Magie (2026-11) - CURRENT STANDARD: safe-area staging, pose tweens, one-tempo score
 lb/   Lal Bihari "dead for 18 years" (2026-11) - same kit; its subtitles still sit below the safe area (verify.js reports it)
-yo/   Pedro Flores and the word "yo-yo" (2026-11) - FINISHED (Stage D): final MP4 + cover + caption, waiting on Farrukh's listening check (yo/brief.md section 11)
+yo/   Pedro Flores and the word "yo-yo" (2026-11) - REBUILT to the ic standard 2026-11-18 (yo/brief.md section 13: painted sets, big captions, 24 cuts; narration unchanged): final MP4 + cover, waiting on Farrukh's listening check
 tn/   The Day of Two Noons (1883) - FORMAT TEST ep. 1, FINISHED (Stage D 2026-11-13): final MP4 + cover + caption, waiting on Farrukh's listening check (tn/brief.md section 13)
 ic/   Ice to Calcutta (1833) - FORMAT TEST ep. 2, rich painted look. Stage A done 2026-11-13; Stage B part 2 (painted layer) done 2026-11-15 (ic/brief.md section 11).
       Stage D export 2026-11-16 (ic/brief.md section 13). First full painted film: 0.37 s/frame/worker.
