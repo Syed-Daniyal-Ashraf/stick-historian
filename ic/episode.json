@@ -2,7 +2,7 @@
  "title": "Boston Shipped Ice to India in 1833. Here's How It Survived.",
  "sub": "THE STICK HISTORIAN",
  "aria": "Animated short about the 1833 voyage of the Tuscany, which carried about 180 tons of New England pond ice to Calcutta packed in tanners' bark and hay",
- "foot": "STAGE B TEST BUILD (painted-layer test shot only; Stage C replaces this). Backgrounds are painted in code at render time: no image files, no AI images. Narration will be an AI voice (Kokoro, af_heart).",
+ "foot": "Backgrounds are painted in code at render time (no image files, no AI images). Narration: AI voice (Kokoro, af_heart). Music and foley: VSCO 2 Community Edition (CC0) and Kenney audio (CC0).",
  "out": "ice-calcutta",
  "file": "Ice-To-Calcutta-1833"
 }

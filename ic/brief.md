@@ -262,3 +262,36 @@ Report: `paint: {pages:2, checked:60, mismatchesSamePage:[], mismatchesAcrossPag
   colour grade per shot so figures pick up the scene's light (the `finish()` grade), and haze on far planes only.
 - **Comments will say "sawdust".** The pinned comment answers it with the 1834 source.
 - **Colonial framing:** it is a luxury for British Calcutta. Keep it dry and factual: no celebration of the Raj, no servant jokes; the gag is on the buyer.
+
+## 11. Stage C results (2026-11-23, Sonnet 5.5, medium)
+Built the full episode from sections 3-5. `ic/src/shots.js` and `ic/vo/timing.json` of the Stage B test are replaced; `props.js` keeps `skyAt`, `paintSeaDeck`, `tallies` and adds `iceCube`, `iceStack`, `coldMist`, `shipSvg`, `horseSvg`, `paintHold`, `paintGlobe`, `paintPond`, `paintRiver`, `paintDocks`, `baked()` (cached half-resolution static layers) and 10 costumes. No engine change; `ENGINE.md` untouched.
+- **Voice:** 53.1 s (15 lines, Kokoro `af_heart`), `gen.py` -> `timeline.py` (BPM 104, MIN per shot) -> `align.py` (all words measured except "tannery", estimate kept). Shot starts (s): 0, 8.08, 15.00, 21.35, 28.85, 35.19, 39.23, 47.31.
+- **Cuts (`CUT_EP`, 26 sub-shots):** the cut points are tied to words, so they differ a little from the section 4 estimates because the real voice timing differs. Main changes from the storyboard: 3a/3b are shorter (blocks lock 0-1.3 s, merge pulse on "giant"); 5a is 1.3 s, 5b runs 2.7 s at 1.1 s per day (**3 days**, tally 3), 5c starts at 4.0 s with the tally jumping to 10 (option a, section 9); 7 has four sub-shots (7c walk, 7d cube + second slate).
+- **Gates:** `verify.js` PASS (paint: 0 mismatches on one page and across two browsers; paintMs median 15 ms, p95 33 ms, so inside the 30/60 budget); `motion.js` PASS on `ic/out/draft.mp4` (0 pops, no 2 s still; only the final 1.3 s door hold, which the tool allows). Draft render 0.335 s/frame/worker at 540 px. **The full-resolution export time was not measured** (Stage D: compare against `yo` 0.491 s/frame/worker, budget 1.5x; try `-preset medium` if over).
+- **What it took to get there:** `PNT.shimmer` copies the canvas onto itself and cost ~80 ms a frame on the docks, so it is not used (2a and 5a use `PNT.haze`, docks none). Hold, river, docks and the 8c wall are baked once per page at half resolution. The pattern fills in `paintPond` and 2c reset their pattern matrix before use (otherwise `verify.js` found order-dependent pixels).
+- **Sound:** `vo/sound.py` (VSCO + Kenney CC0 only): harp/pizzicato "bright" hook, piano "soft", "pizz" steps, "tense" days with a clave tick, "roll" arrival, "hush" ice house, silence after "house". Foley on word cues: ice thunk x4 on 3a, crackle, drawKnife plow, shovel, hay rustle, hammer (`chop`), coins, door + latch. Section levels are printed by `sound.py`; `bed.py` ran. **I cannot hear it.** Stage D must measure it and Farrukh must listen.
+
+### Fix list for Stage D (known problems, none blocking)
+1. **2b (pond):** the worker at the far left is partly cropped by the frame edge; horse and workers are small. Zoom and recentre.
+2. **1c / 1c-flip (equator):** the dashed line is clear only in the lower half of the frame (the ship hides the rest) and the geometry is a cartoon: a vertical dashed line on the water, with the sailor hopping on deck. Check on the phone whether it reads; if not, draw a horizontal line across the deck.
+3. **3a:** the pushing worker is small and the sliding blocks thunk is only in the sound; consider a tighter crop.
+4. **1a:** "TUSCANY" on the bulwark is mostly hidden by the block and the sailor (the brief wanted it readable in 1a). Move it or drop it; it is on the ship in 1c and 6a.
+5. **2c:** the `bigArm` holding the ruler is crude.
+6. **No independent fact/frame review has been run** (CLAUDE.md quality gate): spawn a fresh agent with frames + script. Things it should check: "four months at sea" vs "Four months and seven days"; "ten days" (tally of 10) vs the source's "more than ten days"; ice house is an illustration, no year; no sawdust.
+7. Pronunciation (Kokoro): "tannery", "equator", "two-foot", "Calcutta" by ear.
+8. The first-frame hook needs a no-sound review on the phone; check the cover (`COVER_T` 1.2 s = frame at 1.2 s: sailor hugging the block, tag 1833).
+9. Not done yet: final export, `mix.sh` loudness, `cover.js`, caption/pinned-comment finalisation (section 8 drafts stand).
+
+### Handoff for the Stage D chat (paste this)
+```
+Stick Historian, repo Syed-Daniyal-Ashraf/stick-historian (attach with push access). Episode: ic (Ice to Calcutta).
+Stage D: rough cut, revisions, final QC, export. Start the chat on Opus 5.5, medium effort.
+Read CLAUDE.md, ENGINE.md, then ic/brief.md section 11 (Stage C results + fix list) and sections 3-8.
+Locked: narration (ic/vo/gen.py SCRIPT, 53.1 s), cut words (CUT_EP), sources (section 6), painted look (approved 2026-11-23).
+Built: all 8 shots, music and foley, draft passes verify.js and motion.js. Nothing final exported.
+Open: the fix list in section 11, an independent fact/frame review (CLAUDE.md "Facts" gate), listening check by Farrukh,
+final export + mix.sh (-14 LUFS) + cover.js, caption and pinned comment.
+Pipeline: engine/make.sh ic; node engine/tools/verify.js ic; DRAFT=1 node engine/tools/export.js ic; node engine/tools/motion.js ic;
+python3 engine/tools/align.py ic after any timeline.py run. Needs CHROMIUM_PATH if the Playwright download is blocked.
+Do not publish anything. Heavy rework goes back to a Stage C chat on Sonnet.
+```
