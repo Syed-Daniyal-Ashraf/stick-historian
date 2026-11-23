@@ -229,6 +229,26 @@ Report: `paint: {pages:2, checked:60, mismatchesSamePage:[], mismatchesAcrossPag
   including the two-page check, numbers above recorded here, and a contact sheet sent to Farrukh for a yes/no on the look before Stage C builds the rest.
 - `ENGINE.md` updated in the same commit (the painter API, the measurements and the new verify fields).
 
+### Results (Stage B part 2, 2026-11-23, Opus 5.5; container with 2 CPUs)
+- **Baseline `yo`** (final export, before any change): 1,567 frames, 2 workers, 384.5 s wall, **0.491 s/frame/worker**, capture median 377 ms, p95 737 ms.
+- **Blend test:** a grey `mix-blend-mode:multiply` SVG rect over a red canvas reads **(128,0,0)** in headless Chromium: `finish()` paper and grade
+  blend with the painted layer. No `P.post` and no second canvas needed.
+- **Paint pass (`verify.js`, test shot 5b):** median **25-28 ms**, p95 **35-39 ms** (budget 30/60). Texture baking ~300 ms total (budget 3 s).
+  Got there by: sea drawn with pattern fills and cropped to where the set covers it, sky filled only to the horizon, the deck's plank layer cached.
+- **Export:** a 20 s run of the shot: **0.73 s/frame/worker = 1.49x yo** (budget 1.5x). Capture is the same as yo (median 388 ms); the extra is x264
+  encoding the textured picture. For the full episode, measure again; if it goes over, try `-preset medium` before cutting painters.
+- **Determinism:** 60 frames, scrambled order and a second browser: 0 mismatches; repeated runs: 0 frames changed.
+- **Regression:** `compare.js` 0 frames different on mo, lb, yo, tn. `verify.js` PASS on mo, yo, tn, ic.
+- **Deviations from the design above:** the painter namespace is `PNT`, not `P` (shots use `P=part(n,u)` locally, which would hide it);
+  textures bake on first use instead of at boot (episodes that never paint pay nothing; a frame is still never captured half-baked, because
+  baking is synchronous inside `renderAt`); added `PNT.deck` (receding planks), `PNT.stars`, `PNT.shimmer`, `PNT.grain`.
+- **Storyboard problem found, 5b (Stage C must decide):** ten full day/night cycles in ~2.2 s is a full-screen light/dark swing 4.5 times a second.
+  Built that way, every frame of the draft changed the whole picture (`motion.js` flagged each one) and it breaks WCAG 2.3.1 (no more than 3 flashes
+  a second). The test shot runs one smooth day per second with night kept deep blue, not black, and everything the sun casts (glow, glint,
+  shadows) fading with it. Options for Stage C: (a) 5b shows 3-4 smooth days (~3.5 s) and the tally jumps to 10 in 5c; (b) keep the sky mostly
+  in daylight and show the days only with the tally and a fast sun arc; (c) one day/night, then a "×10" tally card. My pick: (a).
+- **Look test:** contact sheet and a 4 s clip of the shot went to Farrukh on 2026-11-23. Stage C waits for his yes/no.
+
 ## 10. Risks and fallbacks
 - **Too long (est. 54-57 s).** Cut in this order: "Less surface… slower melting." (-2 s, keep the 3c gag silent); then "No refrigeration." from line 3 (-1 s); then shorten the tropics shot to two cuts (drop 5c).
 - **The best material arrives at ~37-45 s** (the melting reversal). The hook and the step-by-step mechanism carry the first 20 s; that is the bet of the mechanism format.

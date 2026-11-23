@@ -14,7 +14,8 @@
 //            const HOLD_OK_EP=[[43.0,45.2,'reading the patent quote']];
 //   pop    - one frame where part of the picture changes far more than the frames around it, away from a cut:
 //            a snapped pose, an inset or prop that appears with no animation, or an intended shake/slam. WARN: look at it.
-//   uncut  - the whole picture changes at a time that is not in film.CUTS (an in-shot scene switch without CUT_EP).
+//   uncut  - the whole picture changes in one frame at a time that is not in film.CUTS (an in-shot scene switch without CUT_EP).
+//            Fast fades (e.g. a day/night time-lapse) change several frames in a row and are not counted.
 //            WARN: verify.js measures shot length from film.CUTS, so it can't see these.
 // Thresholds were tuned on yo/tn/mo drafts (2026-11). Prints MOTION: PASS or FAIL and a contact-sheet command.
 const {episode,open}=require('./common'); const {spawnSync}=require('child_process'); const fs=require('fs'); const path=require('path');
@@ -53,7 +54,8 @@ const POP_MIN=25, POP_RATIO=3, SCENE=20;
 
   const pops=[], uncut=[];
   for(let i=1;i<N;i++){ const t=i/FPS; if(nearCut(t,1.5/FPS)) continue;
-    if(glob[i]>SCENE){ uncut.push(t); continue; }
+    if(glob[i]>SCENE&&glob[i]>2.5*Math.max(glob[i-1]||0,glob[i+1]||0)){ uncut.push(t); continue; }   // one-frame whole-picture change; a fast fade changes several frames in a row
+    if(glob[i]>SCENE) continue;
     const before=med(Array.from(top.slice(Math.max(1,i-4),i))), after=med(Array.from(top.slice(i+1,i+5)));
     if(top[i]>POP_MIN&&top[i]>POP_RATIO*Math.max(before,after,2)) pops.push([t,top[i]]); }
   const merge=a=>a.filter((t,k)=>k===0||t-(Array.isArray(a[k-1])?a[k-1][0]:a[k-1])>.2);

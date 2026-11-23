@@ -22,6 +22,7 @@ engine/build_episode.py   fills the template from <ep>/episode.json + <ep>/src/*
 engine/make.sh <ep>       joins engine/toon/*.js + <ep>/src/props.js + <ep>/src/shots.js, then builds ../<out>.html
 engine/toon/              THE SHARED TOON KIT, used by every toon episode. Fix the rig here, never in an episode copy.
   10_base.js              palette, finish() (line boil, paper, grade, vignette), cam(), type, stamps, subtitles
+  15_paint.js             painted layer: seeded noise, textures, PNT painters for the canvas under the SVG (ENGINE.md "Painted layer")
   20_rig.js               toon() rig, costumes TC, expressions EX, poses TP, full()/tween() pose blending, shoes, idle life
   30_world.js             shared props and sets (desk, paper, bigArm, strut, burst, dust, web, Indian village/office sets)
 engine/tools/             export.js, shots.js, verify.js, motion.js, align.py, cover.js, mix.sh. All take the episode folder as first argument.
@@ -31,7 +32,8 @@ mo/   Monopoly / Lizzie Magie (2026-11) - CURRENT STANDARD: safe-area staging, p
 lb/   Lal Bihari "dead for 18 years" (2026-11) - same kit; its subtitles still sit below the safe area (verify.js reports it)
 yo/   Pedro Flores and the word "yo-yo" (2026-11) - FINISHED (Stage D): final MP4 + cover + caption, waiting on Farrukh's listening check (yo/brief.md section 11)
 tn/   The Day of Two Noons (1883) - FORMAT TEST ep. 1, FINISHED (Stage D 2026-11-13): final MP4 + cover + caption, waiting on Farrukh's listening check (tn/brief.md section 13)
-ic/   Ice to Calcutta (1833) - FORMAT TEST ep. 2, rich painted look, Stage A done 2026-11-13 (ic/brief.md); built after tn, needs Stage B part 2 (painted layer)
+ic/   Ice to Calcutta (1833) - FORMAT TEST ep. 2, rich painted look. Stage B part 2 (painted layer) done 2026-11-23: ic/ holds only the
+      test shot 5b; waiting on Farrukh's yes/no on the look before Stage C (ic/brief.md section 9, "Results")
 px/ r2/ rc/               older stick-rig episodes with their own tool copies. Leave as they are.
 ```
 An episode folder holds only what is its own: `episode.json` (title, `out` html name, `file` mp4 name), `src/meta.js`
@@ -84,6 +86,8 @@ Do not redeclare `world`, `capsEl` or `SUB_MAXW` in episode code; the template o
   `engine/tools/align.py` measures them; episodes made before 2026-11-23 (lb, mo, yo, tn) still use the estimates.
 - New episodes set `WALK_RAMP_EP=.14` in `meta.js` (walks speed up and slow down instead of starting at full speed).
 - Engine tools added 2026-11-23 (align.py, motion.js, walk ramp) were adapted from ideas in github.com/krishnagoswami52/stickman-skill (MIT). Its look, characters and 3D engine were not adopted.
+- Painted shots: `paint(ctx=>...)` queues canvas drawing under the SVG; use `camCtx(ctx,c)` with the same camera as `cam()`.
+  Full-screen light changes (day/night time-lapses, flashes) must stay under 3 swings a second and change smoothly (WCAG 2.3.1).
 - `tween()` blends numbers and arrays; text fields (expr, hand shape) switch halfway. Always wrap poses in `full()`.
 - Chromium: set `CHROMIUM_PATH` only if you need a specific browser.
 

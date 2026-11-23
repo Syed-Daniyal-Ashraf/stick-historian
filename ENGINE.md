@@ -11,9 +11,9 @@ Update this file in the same change as any engine change. Rules and history are 
 | Contact sheet | `SAFE=1 SCALE=.3 COLS=8 node engine/tools/shots.js EP sheet.png t1 t2 ...` | tiled frames; `SAFE=1` shades the area the Reels interface covers |
 | Gates | `node engine/tools/verify.js EP` | `VERIFY: PASS` or `FAIL` plus a JSON report |
 | Sound | `cd EP && python3 vo/sound.py && python3 vo/bed.py` | `vo/music_raw.wav`, `out/fx_real.wav`, `vo/bed.wav`, `vo/bed.mp3` |
-| Draft | `DRAFT=1 node engine/tools/export.js EP` | `EP/out/draft.mp4` (540 px, 15 fps) |
+| Draft | `DRAFT=1 node engine/tools/export.js EP` | `EP/out/draft.mp4` (540 px, 15 fps), `EP/out/render_time_draft.json` |
 | Motion gate | `node engine/tools/motion.js EP [video]` | `MOTION: PASS` or `FAIL`: still stretches, pops, hard cuts missing from `film.CUTS` |
-| Final | `node engine/tools/export.js EP && bash engine/tools/mix.sh EP` | `<file>.mp4` in the root, 1080x1920, 30 fps, -14 LUFS |
+| Final | `node engine/tools/export.js EP && bash engine/tools/mix.sh EP` | `<file>.mp4` in the root, 1080x1920, 30 fps, -14 LUFS; `EP/out/render_time.json` |
 | Cover | `node engine/tools/cover.js EP` | `<file>-Cover-4K.png` (frame at `COVER_T`) |
 | Regression | `node engine/compare.js old.html new.html` | pixel-compares 24 frames of two builds |
 
@@ -23,7 +23,11 @@ Environment: `TTS_DIR`, `ASSETS_DIR` (default `assets/`), `CHROMIUM_PATH`, `WORK
 target more than 6 units beyond the limb; (3) subtitles inside x 65-1015 / y 270-1250 and every narrated word covered;
 (4) `captions` (big mode only): FAIL on a chunk that breaks the rules (`ruleBreaks`) or can't fit at 104 px (`tooWide`), WARN `under025`;
 (5) `cadence`: the gaps between `film.CUTS`. Enforced only when the episode declares `CUT_EP`: FAIL on a gap over 3.4 s (4.5 s in
-`CUT_HOLD_EP` shots), WARN `gapsOver3` / `gapsUnder1`. Without `CUT_EP` it is printed for information. Also prints `renderMs`.
+`CUT_HOLD_EP` shots), WARN `gapsOver3` / `gapsUnder1`. Without `CUT_EP` it is printed for information. Also prints `renderMs` (building the frame's SVG; the paint pass is `paint.paintMs`).
+(6) **paint**: 60 frames hashed (canvas pixels + SVG markup, FNV-1a) must match in a scrambled order on the same page and on a
+second, freshly started browser (the export uses parallel browsers); hashes go to `EP/out/paint_hashes.json` and the next run
+reports `changedSinceLastRun` (not a failure). Episodes that paint also get `paintMs {median,p95}` (paint pass alone, 120 frames)
+and `bakeMs` (texture baking). Episodes that don't paint skip the canvas part at no cost.
 It does not check labels, faces or props against the safe area: look at a `SAFE=1` sheet for those.
 
 `motion.js` reads the rendered draft (or final) video at 15 fps, 180x320 grey, ignores the caption band (y 970-1270) and
@@ -49,7 +53,39 @@ It also does not judge whether a cut changes the picture: put frames 0.1 s befor
 - `keys(u,[[t,value,ease],...])`, `seg(u,a,b,ease)`, `lerp`, `mix(a,b,k)` (numbers, arrays, objects), easings `E.io E.o E.i E.lin E.back`.
 - `SEQ` lists the shots; each shot function `shN(t)` returns SVG for the whole frame. `overlays(t)` draws titles + subtitles.
 
+## Painted layer (engine/template.html + engine/toon/15_paint.js; first used by ic/)
+A `<canvas id="paint">` sits under the SVG, same 1080x1920 frame. The SVG still draws the rig, props, labels and captions; the canvas
+draws soft skies, water, wood, light and haze. A shot paints by calling `paint(ctx=>{...})` while it builds its SVG (it only queues);
+`renderAt` runs the queue after the shot functions. Painters work in 1080x1920 units at any pixel density (backing = 1080x1920 x
+`min(devicePixelRatio,2)`, so the 4K cover is sharp). A shot that never calls `paint()` leaves the canvas empty and unallocated:
+mo, lb, yo and tn render pixel-identical (compare.js, 24 frames each, 2026-11-23).
+- **Camera:** `camCtx(ctx,c,oy)` applies the same matrix as `cam(c,svg,oy)` (`camM(c,oy)` returns it, same rounding). Pass both the
+  same camera object. Screen-space painters (sky, sea, haze) take the camera only for parallax. Shakes applied with `jolt()` are SVG-only:
+  apply the same offset in the painter if the background must shake too.
+- **Transitions:** whip/push move queued painters with the SVG; dissolves fade them; whips blur them (5 offset copies). A dissolve
+  between a painted shot and an unpainted shot with an opaque SVG background hides the painted one until the cut: use a hard cut or whip there.
+- **Blending:** `finish()`'s paper and grade rects (`mix-blend-mode:multiply`) DO blend with the canvas underneath in headless Chromium
+  (measured: red canvas under a grey multiply rect reads (128,0,0)), so painted shots use `finish()` as usual. Inside a whip the world
+  is wrapped in a filter group, which isolates the blend for those 0.2 s.
+- **Determinism:** painters may use only `t`, the camera, their options and fixed seeds (no `Math.random`, `Date`, `performance.now`).
+  Caches are keyed by the full input (`cached(key,make)` in 15_paint.js), never by "last frame". `verify.js` checks it across two browsers.
+- **15_paint.js** (global name `PNT`, not `P`: shots use `P=part(n,u)` locally): seeded `rng(seed)`, `hash2`, `vnoise` (tileable),
+  `fbm`, `smoothstep`. Textures are baked on first use (~300 ms total; episodes that never paint pay nothing): `tex('wood')` planks,
+  `tex('water')` ripples, `tex('glint')` sun sparkle, `tex('cloud')` cumulus band, `tex('grain')`.
+  Painters: `PNT.sky(ctx,{top,mid,bot,midAt,y1,sun:[x,y,r,col],halo})` (fills only to y1+100), `PNT.stars(ctx,{n,alpha,y1,t,seed})`,
+  `PNT.clouds(ctx,cam,t,{alt,h,drift,alpha,scale,par,seed,tint:[col,a]})`, `PNT.sea(ctx,cam,t,{horizon,bottom,deep,shallow,haze,glint:[x,a],swell,speed,strips})`
+  (set `bottom` to where the set covers it: water strips are the costliest thing here), `PNT.wood(ctx,[x,y,w,h],{tone,light,scale,rot})`
+  (rot 90 = a mast), `PNT.deck(ctx,y0,y1,{tone,rows,grow,light,shade,x0,x1})` (planks receding; the plank layer is cached),
+  `PNT.shafts(ctx,{x,y,angle,spread,n,len,width,alpha,col,motes,t,seed})`, `PNT.glow(ctx,x,y,r,col,a)`, `PNT.haze(ctx,y0,y1,col,a)`,
+  `PNT.shimmer(ctx,y0,y1,t,amp)` (screen space only), `PNT.vignette(ctx,a)` (finish() already vignettes both layers), `PNT.grain(ctx,a,t)`.
+- **Cost (ic test shot 5b, 2026-11-23, 2 CPUs):** paint pass median 25-28 ms, p95 35-39 ms (budget 30/60). Per painter: sea ~9,
+  deck ~7, sky ~4.5, wood ~4.5 (3 rects), clouds ~2, glow ~1 ms. Export of a 20 s run of the shot: 0.73 s/frame/worker against yo's
+  0.491 (1.49x, budget 1.5x). Frame capture is about the same as yo (median 388 vs 377 ms); the extra time is x264 encoding the
+  textured picture at `-preset slow -crf 14`. If a full painted episode goes over budget, try `-preset medium` for it before cutting painters.
+
 ## Toon kit (engine/toon)
+**15_paint.js**: see "Painted layer" above.
+
 **10_base.js**
 - `finish(svg,t,{boil,paper,grade,vig})` wraps a shot: line boil (10 fps), paper grain, colour grade, vignette.
 - `cam({x,y,z,oy},svg,oy)` world point (x,y) lands at screen (540, oy); oy defaults to 960.

@@ -22,7 +22,8 @@ h1{font-family:var(--display);font-weight:400;font-size:26px;margin:0;color:var(
 /* 9:16 stage, scaled to fit both width and height */
 .stage{position:relative;width:min(100%,460px,calc((100vh - 250px) * .5625));min-width:180px;aspect-ratio:9/16;
   border-radius:12px;overflow:hidden;background:#000;box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 0 1px var(--line)}
-#sv{display:block;width:100%;height:100%}
+#sv{display:block;width:100%;height:100%;position:relative}
+#paint{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
 .start{position:absolute;inset:0;width:100%;border:0;margin:0;padding:24px;cursor:pointer;font:inherit;color:var(--fg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;
   background:radial-gradient(ellipse at 50% 45%,rgba(10,12,14,.2),rgba(10,12,14,.85))}
@@ -53,6 +54,7 @@ body.export .stage{width:1080px;height:1920px;border-radius:0;box-shadow:none;mi
 <div class="app">
   <header><h1>{{TITLE}}</h1><span class="sub">{{SUB}}</span></header>
   <div class="stage" id="stage">
+    <canvas id="paint" width="0" height="0" aria-hidden="true"></canvas>
     <svg id="sv" viewBox="0 0 1080 1920" preserveAspectRatio="xMidYMid meet" role="img" aria-label="{{ARIA}}">
       <defs>
 {{DEFS}}
@@ -375,25 +377,60 @@ function composeAt(t){
   const i=seqAt(t), q=SEQ[i], prev=SEQ[i-1], next=SEQ[i+1];
   let blur=0, svg;
   const W={whip:.2, push:.36, dissolve:.45};
-  if(next&&q.out==='whip'&&t>q.end-W.whip){ const k=.5*(t-(q.end-W.whip))/W.whip; blur=Math.sin(Math.PI*k)*80; svg=whipPair(q,next,t,k); }
-  else if(prev&&prev.out==='whip'&&t<q.start+W.whip){ const k=.5+.5*(t-q.start)/W.whip; blur=Math.sin(Math.PI*k)*80; svg=whipPair(prev,q,t,k); }
+  if(next&&q.out==='whip'&&t>q.end-W.whip){ const k=.5*(t-(q.end-W.whip))/W.whip; blur=Math.sin(Math.PI*k)*80; svg=withPS({blur},()=>whipPair(q,next,t,k)); }
+  else if(prev&&prev.out==='whip'&&t<q.start+W.whip){ const k=.5+.5*(t-q.start)/W.whip; blur=Math.sin(Math.PI*k)*80; svg=withPS({blur},()=>whipPair(prev,q,t,k)); }
   else if(next&&q.out==='push'&&t>q.end-W.push){ const k=.5*(t-(q.end-W.push))/W.push; svg=pushPair(q,next,t,k); }
   else if(prev&&prev.out==='push'&&t<q.start+W.push){ const k=.5+.5*(t-q.start)/W.push; svg=pushPair(prev,q,t,k); }
-  else if(next&&q.out==='dissolve'&&t>q.end-W.dissolve){ const k=.5*(t-(q.end-W.dissolve))/W.dissolve; svg=q.r(t)+`<g opacity="${N(E.io(k)*100)/100}">${next.r(next.start)}</g>`; }
-  else if(prev&&prev.out==='dissolve'&&t<q.start+W.dissolve){ const k=.5+.5*(t-q.start)/W.dissolve; svg=prev.r(prev.end-1e-3)+`<g opacity="${N(E.io(k)*100)/100}">${q.r(t)}</g>`; }
+  else if(next&&q.out==='dissolve'&&t>q.end-W.dissolve){ const k=.5*(t-(q.end-W.dissolve))/W.dissolve, a=N(E.io(k)*100)/100; svg=q.r(t)+`<g opacity="${a}">${withPS({alpha:a},()=>next.r(next.start))}</g>`; }
+  else if(prev&&prev.out==='dissolve'&&t<q.start+W.dissolve){ const k=.5+.5*(t-q.start)/W.dissolve, a=N(E.io(k)*100)/100; svg=prev.r(prev.end-1e-3)+`<g opacity="${a}">${withPS({alpha:a},()=>q.r(t))}</g>`; }
   else svg=q.r(t);
   if(blur>0) svg=`<g filter="url(#whip)">${svg}</g>`;
   return {svg, blur};
 }
 function whipPair(a,b,t,k){ const e=E.io(k), ta=Math.min(t,a.end-1e-3), tb=Math.max(t,b.start);
-  return `<g transform="translate(${N(-e*1080)} 0)">${a.r(ta)}</g><g transform="translate(${N(1080-e*1080)} 0)">${b.r(tb)}</g>`; }
+  const A=withPS({dx:-e*1080},()=>a.r(ta)), B=withPS({dx:1080-e*1080},()=>b.r(tb));
+  return `<g transform="translate(${N(-e*1080)} 0)">${A}</g><g transform="translate(${N(1080-e*1080)} 0)">${B}</g>`; }
 function pushPair(a,b,t,k){ const e=E.io(k), ta=Math.min(t,a.end-1e-3), tb=Math.max(t,b.start);
-  return `<g transform="translate(${N(e*1080)} 0)">${a.r(ta)}</g><g transform="translate(${N(-1080+e*1080)} 0)">${b.r(tb)}</g><rect x="${N(-12+e*1080)}" y="0" width="24" height="1920" fill="#000" opacity=".25"/>`; }
+  const A=withPS({dx:e*1080},()=>a.r(ta)), B=withPS({dx:-1080+e*1080},()=>b.r(tb));
+  return `<g transform="translate(${N(e*1080)} 0)">${A}</g><g transform="translate(${N(-1080+e*1080)} 0)">${B}</g><rect x="${N(-12+e*1080)}" y="0" width="24" height="1920" fill="#000" opacity=".25"/>`; }
+
+/* ============================== painted layer: <canvas id="paint"> under the SVG (ic/ onward; ENGINE.md "Painted layer")
+   A shot paints by calling paint(ctx=>{...}) while it builds its SVG; renderAt runs the queue after composeAt, so one function
+   per shot still draws both layers. Painters work in 1080x1920 frame units; camCtx(ctx,c,oy) applies the same camera as cam().
+   Transitions wrap the shots they call in a paint state (dx = push/whip offset, alpha = dissolve, blur = whip) that painters inherit.
+   Shots that never call paint() leave the canvas empty and unallocated, so older episodes render exactly as before. */
+const paintEl=$('paint'), PQ=[]; let PST={dx:0,alpha:1,blur:0}, paintDirty=false, paintScratch=null;
+function paint(fn){ PQ.push({fn,st:PST}); }
+function withPS(st,f){ const o=PST; PST={dx:o.dx+(st.dx||0),alpha:o.alpha*(st.alpha==null?1:st.alpha),blur:Math.max(o.blur,st.blur||0)}; try{ return f(); } finally{ PST=o; } }
+const paintDpr=()=>Math.min(window.devicePixelRatio||1,2);
+/* camera matrix, the same numbers cam() writes into the SVG transform (same rounding), so both layers line up to the pixel */
+function camM(c,oy){ const z=N(c.z*1000)/1000, X=N(-c.x), Y=N(-c.y), O=N(oy!=null?oy:(c.oy!=null?c.oy:960)); return [z,0,0,z,540+z*X,O+z*Y]; }
+function camCtx(ctx,c,oy){ const m=camM(c,oy); ctx.transform(m[0],m[1],m[2],m[3],m[4],m[5]); return ctx; }
+function paintRun(){
+  if(!PQ.length){ if(paintDirty){ paintEl.getContext('2d').clearRect(0,0,paintEl.width,paintEl.height); paintDirty=false; } return; }
+  const d=paintDpr(), w=Math.round(1080*d), h=Math.round(1920*d);
+  if(paintEl.width!==w||paintEl.height!==h){ paintEl.width=w; paintEl.height=h; }
+  const ctx=paintEl.getContext('2d'); ctx.setTransform(1,0,0,1,0,0); ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over'; ctx.filter='none';
+  ctx.clearRect(0,0,w,h); paintDirty=true;
+  const fresh=c=>{ c.setTransform(1,0,0,1,0,0); c.globalAlpha=1; c.globalCompositeOperation='source-over'; c.filter='none'; c.clearRect(0,0,w,h); c.setTransform(d,0,0,d,0,0); return c; };
+  for(const {fn,st} of PQ){
+    if(st.alpha>=1&&st.blur<=0){ ctx.save(); ctx.setTransform(d,0,0,d,st.dx*d,0); fn(ctx); ctx.restore(); continue; }
+    if(!paintScratch) paintScratch=document.createElement('canvas');
+    if(paintScratch.width!==w||paintScratch.height!==h){ paintScratch.width=w; paintScratch.height=h; }
+    const sc=fresh(paintScratch.getContext('2d')); sc.save(); fn(sc); sc.restore();
+    ctx.save(); ctx.setTransform(1,0,0,1,0,0);
+    if(st.blur>0){ /* whip: 5 copies offset horizontally at falling alpha (canvas has no one-axis blur) */
+      const off=[0,-.5,.5,-1,1];   /* copy i at alpha 1/(i+1): all five end up equally weighted, i.e. a box blur ~2x blur wide */
+      for(let i=0;i<5;i++){ ctx.globalAlpha=i?1/(i+1):st.alpha; ctx.drawImage(paintScratch,Math.round((st.dx+off[i]*st.blur)*d),0); } }
+    else { ctx.globalAlpha=st.alpha; ctx.drawImage(paintScratch,Math.round(st.dx*d),0); }
+    ctx.restore(); }
+  PQ.length=0; }
 function flashAt(t){ return 0; }
 let lastFrameT=-1;
 function renderAt(t){
   t=clamp(t,0,TOTAL-1e-4); DBG.now=t;
-  const c=composeAt(t);
+  PQ.length=0; PST={dx:0,alpha:1,blur:0};
+  const c=composeAt(t); paintRun();
   whipBlur.setAttribute('stdDeviation',`${N(c.blur)} 0`);
   world.innerHTML=c.svg;
   capsEl.innerHTML=overlays(t)+subSvg(t);
@@ -482,7 +519,10 @@ function frame(now){
 /* B2: every cut in the film (SEQ starts + in-shot cuts from CUT_EP), absolute seconds. Episodes without CUT_EP get the SEQ starts only. */
 const CUTS=(()=>{ const c=SEQ.map(q=>q.start); if(typeof CUT_EP!=='undefined'&&typeof cutPts==='function') for(const n of Object.keys(CUT_EP)) for(const p of cutPts(+n)) c.push(S(+n)+p);
   return [...new Set(c.map(x=>+x.toFixed(3)))].sort((x,y)=>x-y); })();
-window.film={renderCover,renderAt,TOTAL,SHOTS,SEQ,SUBS,CUES,DBG,seek,play,pause,state:PL,renderSfxOffline,CUTS,part:typeof part==='function'?part:null,
+/* verify.js: time the paint pass alone for frame t (the 1x1 read forces the canvas to finish drawing) */
+function paintProbe(t){ t=clamp(t,0,TOTAL-1e-4); PQ.length=0; PST={dx:0,alpha:1,blur:0}; composeAt(t); const n=PQ.length, s=performance.now(); paintRun();
+  if(paintEl.width) paintEl.getContext('2d').getImageData(0,0,1,1); return {ms:performance.now()-s,painters:n}; }
+window.film={renderCover,renderAt,paintProbe,paintBake:typeof bakeAll==='function'?bakeAll:null,PNT:typeof PNT!=='undefined'?PNT:null,TOTAL,SHOTS,SEQ,SUBS,CUES,DBG,seek,play,pause,state:PL,renderSfxOffline,CUTS,part:typeof part==='function'?part:null,
   CUT_OPT:typeof CUT_EP!=='undefined', CUT_HOLD:typeof CUT_HOLD_EP!=='undefined'?CUT_HOLD_EP:[],
   CAPS:{mode:typeof CAP_MODE!=='undefined'?CAP_MODE:'line', chunks:typeof BIGCAPS!=='undefined'?BIGCAPS:[], fit:typeof bigCapFit==='function'?bigCapFit:null, ok:typeof capOk==='function'?capOk:null, min:typeof BIGCAP!=='undefined'?BIGCAP.min:0}};
 if(/[?&]export\b/.test(location.search)){ document.body.classList.add('export'); startBtn.hidden=true; }
