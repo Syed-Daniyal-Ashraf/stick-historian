@@ -33,7 +33,7 @@ lb/   Lal Bihari "dead for 18 years" (2026-11) - same kit; its subtitles still s
 yo/   Pedro Flores and the word "yo-yo" (2026-11) - FINISHED (Stage D): final MP4 + cover + caption, waiting on Farrukh's listening check (yo/brief.md section 11)
 tn/   The Day of Two Noons (1883) - FORMAT TEST ep. 1, FINISHED (Stage D 2026-11-13): final MP4 + cover + caption, waiting on Farrukh's listening check (tn/brief.md section 13)
 ic/   Ice to Calcutta (1833) - FORMAT TEST ep. 2, rich painted look. Stage B part 2 (painted layer) done 2026-11-23: ic/ holds only the
-      test shot 5b; waiting on Farrukh's yes/no on the look before Stage C (ic/brief.md section 9, "Results")
+      test shot 5b. Look approved and 5b = option (a) (Farrukh, 2026-11-23); next: Stage C (ic/brief.md section 9, "Results")
 px/ r2/ rc/               older stick-rig episodes with their own tool copies. Leave as they are.
 ```
 An episode folder holds only what is its own: `episode.json` (title, `out` html name, `file` mp4 name), `src/meta.js`

@@ -247,7 +247,10 @@ Report: `paint: {pages:2, checked:60, mismatchesSamePage:[], mismatchesAcrossPag
   a second). The test shot runs one smooth day per second with night kept deep blue, not black, and everything the sun casts (glow, glint,
   shadows) fading with it. Options for Stage C: (a) 5b shows 3-4 smooth days (~3.5 s) and the tally jumps to 10 in 5c; (b) keep the sky mostly
   in daylight and show the days only with the tally and a fast sun arc; (c) one day/night, then a "×10" tally card. My pick: (a).
-- **Look test:** contact sheet and a 4 s clip of the shot went to Farrukh on 2026-11-23. Stage C waits for his yes/no.
+- **Look test:** contact sheet and a 4 s clip of the shot went to Farrukh on 2026-11-23. **Approved (Farrukh, 2026-11-23): yes.**
+- **5b decision (Farrukh, 2026-11-23): option (a).** 5b shows 3-4 smooth day/night cycles (~3.5 s, at most ~1 day a second, night deep blue,
+  sun-cast light fading with the sun as in the test shot); the tally reaches 3-4 there and jumps to 10 in 5c. Narration unchanged
+  ("more than ten days"): 5c's tally of 10 carries the number. Run motion.js on the draft to confirm no full-frame strobe.
 
 ## 10. Risks and fallbacks
 - **Too long (est. 54-57 s).** Cut in this order: "Less surface… slower melting." (-2 s, keep the 3c gag silent); then "No refrigeration." from line 3 (-1 s); then shorten the tropics shot to two cuts (drop 5c).
