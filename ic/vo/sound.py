@@ -97,7 +97,7 @@ BED=np.zeros((n,2),np.float32); bed=lambda x,t0,g=1,pan=0: put(BED,x,t0,g,pan)
 cut=lambda sh,w,off: W(sh,w)+off
 kend=W(8,'house')+1.3
 # (start, mode, level dB). bright = harp + pizzicato (glassy ice), soft = piano, pizz = the steps, tense = days ticking, roll = arrival, hush = the ice house, out = silence
-SECT=[(0,'bright',0),(S[2],'soft',-2),(cut(2,'step',-.1),'pizz',-4),(S[5],'tense',-4),(S[6],'roll',-3),(S[7],'pizz',-4),(S[8],'hush',-6),(kend,'out',-99)]
+SECT=[(0,'bright',0),(S[2],'soft',-2),(cut(2,'step',-.1),'pizz',-4),(S[6],'roll',-3),(S[7],'pizz',-4),(S[8],'hush',-6),(kend,'out',-99)]
 SECT=[(beat(t)*Q,m,l) for t,m,l in SECT]
 def mode_at(t):
     cur=SECT[0]
@@ -173,8 +173,8 @@ fx(chipH(2)[:int(.1*SR)],S[2]+1.1,.4)
 st2=cut(2,'step',-.1); room(st2,S[3],.05,200,1600); fx(rpg('drawKnife1'),st2+.7,.35); fx(rpg('drawKnife2'),st2+1.6,.3)
 for i in range(12): fx(chip(i),cut(2,'two',-.1)+.1+i*.07,.28)
 fx(rpg('metalClick'),cut(2,'two',-.1)+.9,.4)
-# 3: four blocks locked in (thunk each), the merge, melt gag
-for i in range(4): thunk(S[3]+.08+i*.27+.2,.8)
+# 3: three blocks locked in (thunk each, on the landing frame in sh3a), the merge, melt gag
+for i in range(3): thunk(S[3]+.34+i*.36,.8)
 fx(shift(GLOCK.note(76),0),cut(3,'giant',0),.0); crackle(cut(3,'giant',0)-.2,.4,.2)
 for i in range(4): fx(chipH(i)[:int(.1*SR)],cut(3,'less',-.07)+.6+i*.5,.22)
 # 4: shovel into the gap, tannery, bark, hay, stomp, hammer
@@ -187,10 +187,10 @@ th=cut(4,'hay',-.4)
 for i in range(7): fx(noise(.3,1500,6500,0)*np.hanning(int(.3*SR)).astype(np.float32),th+.1+i*.13,.18)
 for i in range(3): fx(rpg('footstep0%d'%(i+3)),th+1.1+i*.22,.5)
 for i in range(3): fx(rpg('chop'),th+2.3+i*.27,.55); fx(rpg('metalClick'),th+2.3+i*.27,.3)
-# 5: heat, the days ticking by, scarf
+# 5 (Stage D): the thermometer test - set down on the planks, the two readings meet on 'same', a pleased pat
 room(S[5],S[6],.04,300,2200)
-for i in range(3): fx(shift(CLAVE,5),cut(5,'hold',-.1)+.9*i+.45,.3)
-fx(rpg('cloth4'),S[5]+4.0+.9,.5); fx(rpg('cloth2'),S[5]+4.0+1.75,.4); fx(chip(3),S[5]+4.0+.15,.5)
+fx(chip(2),S[5]+1.15,.35); fx(rpg('metalClick'),S[5]+1.16,.35)   # thermometer lands on the planks (sh5a, pu 1.15)
+fx(rpg('metalClick'),cut(5,'same',0)+.02,.45); fx(chip(5),cut(5,'same',0)+.05,.3)
 # 6: arrival, hatch opens, murmur
 room(S[6],S[7],.05,200,1800); fx(rpg('doorOpen_1'),cut(6,'with',-.05)+.02,.6); [fx(chip(i),cut(6,'with',-.05)+.5+i*.2,.2) for i in range(4)]
 # 7: dripping docks, chalk, walking buyer

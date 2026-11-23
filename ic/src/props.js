@@ -55,15 +55,17 @@ function tallies(n,x,y,{col='#f6eed8',gap=15,len=64,k=1}={}){ let g='';
   return g; }
 
 /* ======================= Stage C additions: costumes ======================= */
+/* Stage D: sailor2 (Boston packer) now dark cap, waistcoat, dark trousers; buyers lost the white topi; buyer3 replaces lb's 'lekh' in 8a (the subscribers were British residents). */
 Object.assign(TC,{
-  sailor2:{skin:'#c99468',hair:'#2a1c12',top:'#3b5a8a',topDk:'#2f4870',pants:'#e9e1cc',shoe:'#2a1e16',cap:'flat',capC:'#e9e1cc',mus:'thick',headS:1.14,build:.35},
+  sailor2:{skin:'#d9a57c',hair:'#2a1c12',top:'#ddd2b8',topDk:'#bdb298',vest:'#4a3a30',pants:'#4a4048',shoe:'#2a1e16',cap:'flat',capC:'#2e2a28',mus:'thick',headS:1.14,build:.35},
   scarfy:{skin:'#e3b088',hair:'#7a4a22',top:'#6a4a3a',topDk:'#523a2e',pants:'#3c3a44',shoe:'#2a1e16',cap:'flat',capC:'#3a3a44',headS:1.14,build:.2},
   mate:{skin:'#dba67a',hair:'#8a8a86',grey:.6,suit:true,top:'#27324f',topDk:'#1c2540',shirt:'#f1ece0',tie:'#c8372d',pants:'#27324f',shoe:'#1a120c',cap:'flat',capC:'#1c2540',mus:'thick',headS:1.16,build:.6},
   coatA:{skin:'#e6b794',hair:'#4a3020',suit:true,top:'#6a4030',topDk:'#52301f',shirt:'#8a7a60',tie:'#8a7a60',pants:'#4a4048',shoe:'#1e1610',cap:'flat',capC:'#4a3a30',mus:'thin',headS:1.14,build:.3},
   coatB:{skin:'#d9a37a',hair:'#2a1e16',suit:true,top:'#3a5a4a',topDk:'#2c4639',shirt:'#8a8470',tie:'#8a8470',pants:'#3a3a40',shoe:'#1e1610',cap:'flat',capC:'#2c2c34',beard:true,headS:1.14,build:.5},
   tanner:{skin:'#c8946a',hair:'#1c1410',top:'#8a6a4a',topDk:'#6a4e34',pants:'#5a4a3a',shoe:'#2a1e16',bald:true,mus:'thick',headS:1.16,build:.7},
-  buyer:{skin:'#efc4a0',hair:'#c8b898',suit:true,top:'#f6f2e6',topDk:'#d8d2c0',shirt:'#fffaf0',tie:'#2c5e8a',pants:'#f6f2e6',shoe:'#d8d2c0',cap:'topi',capC:'#f1ead8',mus:'thick',headS:1.14,build:.6},
-  buyer2:{skin:'#ecbc94',hair:'#4a3a2a',suit:true,top:'#e8e0c8',topDk:'#c8c0a8',shirt:'#fffaf0',tie:'#8a2a2a',pants:'#e8e0c8',shoe:'#d0c8b0',cap:'topi',capC:'#e8e0c8',glasses:true,headS:1.14,build:.2},
+  buyer:{skin:'#efc4a0',hair:'#c8b898',suit:true,top:'#f6f2e6',topDk:'#d8d2c0',shirt:'#fffaf0',tie:'#2c5e8a',pants:'#f6f2e6',shoe:'#d8d2c0',capC:'#f1ead8',mus:'thick',headS:1.14,build:.6},
+  buyer2:{skin:'#ecbc94',hair:'#4a3a2a',suit:true,top:'#e8e0c8',topDk:'#c8c0a8',shirt:'#fffaf0',tie:'#8a2a2a',pants:'#e8e0c8',shoe:'#d0c8b0',capC:'#e8e0c8',glasses:true,headS:1.14,build:.2},
+  buyer3:{skin:'#f0c8a4',hair:'#7a4a22',suit:true,top:'#3a4a3a',topDk:'#2c382c',shirt:'#fffaf0',tie:'#2a2a2a',pants:'#3a3a40',shoe:'#1a120c',mus:'thin',headS:1.14,build:.5},
   boatman:{skin:'#a8723f',hair:'#1a120c',top:'#efe9da',topDk:'#d5ceba',pants:'#efe9da',dhoti:true,shoe:'#4a2e1a',cap:'pagri',capC:'#c8572e',mus:'thin',headS:1.14,build:.1},
   porter:{skin:'#b07848',hair:'#1a120c',top:'#d9c49a',topDk:'#b8a478',pants:'#efe9da',dhoti:true,shoe:'#4a2e1a',headS:1.14,build:.2},
 });
@@ -131,7 +133,7 @@ const LAND=[ // polygons around the globe centre (units: px at r=360)
  [[-205,12],[-132,0],[-98,70],[-148,182],[-200,272],[-218,150]],                                        // South America
  [[-12,-205],[58,-236],[124,-204],[92,-142],[22,-132]],                                                  // Europe
  [[-32,-112],[72,-122],[122,-52],[112,62],[72,172],[12,202],[-8,100],[-58,0],[-50,-72]],                // Africa
- [[112,-212],[254,-232],[334,-152],[324,-60],[266,-24],[246,40],[222,92],[196,10],[152,-40],[112,-102]] // Asia + India
+ [[112,-212],[254,-232],[334,-152],[324,-60],[282,-44],[262,-34],[240,56],[214,124],[188,44],[168,-8],[150,-40],[112,-102]] // Asia + India (Stage D: a clear peninsula; Calcutta at its north-east corner, ~[264,-36])
 ];
 function paintGlobe(ctx,t,cx,cy,r,{spin=0}={}){ const k=r/360;
   ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.clip();
@@ -141,6 +143,7 @@ function paintGlobe(ctx,t,cx,cy,r,{spin=0}={}){ const k=r/360;
   const sh=spin*14; LAND.forEach((poly,i)=>{ ctx.beginPath(); poly.forEach(([x,y],j)=>{ const X=cx+(x+sh)*k, Y=cy+y*k; j?ctx.lineTo(X,Y):ctx.moveTo(X,Y); }); ctx.closePath();
     ctx.fillStyle=i===4?'#7fa24c':i===3?'#b79a4c':'#6e9a4a'; ctx.fill(); ctx.strokeStyle='rgba(30,50,20,.55)'; ctx.lineWidth=3; ctx.stroke(); });
   g=ctx.createLinearGradient(cx-r,cy,cx+r,cy); g.addColorStop(0,'rgba(255,255,255,.12)'); g.addColorStop(.55,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(4,10,40,.62)'); ctx.fillStyle=g; ctx.fillRect(cx-r,cy-r,2*r,2*r);
+  ctx.save(); ctx.setLineDash([22,14]); ctx.lineWidth=6; ctx.strokeStyle='#f2b630'; ctx.beginPath(); ctx.ellipse(cx,cy+28*k,r*.995,10*k,0,0,Math.PI); ctx.stroke(); ctx.restore();   // equator (Stage D), front half only
   ctx.restore(); ctx.strokeStyle='rgba(20,12,6,.85)'; ctx.lineWidth=8; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.stroke(); }
 const globePt=(cx,cy,r,p,spin=0)=>[cx+(p[0]+spin*14)*r/360, cy+p[1]*r/360];
 

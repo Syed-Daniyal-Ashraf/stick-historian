@@ -40,12 +40,12 @@ SCRIPT=[
  (1,'N',"In eighteen thirty-three, a Boston ship carried *one hundred eighty tons* of ice to *India.*",1.0,.0),
  (1,'N',"Four months at sea. Across the *equator.* Twice.",1.0,.1),
  (2,'N',"No refrigeration. So how did it *survive?*",1.0,.05),
- (2,'N',"Step one: a machine cut the ice into identical, *two-foot* blocks.",1.02,.05),
+ (2,'N',"Step one: a machine cut the ice into square, *two-foot* blocks.",1.02,.05),   # Stage D: was "identical" (thickness varied 1-1.5 ft)
  (3,'N',"Packed with *no gaps,* they acted like one *giant* block.",1.02,.0),
  (3,'N',"Less surface… *slower* melting.",.98,.05),
  (4,'N',"Step two: they *buried* it.",1.0,.0),
  (4,'N',"A foot of leftover *tannery bark* on every side. A foot of *hay* on top.",1.0,.05),
- (5,'N',"Even in the tropics, the hold took more than *ten days* just to warm up.",1.02,.0),
+ (5,'N',"It worked: a thermometer on the packing read the *same* as one in the cabin.",1.0,.0),   # Stage D: replaces the "ten days" line (section 12)
  (6,'N',"In *September,* the ship reached Calcutta… with more than *half* still ice.",1.0,.0),
  (7,'N',"Then the *real* melting started.",1.0,.0),
  (7,'N',"Four months at sea had cost about *fifty-five* tons.",1.0,.05),
@@ -148,21 +148,28 @@ Painters (with the section 9 API): `skyNoon`, `skyDusk`, `skyMorningHaze`, `sea(
 Suggested `episode.json`: title "Boston Shipped Ice to India in 1833. Here's How It Survived.", out `ice-calcutta`, file `Ice-To-Calcutta-1833`.
 Sub "THE STICK HISTORIAN". `foot` must say the backgrounds are drawn in code and list every CC0 sample.
 
-## 8. Caption and pinned comment (draft; Stage D finalises)
-Caption:
-> 180 tons of ice. Boston to Calcutta. 1833. No refrigeration. 🧊🚢
-> The ship was the Tuscany; the ice was Frederic Tudor's.
+## 8. Caption and pinned comment (final, Stage D 2026-11-23)
+Caption (opens with the share line; one question; no follow plug):
+> In 1833 a Boston ship carried 180 tons of pond ice to Calcutta. Four months under sail, across the equator twice, and more than half arrived as ice. 🧊🚢
+> The trick was a foot of tanners' bark and hay. The twist: the ice lost far more per day in its last days, on the river and the docks, than in four months at sea.
 > Would you have trusted bark and hay?
 >
 > #history #india #kolkata #boston #animation
 
-Pinned comment (sources):
+Pinned comment (sources and disagreements):
 > Sources:
 > - "The Ice Trade between America and India", Journal of the Asiatic Society of Bengal (Sept 1834), from J. J. Dixwell, agent for the shippers; reprinted in Mechanics' Magazine, 9 Apr 1836 (transcript: todayinsci.com/T/Tudor_Frederic/IceTradeAmericaToIndia.htm)
-> - Susan S. Bean, "Cold Mine", American Heritage (1991), from Frederic Tudor's diaries (Baker Library, Harvard) and Capt. Littlefield's notes: americanheritage.com/cold-mine
-> - Gavin Weightman, The Frozen Water Trade (2003)
+> - Susan S. Bean, "Cold Mine", American Heritage (1991), from Frederic Tudor's diaries and Capt. Littlefield's notes: americanheritage.com/cold-mine
 >
-> Notes: Most retellings say sawdust; the 1834 account of this voyage says a foot of tanners' bark on the floor and sides and a foot of hay on top. Arrival dates differ (6, 10 or 13 September), so the video says September. "Almost thirty more" = 6-8 tons lost on the river + about 20 in unloading (the agent's estimate). The voyage was organised with Samuel Austin and William C. Rogers; Rogers sold the ice in Calcutta.
+> Notes:
+> - Sawdust? Most retellings say so. The 1834 account of this voyage says a foot of "tan" (spent bark from tanners' pits) under and around the ice, with inch-thick planking, and a foot of hay on top. Tudor's own fitting-out notes (Bean) mention straw and other fillers, so details differ by source.
+> - The blocks were two feet square and one foot to eighteen inches thick, packed with no space between them.
+> - The thermometer: "So effectual was the non-conducting power of the ice-house on board, that a thermometer placed on it did not differ perceptibly from one in the cabin." (1834 account)
+> - How much survived: the shippers' agent counts about 100 of 180 tons landed; Capt. Littlefield says 100 tons; Tudor's later diary says two-thirds. All are more than half.
+> - "Almost thirty more" = 6-8 tons lost on the way up the river plus "probably about twenty" in landing (the agent's own estimate).
+> - Dates: loaded 6-7 May, sailed 12 May (Tudor's diary); arrival is given as 6, 10 or 13 September and unloading ran to 16 September, so the video just says September.
+> - The ice house: Calcutta's British residents raised money to build one (Bean). It took time; the first cargo was stored in a lower room of a house at Brightman's Ghaut. The building in the video is an illustration, not a reconstruction.
+> - The voyage was organised by Frederic Tudor with Samuel Austin and William C. Rogers; the ship was the Tuscany, Capt. Littlefield.
 
 ## 9. Engine change for Stage B, part 2: the painted layer
 Farrukh chose backgrounds painted in code over generated stills (2026-11-13). Rules that are not up for debate in Stage B:
@@ -295,3 +302,44 @@ Pipeline: engine/make.sh ic; node engine/tools/verify.js ic; DRAFT=1 node engine
 python3 engine/tools/align.py ic after any timeline.py run. Needs CHROMIUM_PATH if the Playwright download is blocked.
 Do not publish anything. Heavy rework goes back to a Stage C chat on Sonnet.
 ```
+
+## 12. Stage D report (2026-11-23, Opus 5.5, built on 9bf2605)
+**Delivered (project root, not in git):** `Ice-To-Calcutta-1833.mp4` (1080x1920, 30 fps, 53.07 s, -14.1 LUFS, true peak -1.5 dBFS) and
+`Ice-To-Calcutta-1833-Cover-4K.png` (2160x3840, frame at `COVER_T` 1.2 s). Caption and pinned comment: section 8. Nothing published.
+
+**Independent review** (fresh agent, frames every 0.5 s + cut pairs + script + source list, no production notes). Findings and what was done:
+- **"Even in the tropics, the hold took more than ten days just to warm up" misread the 1834 source** (checked myself): the hold was *not* cold;
+  "the temperature of the hold was not sensibly affected by the ice", and the ten days was the hold warming back up "after being several weeks
+  in high latitudes". The scarf/breath/day-tally pictures showed the opposite. **Farrukh chose the replacement (2026-11-23):** "It worked: a
+  thermometer on the packing read the same as one in the cabin." (source: "So effectual was the non-conducting power of the ice-house on board,
+  that a thermometer placed on it did not differ perceptibly from one in the cabin.") Shot 5 rebuilt: 5a a sailor sets a thermometer on the
+  planked-over packing; 5b HOLD and CABIN thermometers side by side settle on the same mark (gold line + "="); 5c his reaction. The 5b
+  day/night sky shot and the tally are gone (functions `skyAt`, `tallies` stay in props.js). Music section `tense` removed (pizz runs on).
+- **"identical" → "square"** (Farrukh, 2026-11-23): the source gives two feet square, one foot to eighteen inches thick.
+- **Hook without sound:** tag "1833" → "ICE FOR INDIA · 1833", frost on the block from frame 1, hug pose (leaning in, eyes shut). Kept the
+  deck-and-sun first frame (brief section 2); did not move the globe to the front.
+- **Costumes:** Boston packers (`sailor2`) read as Indian dress → dark flat cap, shirt + waistcoat, dark trousers. Buyers lost the white `topi`;
+  `buyer3` (dark suit) replaces lb's `lekh` in 8a (the subscribers were British residents, Bean 1991).
+- **Globe:** India drawn as a peninsula, route goes round its tip and up the Bay of Bengal to Calcutta, gold dashed equator the route crosses twice.
+- **6b:** 5 of the 9 blocks left (was 3), so the picture says "more than half" (~100 of 180 t).
+- **Slates:** "4 MONTHS" writes on in 0.22 s (it read "41" mid-write); "DAYS ≈ −30 T" → "RIVER + DOCKS / ≈ −30 T".
+- **Fix list (section 11):** 1a TUSCANY dropped (hidden; it is on the hull in 1c/6a). 1c equator: gold receding dashed line weighted into
+  y 736-1040 with an ink edge, label above the sails with a leader to the horizon (it hid behind the sails). 2b: workers walk with the cutter,
+  group zoomed 1.38x and centred (no crop). 2c: bigArm removed; the ruler drops onto the grid with a shadow. 3a: 3 bigger blocks, worker at
+  1.45x (foley now 3 thunks on the landing frames). 3c: the smug sailor stood *inside* the transparent block; he now sits on its top face.
+  4a: worker starts below the Reels band. 4d: starts pulled back (z .74) so the man on the hay stays below y 290, then pushes in to the hammer.
+- **Not changed (judgement):** the ship's rig (brief: generic square-rigger, mast count not a feature); the ice-house design (illustration,
+  noted in the pinned comment); the protagonist's flat cap (reviewer: reads modern); stack size between 3b (2x3) and 4 (3x3) (packing
+  abstraction); the TUSCANY hull text at 6a is small and partly behind the crowd; block side views are square, not 2:1.5 slabs.
+
+**Gates:** `verify.js` PASS (0 reach misses; paint 0 mismatches on one page and across two browsers; paintMs median 12.7, p95 30.8).
+`motion.js` PASS on the new draft (0 pops, no 2 s still, only the 1.3 s end hold). Cadence: gaps over 3 s at 18.05-21.35 (3.3 s, 3c) and
+25.73-28.85 (3.12 s, 4d), both under the 3.4 s limit.
+**Final export:** 1,592 frames, 2 workers, 316 s wall, **0.396 s/frame/worker** (yo baseline 0.491; budget 1.5x). No `-preset` change needed.
+**Loudness (final MP4, ebur128 per section):** hook -13.9, question -14.0, packing -14.2, bark/hay -14.0, thermometer -14.9 (LRA 4.8: 2 s of
+score after the line), arrival -13.7, melting -13.5, ice house -13.9, tail after "house" -25.9. Score alone before ducking: hook -14.6 (loudest),
+others -17 to -21. **Not heard by anyone yet.** Listen for: "tannery" (the one word align.py could not measure), "equator", "two-foot",
+"Calcutta", "thermometer"; whether the bright hook music competes with the first two lines; the thunks in 3a; that the music never restarts.
+
+**Open:** Farrukh's listening check on a phone; posting (his). Then the 72 h / 7-day numbers into CLAUDE.md "Results so far",
+compared with `tn` (section 0: two data points, not a verdict).
