@@ -4,3 +4,4 @@ soundfile
 pillow
 fonttools
 kokoro-onnx==0.6.1
+pocketsphinx

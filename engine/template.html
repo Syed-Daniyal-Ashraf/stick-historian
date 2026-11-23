@@ -310,9 +310,14 @@ function walk(d,L,lift=22){
 }
 /* move a figure from x0 to x1 (world px) between u0,u1. Steps are computed in the figure's own units
    (world / scale) so planted feet stay fixed on the ground. After stopping, feet stay where they landed. */
+/* Walk speed: speed up, cruise, slow down. r = share of the walk spent speeding up (and again slowing down).
+   Feet stay planted because walk() steps by distance travelled, not by time. Episodes switch it on with
+   WALK_RAMP_EP=.14 in src/meta.js; without it walks keep their old constant speed (finished episodes render unchanged). */
+function rampK(k,r){ if(!(r>0)) return k; r=Math.min(r,.45);
+  return k<r ? k*k/(2*r*(1-r)) : k>1-r ? 1-(1-k)*(1-k)/(2*r*(1-r)) : (k-r/2)/(1-r); }
 function walker(u,x0,x1,u0,u1,stepGuess=80,s=1.5){
   const dist=Math.abs(x1-x0), steps=Math.max(1,Math.round(dist/stepGuess)), Lw=dist/steps;
-  const k=seg(u,u0,u1,E.lin), x=lerp(x0,x1,k);
+  const k=rampK(seg(u,u0,u1,E.lin),typeof WALK_RAMP_EP!=='undefined'?WALK_RAMP_EP:0), x=lerp(x0,x1,k);
   const moving=u>u0&&u<u1, w=walk(dist*k/s,Lw/s);
   if(moving) return {x,moving,p:w};
   const end=walk(dist/s,Lw/s), settle=seg(u,u1,u1+.3);

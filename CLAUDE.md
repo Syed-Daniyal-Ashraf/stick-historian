@@ -24,7 +24,7 @@ engine/toon/              THE SHARED TOON KIT, used by every toon episode. Fix t
   10_base.js              palette, finish() (line boil, paper, grade, vignette), cam(), type, stamps, subtitles
   20_rig.js               toon() rig, costumes TC, expressions EX, poses TP, full()/tween() pose blending, shoes, idle life
   30_world.js             shared props and sets (desk, paper, bigArm, strut, burst, dust, web, Indian village/office sets)
-engine/tools/             export.js, shots.js, verify.js, cover.js, mix.sh. All take the episode folder as first argument.
+engine/tools/             export.js, shots.js, verify.js, motion.js, align.py, cover.js, mix.sh. All take the episode folder as first argument.
 build/fonts.css           embedded fonts (Anton, Fell, Fraktur, Baloo 2, Kalam, Rozha One)
 assets/                   fonts (OFL), tts model, CC0 sample libraries (created by scripts/setup.sh)
 mo/   Monopoly / Lizzie Magie (2026-11) - CURRENT STANDARD: safe-area staging, pose tweens, one-tempo score
@@ -58,12 +58,14 @@ Do not redeclare `world`, `capsEl` or `SUB_MAXW` in episode code; the template o
 
 ## Pipeline (from the project root; EP = episode folder, e.g. mo)
 1. **Script:** edit `SCRIPT` in `EP/vo/gen.py`. `(shot, 'N', text, speed, gap)`; `*word*` highlights. Fix names with `PH` or `REPL`.
-2. **Voice:** `cd EP && python3 vo/gen.py && python3 vo/timeline.py` (writes `vo/timing.json`, `vo/voice.wav`).
+2. **Voice:** `cd EP && python3 vo/gen.py && python3 vo/timeline.py` (writes `vo/timing.json`, `vo/voice.wav`),
+   then from the root `python3 engine/tools/align.py EP` (replaces the estimated word times with measured ones). Run it again after every `timeline.py`.
 3. **Picture:** write shots, then `engine/make.sh EP`. Open `<out>.html` to preview (voice + music; foley is only in the MP4).
 4. **Stills:** `SAFE=1 node engine/tools/shots.js EP sheet.png 0.5 1.5 ...` Check every second, and dense strips (0.1 s) at every pose change.
 5. **Gates:** `node engine/tools/verify.js EP` must print `VERIFY: PASS` (determinism, reach, subtitles in the safe area, every word covered).
 6. **Sound:** `cd EP && python3 vo/sound.py && python3 vo/bed.py` (prints the level of each music section).
-7. **Draft:** `DRAFT=1 node engine/tools/export.js EP` (540 px, 15 fps).
+7. **Draft:** `DRAFT=1 node engine/tools/export.js EP` (540 px, 15 fps), then `node engine/tools/motion.js EP` must print
+   `MOTION: PASS` (no 2 s+ still stretch outside `HOLD_OK_EP`). Look at every pop and still WARN it lists; add any hard cut it reports to `CUT_EP`.
 8. **Final:** `node engine/tools/export.js EP && bash engine/tools/mix.sh EP` writes `<file>.mp4` in the project root, -14 LUFS.
    JPEG capture with 2 parallel browsers: see ENGINE.md for the measured time.
 9. **Cover:** `node engine/tools/cover.js EP`.
@@ -78,7 +80,10 @@ Do not redeclare `world`, `capsEl` or `SUB_MAXW` in episode code; the template o
 - Fonts load lazily: `engine/tools/common.js` waits for `window.__fontsReady` before any screenshot. Use it for new tools.
 - `UID` is reset each frame in `finish()`; otherwise clip ids change and `verify.js` reports mismatches.
 - `cu()` matches the first word whose normalised form starts with the prefix. For a repeated word, use an offset from a unique word.
-- Word times in `timing.json` are estimates (phoneme counts between detected pauses), not measurements. Long phrases can drift.
+- Word times from `timeline.py` are estimates (phoneme counts between detected pauses) and drift on long phrases (median 82 ms, up to 334 ms on yo).
+  `engine/tools/align.py` measures them; episodes made before 2026-11-23 (lb, mo, yo, tn) still use the estimates.
+- New episodes set `WALK_RAMP_EP=.14` in `meta.js` (walks speed up and slow down instead of starting at full speed).
+- Engine tools added 2026-11-23 (align.py, motion.js, walk ramp) were adapted from ideas in github.com/krishnagoswami52/stickman-skill (MIT). Its look, characters and 3D engine were not adopted.
 - `tween()` blends numbers and arrays; text fields (expr, hand shape) switch halfway. Always wrap poses in `full()`.
 - Chromium: set `CHROMIUM_PATH` only if you need a specific browser.
 

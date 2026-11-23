@@ -6,11 +6,13 @@ Update this file in the same change as any engine change. Rules and history are 
 | Step | Command | Output |
 |---|---|---|
 | Voice | `cd EP && python3 vo/gen.py && python3 vo/timeline.py` | `vo/lines.json`, `vo/timing.json`, `vo/voice.wav` |
+| Word times | `python3 engine/tools/align.py EP` (`--check` = report only) | measured word times in `vo/timing.json`; the estimate is kept in `vo/timing_est.json` |
 | Build | `engine/make.sh EP` | `<out>.html` (preview with voice + music) |
 | Contact sheet | `SAFE=1 SCALE=.3 COLS=8 node engine/tools/shots.js EP sheet.png t1 t2 ...` | tiled frames; `SAFE=1` shades the area the Reels interface covers |
 | Gates | `node engine/tools/verify.js EP` | `VERIFY: PASS` or `FAIL` plus a JSON report |
 | Sound | `cd EP && python3 vo/sound.py && python3 vo/bed.py` | `vo/music_raw.wav`, `out/fx_real.wav`, `vo/bed.wav`, `vo/bed.mp3` |
 | Draft | `DRAFT=1 node engine/tools/export.js EP` | `EP/out/draft.mp4` (540 px, 15 fps) |
+| Motion gate | `node engine/tools/motion.js EP [video]` | `MOTION: PASS` or `FAIL`: still stretches, pops, hard cuts missing from `film.CUTS` |
 | Final | `node engine/tools/export.js EP && bash engine/tools/mix.sh EP` | `<file>.mp4` in the root, 1080x1920, 30 fps, -14 LUFS |
 | Cover | `node engine/tools/cover.js EP` | `<file>-Cover-4K.png` (frame at `COVER_T`) |
 | Regression | `node engine/compare.js old.html new.html` | pixel-compares 24 frames of two builds |
@@ -23,6 +25,22 @@ target more than 6 units beyond the limb; (3) subtitles inside x 65-1015 / y 270
 (5) `cadence`: the gaps between `film.CUTS`. Enforced only when the episode declares `CUT_EP`: FAIL on a gap over 3.4 s (4.5 s in
 `CUT_HOLD_EP` shots), WARN `gapsOver3` / `gapsUnder1`. Without `CUT_EP` it is printed for information. Also prints `renderMs`.
 It does not check labels, faces or props against the safe area: look at a `SAFE=1` sheet for those.
+
+`motion.js` reads the rendered draft (or final) video at 15 fps, 180x320 grey, ignores the caption band (y 970-1270) and
+measures motion as the change in the 10 most-changed 10x10 blocks, so paper grain and line boil don't count as movement.
+(1) **still**: 1 s or more with motion under 6 is a WARN; 2 s (`STILL_MAX`) is a FAIL unless it is the last 1.5 s or inside
+`HOLD_OK_EP` (`const HOLD_OK_EP=[[t0,t1,'why']];` in `shots.js`, absolute seconds). (2) **pop**: one frame where part of the
+picture jumps far more than its neighbours, away from a cut (WARN: a snapped pose or an inset with no entrance; shakes and
+stamp slams also show up, so look). (3) **uncut**: a whole-frame change that is not in `film.CUTS`; add it to `CUT_EP` so
+`verify.js` cadence sees it. It prints a `shots.js` command for every flagged time. Tuned on the yo/tn/mo drafts:
+mo and tn pass, yo fails on two holds of 2.1 and 2.5 s.
+
+`align.py` aligns each narrated line on its own (pocketsphinx, offline) and replaces the estimated word times; line starts
+(`v0`) are kept, so shot lengths and the score don't move. Words it can't place keep the estimate shifted by their nearest
+measured neighbour, and each word gets `src` `m` (measured) or `e`. Re-running it re-measures from `timing_est.json`,
+so it's repeatable; running `timeline.py` again starts a fresh estimate. On yo the estimate was off by a median 82 ms,
+up to 334 ms; against silence-gap onsets the measured times were within a median 3 ms (estimate 4 ms) and a mean 14 ms
+(estimate 35 ms). English only.
 It also does not judge whether a cut changes the picture: put frames 0.1 s before and after every cut on a contact sheet.
 
 ## Frame and timing (engine/template.html)
@@ -62,7 +80,7 @@ It also does not judge whether a cut changes the picture: put frames 0.1 s befor
 - Limits: arm reach ~114 units from the shoulder, leg ~128 from the hip. One fixed three-quarter view; no front or back view.
 
 **30_world.js**: `st(fill,w)`, `desk`, `deskTop`, `paper`, `bigArm(shoulder,hand,skin,sleeve,hand,propSvg,w)` for top-down inserts,
-`strut(u,x0,x1,u0,u1,s,step,swing)` walk, `burst`, `dust`, `web`, and the Indian village / office / police sets from Lal Bihari.
+`strut(u,x0,x1,u0,u1,s,step,swing)` walk (speed ramps up and down when the episode sets `WALK_RAMP_EP=.14` in `meta.js`; without it, constant speed as before. Feet stay planted either way. Best for walks that start and stop on screen; a walk that enters from off screen spends its slow start out of view), `burst`, `dust`, `web`, and the Indian village / office / police sets from Lal Bihari.
 `courtroom(u,t,slam)` and `TC.judge` (shared by mo/ and yo/).
 
 **yo/src/props.js** (copy, don't import, if another episode needs them): `yoyo(hx,hy,u,mode,o)` string prop, modes `drop sleep return bob walk`;
@@ -72,7 +90,7 @@ It also does not judge whether a cut changes the picture: put frames 0.1 s befor
 
 ## Episode files
 - `episode.json`: `title sub aria foot out file`.
-- `src/meta.js`: `SKIP_SUBS`, `SPEAKERS`, `SHOT_META` (subtitle y per shot), `MERGE_EP`, optional `LIFE_EP`, `SUB_MAXW_EP`.
+- `src/meta.js`: `SKIP_SUBS`, `SPEAKERS`, `SHOT_META` (subtitle y per shot), `MERGE_EP`, optional `LIFE_EP`, `SUB_MAXW_EP`, `WALK_RAMP_EP` (new episodes: `.14`).
 - `src/props.js`: episode sets, props, costumes. `src/shots.js`: `COVER_T`, shots, `SEQ`, `overlays`.
 - `mo/src/shots.js` helpers worth copying: `stage(x,z,g)` (ground line fixed at screen y 1115), `under(colour)`, `panelBox(...)`.
 
